@@ -1,14 +1,18 @@
+# Global rule to include .gitkeep files anywhere
+!**/.gitkeep
+agent_history.gif
+
 # Ignore everything in containers/ except a0-demo/
-/containers/*
+/containers/**
 !/containers/a0-demo/
 
 # Ignore everything in repositories/ except a0-demo/ and common/
-/repositories/*
+/repositories/**
 !/repositories/a0-demo/
 !/repositories/common/
 
 # Track only the 4 existing directories in volumes/
-/volumes/*
+/volumes/**
 !/volumes/common/
 !/volumes/private/
 !/volumes/public/
