@@ -7,4 +7,4 @@ class ExampleExtension(Extension):
 
     async def execute(self, **kwargs):
         # rename the agent to SuperAgent0
-        self.agent.agent_name = "A0 Kairos " + str(self.agent.number)
+        self.agent.agent_name = "Kairos-" + str(self.agent.number)
