@@ -1,3 +1,19 @@
+# Ignore everything in containers/ except a0-demo/
+/containers/*
+!/containers/a0-demo/
+
+# Ignore everything in repositories/ except a0-demo/ and common/
+/repositories/*
+!/repositories/a0-demo/
+!/repositories/common/
+
+# Track only the 4 existing directories in volumes/
+/volumes/*
+!/volumes/common/
+!/volumes/private/
+!/volumes/public/
+!/volumes/shared/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
