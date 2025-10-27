@@ -30,6 +30,9 @@ services:
       # Agent Zero
       - ${PATH_CONTAINER}/a0:/a0
 
+      # .env
+      # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
+
       # root
       - ${CONTAINER_LAYER}/root:/root
 
@@ -66,9 +69,6 @@ services:
 
       # work_dir
       - ${CONTAINER_LAYER}/work_dir:/a0/work_dir
-
-      # .env
-      # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
 
       # instruments
       - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:ro
