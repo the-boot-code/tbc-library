@@ -12,8 +12,9 @@ agent_history.gif
 # Ignore everything in repositories/ except a0-demo/ and common/
 /repositories/*
 /repositories/*/
-!/repositories/a0-demo/
-!/repositories/a0-demo/**
+# Allow a0-demo (submodule) and common to be tracked
+!/repositories/a0-demo
+!/repositories/common/
 
 # Explicitly include common and all its subdirectories
 /repositories/common
