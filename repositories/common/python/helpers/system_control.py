@@ -325,6 +325,240 @@ class SystemControl:
             "available_profiles": self.get_available_workflow_profiles(),
             "features": workflow_features
         }
+    
+    # Reasoning control methods - Internal
+    
+    def get_active_internal_reasoning_profile(self) -> str:
+        """Get name of active internal reasoning profile"""
+        config = self._load_config()
+        profile = config.get("reasoning", {}).get("internal", {}).get("active_profile", "default")
+        print(f"DEBUG: Active internal reasoning profile: {profile}", flush=True)
+        return profile
+    
+    def get_available_internal_reasoning_profiles(self) -> list[str]:
+        """Get list of available internal reasoning profiles"""
+        config = self._load_config()
+        profiles = list(config.get("reasoning_profiles", {}).get("internal", {}).keys())
+        print(f"DEBUG: Available internal reasoning profiles: {profiles}", flush=True)
+        return profiles
+    
+    def set_active_internal_reasoning_profile(self, profile: str) -> dict:
+        """Change active internal reasoning profile"""
+        config = self._load_config()
+        
+        # Validate profile exists
+        available = config.get("reasoning_profiles", {}).get("internal", {})
+        if profile not in available:
+            return {
+                "success": False,
+                "error": f"Internal reasoning profile '{profile}' not found",
+                "available_profiles": list(available.keys())
+            }
+        
+        # Get old profile
+        old_profile = config.get("reasoning", {}).get("internal", {}).get("active_profile", "default")
+        
+        # No change needed
+        if old_profile == profile:
+            return {
+                "success": True,
+                "message": f"Already on internal reasoning profile '{profile}'",
+                "profile": profile
+            }
+        
+        # Make change
+        if "reasoning" not in config:
+            config["reasoning"] = {}
+        if "internal" not in config["reasoning"]:
+            config["reasoning"]["internal"] = {}
+        config["reasoning"]["internal"]["active_profile"] = profile
+        
+        # Write back
+        if not self._write_config(config):
+            return {
+                "success": False,
+                "error": "Failed to write configuration"
+            }
+        
+        print(f"DEBUG: Internal reasoning profile changed: {old_profile} → {profile}", flush=True)
+        
+        return {
+            "success": True,
+            "previous_profile": old_profile,
+            "new_profile": profile,
+            "message": f"Internal reasoning profile changed from '{old_profile}' to '{profile}'"
+        }
+    
+    def get_internal_reasoning_state(self) -> dict:
+        """Get full internal reasoning state for monitoring"""
+        config = self._load_config()
+        profile_name = self.get_active_internal_reasoning_profile()
+        
+        # Get internal reasoning profile features
+        profile = config.get("reasoning_profiles", {}).get("internal", {}).get(profile_name, {})
+        reasoning_features = profile.get("features", {})
+        
+        return {
+            "active_profile": profile_name,
+            "available_profiles": self.get_available_internal_reasoning_profiles(),
+            "features": reasoning_features
+        }
+    
+    # Reasoning control methods - Interleaved
+    
+    def get_active_interleaved_reasoning_profile(self) -> str:
+        """Get name of active interleaved reasoning profile"""
+        config = self._load_config()
+        profile = config.get("reasoning", {}).get("interleaved", {}).get("active_profile", "default")
+        print(f"DEBUG: Active interleaved reasoning profile: {profile}", flush=True)
+        return profile
+    
+    def get_available_interleaved_reasoning_profiles(self) -> list[str]:
+        """Get list of available interleaved reasoning profiles"""
+        config = self._load_config()
+        profiles = list(config.get("reasoning_profiles", {}).get("interleaved", {}).keys())
+        print(f"DEBUG: Available interleaved reasoning profiles: {profiles}", flush=True)
+        return profiles
+    
+    def set_active_interleaved_reasoning_profile(self, profile: str) -> dict:
+        """Change active interleaved reasoning profile"""
+        config = self._load_config()
+        
+        # Validate profile exists
+        available = config.get("reasoning_profiles", {}).get("interleaved", {})
+        if profile not in available:
+            return {
+                "success": False,
+                "error": f"Interleaved reasoning profile '{profile}' not found",
+                "available_profiles": list(available.keys())
+            }
+        
+        # Get old profile
+        old_profile = config.get("reasoning", {}).get("interleaved", {}).get("active_profile", "default")
+        
+        # No change needed
+        if old_profile == profile:
+            return {
+                "success": True,
+                "message": f"Already on interleaved reasoning profile '{profile}'",
+                "profile": profile
+            }
+        
+        # Make change
+        if "reasoning" not in config:
+            config["reasoning"] = {}
+        if "interleaved" not in config["reasoning"]:
+            config["reasoning"]["interleaved"] = {}
+        config["reasoning"]["interleaved"]["active_profile"] = profile
+        
+        # Write back
+        if not self._write_config(config):
+            return {
+                "success": False,
+                "error": "Failed to write configuration"
+            }
+        
+        print(f"DEBUG: Interleaved reasoning profile changed: {old_profile} → {profile}", flush=True)
+        
+        return {
+            "success": True,
+            "previous_profile": old_profile,
+            "new_profile": profile,
+            "message": f"Interleaved reasoning profile changed from '{old_profile}' to '{profile}'"
+        }
+    
+    def get_interleaved_reasoning_state(self) -> dict:
+        """Get full interleaved reasoning state for monitoring"""
+        config = self._load_config()
+        profile_name = self.get_active_interleaved_reasoning_profile()
+        
+        # Get interleaved reasoning profile features
+        profile = config.get("reasoning_profiles", {}).get("interleaved", {}).get(profile_name, {})
+        reasoning_features = profile.get("features", {})
+        
+        return {
+            "active_profile": profile_name,
+            "available_profiles": self.get_available_interleaved_reasoning_profiles(),
+            "features": reasoning_features
+        }
+    
+    # Reasoning control methods - External
+    
+    def get_active_external_reasoning_profile(self) -> str:
+        """Get name of active external reasoning profile"""
+        config = self._load_config()
+        profile = config.get("reasoning", {}).get("external", {}).get("active_profile", "default")
+        print(f"DEBUG: Active external reasoning profile: {profile}", flush=True)
+        return profile
+    
+    def get_available_external_reasoning_profiles(self) -> list[str]:
+        """Get list of available external reasoning profiles"""
+        config = self._load_config()
+        profiles = list(config.get("reasoning_profiles", {}).get("external", {}).keys())
+        print(f"DEBUG: Available external reasoning profiles: {profiles}", flush=True)
+        return profiles
+    
+    def set_active_external_reasoning_profile(self, profile: str) -> dict:
+        """Change active external reasoning profile"""
+        config = self._load_config()
+        
+        # Validate profile exists
+        available = config.get("reasoning_profiles", {}).get("external", {})
+        if profile not in available:
+            return {
+                "success": False,
+                "error": f"External reasoning profile '{profile}' not found",
+                "available_profiles": list(available.keys())
+            }
+        
+        # Get old profile
+        old_profile = config.get("reasoning", {}).get("external", {}).get("active_profile", "default")
+        
+        # No change needed
+        if old_profile == profile:
+            return {
+                "success": True,
+                "message": f"Already on external reasoning profile '{profile}'",
+                "profile": profile
+            }
+        
+        # Make change
+        if "reasoning" not in config:
+            config["reasoning"] = {}
+        if "external" not in config["reasoning"]:
+            config["reasoning"]["external"] = {}
+        config["reasoning"]["external"]["active_profile"] = profile
+        
+        # Write back
+        if not self._write_config(config):
+            return {
+                "success": False,
+                "error": "Failed to write configuration"
+            }
+        
+        print(f"DEBUG: External reasoning profile changed: {old_profile} → {profile}", flush=True)
+        
+        return {
+            "success": True,
+            "previous_profile": old_profile,
+            "new_profile": profile,
+            "message": f"External reasoning profile changed from '{old_profile}' to '{profile}'"
+        }
+    
+    def get_external_reasoning_state(self) -> dict:
+        """Get full external reasoning state for monitoring"""
+        config = self._load_config()
+        profile_name = self.get_active_external_reasoning_profile()
+        
+        # Get external reasoning profile features
+        profile = config.get("reasoning_profiles", {}).get("external", {}).get(profile_name, {})
+        reasoning_features = profile.get("features", {})
+        
+        return {
+            "active_profile": profile_name,
+            "available_profiles": self.get_available_external_reasoning_profiles(),
+            "features": reasoning_features
+        }
 
 
 # FUTURE ENHANCEMENTS (commented placeholders):
