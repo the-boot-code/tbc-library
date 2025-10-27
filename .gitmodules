@@ -1,0 +1,3 @@
+[submodule "repositories/a0-demo"]
+	path = repositories/a0-demo
+	url = https://github.com/the-boot-code/a0-demo.git
