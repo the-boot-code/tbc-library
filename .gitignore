@@ -19,7 +19,6 @@ agent_history.gif
 # Allow a0-demo (submodule) and common to be tracked
 !/layers/a0-demo
 !/layers/a0-template
-!/layers/common/
 # Ignore logs directory in a0-template
 /layers/a0-template/logs/*
 
