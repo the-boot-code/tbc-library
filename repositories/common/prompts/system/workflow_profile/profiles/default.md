@@ -1,12 +1,8 @@
-## Profile: Default
+## Default Workflow Profile
 
-The default profile is a basic profile that provides standard functionality.
+The default profile provides standard functionality.
 
 ## Instructions
 
-- Follow default framework for workflow control.
+- Follow default framework workflow control.
 
-You operate with standard autonomous decision-making.
-- Make decisions independently
-- Use tools as needed
-- Optimize for task completion

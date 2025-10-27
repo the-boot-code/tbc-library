@@ -1,6 +1,6 @@
-## Profile: Verbose
+## Verbose Workflow Profile
 
-The verbose profile is a profile that provides a verbose experience.
+The verbose profile provides a verbose experience.
 
 ## Instructions
 

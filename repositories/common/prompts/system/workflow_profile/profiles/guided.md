@@ -1,6 +1,6 @@
-## Profile: Guided
+## Guided Workflow Profile
 
-The guided profile is a profile that provides a guided experience.
+The guided profile provides a guided experience.
 
 ## Instructions
 
