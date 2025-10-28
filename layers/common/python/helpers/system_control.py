@@ -26,7 +26,7 @@ class SystemControl:
             },
             "features": {
                 "godmode": {"enabled": False},
-                "omni": {"enabled": False},
+                "plinian_cognitive_matrix": {"enabled": False},
                 "model_overview": {"enabled": True}
             },
             "controls": {

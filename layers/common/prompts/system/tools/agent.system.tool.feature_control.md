@@ -67,7 +67,7 @@ Requires "feature_control" to be enabled.
 ~~~
 
 **Available Options:**
-- **Features** (optional enhancements): `godmode`, `omni`, `model_overview`
+- **Features** (optional enhancements): `godmode`, `plinian_cognitive_matrix`, `model_overview`
 - **Controls** (core system): `security_control`, `feature_control`, `workflow_control`, `reasoning_control`
 
 **Note:** Active security profile may override these settings. Lockdown profile disables this tool.
