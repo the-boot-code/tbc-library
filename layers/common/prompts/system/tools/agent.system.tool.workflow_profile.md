@@ -53,10 +53,12 @@ Use this tool to:
 }
 ~~~
 
-**Available profiles:** default, guided, verbose
+**To discover available profiles:**
+Use `action="get_status"` to see all available workflow profiles and their details.
 
 **Important Notes:**
 - Your active profile is displayed in your system prompt under "Workflow Profile"
 - Each workflow profile loads different behavioral instructions and interaction patterns
 - Profile changes take effect on next message loop
 - **Always check your system prompt first** before making tool calls to query your configuration
+- To see all available profiles and what they do, use the `get_status` action

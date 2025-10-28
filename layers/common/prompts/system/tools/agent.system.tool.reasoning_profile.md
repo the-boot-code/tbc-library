@@ -85,7 +85,10 @@ Use this tool to:
 - You use: `reasoning_type="external"`, `action="set_profile"`, `profile="external_cot_1"`
 
 **Available Types:** internal, interleaved, external
-**Available Profiles:** default, internal_cot_1, interleaved_cot_1, external_cot_1 (varies by type)
+
+**To discover available profiles:**
+Use `action="get_status"` with a specific `reasoning_type` to see all available profiles for that type.
+Each reasoning type (internal, interleaved, external) has its own set of profiles.
 
 **Important Notes:**
 - Your active profiles are displayed in your system prompt under "Reasoning Profiles"
