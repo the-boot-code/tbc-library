@@ -1,1 +1,1 @@
-{{ include "prompts/system/security_control/agent.system.tool.security_control.md" }}
+{{ include "prompts/system/tools/agent.system.tool.security_control.md" }}

@@ -4,15 +4,16 @@ from agent import Agent, LoopData
 from python.helpers import files, memory
 
 
-class TBCPrompt(Extension):
+class InsertPrompt(Extension):
 
     async def execute(self, system_prompt: list[str]=[], loop_data: LoopData = LoopData(), **kwargs):
         prompt = read_prompt(self.agent)
-        prompt_padded = '\n\n\n' + prompt + '\n\n\n'
-        system_prompt.insert(0, prompt_padded) #.append(prompt_padded)
+        prompt_padded = '\n\n' + prompt + '\n\n' if prompt else ''
+        system_prompt.insert(0, prompt_padded)
 
 def get_prompt_file(agent: Agent):
-    return "/a0/prompts/system/pre_behaviour.md"
+    agent_profile=agent.config.profile or "default"
+    return "/a0/agents/" + agent_profile + "/prompts/pre_behaviour.md"
 
 def read_prompt(agent: Agent):
     prompt_file = get_prompt_file(agent)

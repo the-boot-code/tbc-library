@@ -24,9 +24,16 @@ class SystemControl:
             "security_profiles": {
                 "open": {"features": {}}
             },
-            "feature_options": {
+            "features": {
                 "godmode": {"enabled": False},
-                "omni": {"enabled": False}
+                "omni": {"enabled": False},
+                "model_overview": {"enabled": True}
+            },
+            "controls": {
+                "security_control": {"enabled": True},
+                "feature_control": {"enabled": True},
+                "workflow_control": {"enabled": True},
+                "reasoning_control": {"enabled": True}
             }
         }
     
@@ -47,11 +54,17 @@ class SystemControl:
         # Admin override bypasses security profile only, not feature config
         admin_override = self.is_admin_override_active()
         
-        # If admin override, skip profile and use feature options directly
+        # If admin override, skip profile and check features/controls directly
         if admin_override:
-            feature_config = config.get("feature_options", {}).get(feature, {})
-            enabled = feature_config.get("enabled", False)
-            print(f"DEBUG: Feature '{feature}' ADMIN OVERRIDE (options): {enabled}", flush=True)
+            # Check new structure first (features, controls), fallback to old (feature_options)
+            feature_config = config.get("features", {}).get(feature)
+            if feature_config is None:
+                feature_config = config.get("controls", {}).get(feature)
+            if feature_config is None:
+                feature_config = config.get("feature_options", {}).get(feature, {})
+            
+            enabled = feature_config.get("enabled", False) if feature_config else False
+            print(f"DEBUG: Feature '{feature}' ADMIN OVERRIDE: {enabled}", flush=True)
             return enabled
         
         # Normal flow: check profile
@@ -65,10 +78,15 @@ class SystemControl:
             print(f"DEBUG: Feature '{feature}' in profile '{profile_name}': {enabled}", flush=True)
             return enabled
         
-        # Fall back to feature options
-        feature_config = config.get("feature_options", {}).get(feature, {})
-        enabled = feature_config.get("enabled", False)
-        print(f"DEBUG: Feature '{feature}' using feature options: {enabled}", flush=True)
+        # Fall back to features/controls/feature_options
+        feature_config = config.get("features", {}).get(feature)
+        if feature_config is None:
+            feature_config = config.get("controls", {}).get(feature)
+        if feature_config is None:
+            feature_config = config.get("feature_options", {}).get(feature, {})
+        
+        enabled = feature_config.get("enabled", False) if feature_config else False
+        print(f"DEBUG: Feature '{feature}' using global config: {enabled}", flush=True)
         return enabled
     
     def get_feature_config(self, feature: str) -> dict:
@@ -80,8 +98,12 @@ class SystemControl:
         profile_name = config.get("security", {}).get("active_profile", "open")
         profile = config.get("security_profiles", {}).get(profile_name, {})
         
-        # Get from profile or feature options
+        # Get from profile or features/controls/feature_options
         feature_config = profile.get("features", {}).get(feature)
+        if feature_config is None:
+            feature_config = config.get("features", {}).get(feature)
+        if feature_config is None:
+            feature_config = config.get("controls", {}).get(feature)
         if feature_config is None:
             feature_config = config.get("feature_options", {}).get(feature, {})
         
@@ -103,11 +125,16 @@ class SystemControl:
         return profiles
     
     def get_available_features(self) -> list[str]:
-        """Get list of available features"""
+        """Get list of available features and controls"""
         config = self._load_config()
-        features = list(config.get("feature_options", {}).keys())
-        print(f"DEBUG: Available features: {features}", flush=True)
-        return features
+        # Combine features, controls, and legacy feature_options
+        features = set()
+        features.update(config.get("features", {}).keys())
+        features.update(config.get("controls", {}).keys())
+        features.update(config.get("feature_options", {}).keys())
+        features_list = sorted(list(features))
+        print(f"DEBUG: Available features: {features_list}", flush=True)
+        return features_list
     
     def _write_config(self, config: dict) -> bool:
         """Write configuration back to system_control.json"""
@@ -168,22 +195,28 @@ class SystemControl:
     
     def set_feature_option(self, feature: str, enabled: bool) -> dict:
         """
-        Set feature option enabled/disabled.
+        Set feature or control enabled/disabled.
         Returns dict with success status and details.
         """
         config = self._load_config()
         
-        # Validate feature exists
-        feature_options = config.get("feature_options", {})
-        if feature not in feature_options:
+        # Find which section the feature is in
+        section = None
+        if feature in config.get("features", {}):
+            section = "features"
+        elif feature in config.get("controls", {}):
+            section = "controls"
+        elif feature in config.get("feature_options", {}):
+            section = "feature_options"
+        else:
             return {
                 "success": False,
                 "error": f"Feature '{feature}' not found",
-                "available_features": list(feature_options.keys())
+                "available_features": self.get_available_features()
             }
         
         # Get old value
-        old_value = feature_options[feature].get("enabled", False)
+        old_value = config[section][feature].get("enabled", False)
         
         # No change needed
         if old_value == enabled:
@@ -195,7 +228,7 @@ class SystemControl:
             }
         
         # Make change
-        config["feature_options"][feature]["enabled"] = enabled
+        config[section][feature]["enabled"] = enabled
         
         # Write back
         if not self._write_config(config):

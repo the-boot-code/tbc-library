@@ -6,7 +6,7 @@ from python.helpers.print_style import PrintStyle
 
 # Don't import at module level - do it inside execute() to avoid framework discovering it
 import sys
-sys.path.insert(0, '/a0/prompts/system/model_godmode')
+sys.path.insert(0, '/a0/prompts/system/features/model_godmode')
 
 
 class InsertModelGodMode(Extension):
