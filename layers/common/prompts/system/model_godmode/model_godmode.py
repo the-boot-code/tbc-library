@@ -79,6 +79,6 @@ class ModelGodMode(Extension):
                 PrintStyle().info(debug)
         
         # Insert prompt (either disable message or full content)
-        prompt_padded = ('\n\n' + prompt + '\n\n') if prompt else ''
+        prompt_padded = ('\n\n' + prompt + '\n\n') # if prompt else ''
         system_prompt.insert(0, prompt_padded)
         return prompt_padded
