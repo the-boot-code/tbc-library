@@ -96,7 +96,11 @@ class InterleavedReasoningProfile(VariablesPlugin):
         else:
             full_reasoning_content = reasoning_content
         
+        # Create declarative status for agent self-awareness
+        status_display = f"**{active_profile}**"
+        
         return {
             "interleaved_reasoning_profile": full_reasoning_content,
-            "interleaved_reasoning_features": reasoning_features_summary
+            "interleaved_reasoning_features": reasoning_features_summary,
+            "interleaved_reasoning_status": status_display
         }

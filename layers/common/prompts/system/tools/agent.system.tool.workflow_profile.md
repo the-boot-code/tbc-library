@@ -1,7 +1,12 @@
 ### workflow_profile:
 Manage workflow profiles and view workflow state.
-Select and switch between different workflow profiles (default, guided, verbose).
-Requires "workflow_control" feature to be enabled.
+
+**YOUR ACTIVE PROFILE is shown in the "Workflow Profile" section of your system prompt.**
+
+Use this tool to:
+- View detailed information about all available profiles
+- Switch between different workflow profiles
+- Check configuration details that may have changed
 
 **Actions:**
 
@@ -49,5 +54,9 @@ Requires "workflow_control" feature to be enabled.
 ~~~
 
 **Available profiles:** default, guided, verbose
-**Note:** Each workflow profile loads different behavioral instructions and interaction patterns. Profile changes take effect on next message loop.
-**No-Caching** These values may change without notifications make no assumptions do not mentally cache refer to [EXTRAS]
+
+**Important Notes:**
+- Your active profile is displayed in your system prompt under "Workflow Profile"
+- Each workflow profile loads different behavioral instructions and interaction patterns
+- Profile changes take effect on next message loop
+- **Always check your system prompt first** before making tool calls to query your configuration

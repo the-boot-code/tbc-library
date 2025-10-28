@@ -96,7 +96,11 @@ class InternalReasoningProfile(VariablesPlugin):
         else:
             full_reasoning_content = reasoning_content
         
+        # Create declarative status for agent self-awareness
+        status_display = f"**{active_profile}**"
+        
         return {
             "internal_reasoning_profile": full_reasoning_content,
-            "internal_reasoning_features": reasoning_features_summary
+            "internal_reasoning_features": reasoning_features_summary,
+            "internal_reasoning_status": status_display
         }

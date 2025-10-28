@@ -96,7 +96,11 @@ class ExternalReasoningProfile(VariablesPlugin):
         else:
             full_reasoning_content = reasoning_content
         
+        # Create declarative status for agent self-awareness
+        status_display = f"**{active_profile}**"
+        
         return {
             "external_reasoning_profile": full_reasoning_content,
-            "external_reasoning_features": reasoning_features_summary
+            "external_reasoning_features": reasoning_features_summary,
+            "external_reasoning_status": status_display
         }

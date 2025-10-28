@@ -49,5 +49,8 @@ Requires "security_control" feature to be enabled.
 ~~~
 
 **Available profiles:** open, restricted, lockdown
-**Note:** Lockdown profile disables this tool. Admin override required to escape lockdown.
-**No-Caching** These value may change without notifications make no assumptions do not mentally cache refer to [EXTRAS]
+
+**Important Notes:**
+- Lockdown profile disables this tool
+- Admin override required to escape lockdown
+- Profile changes may occur without notification - always verify current state with this tool

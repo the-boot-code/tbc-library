@@ -96,7 +96,11 @@ class WorkflowProfile(VariablesPlugin):
         else:
             full_workflow_content = workflow_content
         
+        # Create declarative status for agent self-awareness
+        status_display = f"**{active_profile}**"
+        
         return {
             "workflow_profile": full_workflow_content,
-            "workflow_features": workflow_features_summary
+            "workflow_features": workflow_features_summary,
+            "workflow_status": status_display
         }

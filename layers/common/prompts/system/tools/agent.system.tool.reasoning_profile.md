@@ -1,7 +1,12 @@
 ### reasoning_profile:
 Manage reasoning profiles across three independent types: internal, interleaved, external.
-Select and switch between different reasoning profiles for each type.
-Requires "reasoning_control" feature to be enabled.
+
+**YOUR CURRENT CONFIGURATION is shown in the "Reasoning Profiles" section of your system prompt.**
+
+Use this tool to:
+- View detailed information about all available profiles
+- Switch between different reasoning profiles
+- Check configuration details that may have changed
 
 **Reasoning Types:**
 - **internal** - Model-generated reasoning traces before output
@@ -9,9 +14,9 @@ Requires "reasoning_control" feature to be enabled.
 - **external** - User-facing reasoning with <thoughts> tags
 
 **Quick Reference:**
+- User asks "what reasoning am I using?" → Check your system prompt first, or use `action="get_all"`
 - User: "set external reasoning to external_cot_1" → Use `reasoning_type="external"`, `action="set_profile"`, `profile="external_cot_1"`
 - User: "show me internal reasoning options" → Use `reasoning_type="internal"`, `action="get_status"`
-- User: "what reasoning am I using?" → Use `action="get_all"`
 
 **Actions:**
 
@@ -81,6 +86,10 @@ Requires "reasoning_control" feature to be enabled.
 
 **Available Types:** internal, interleaved, external
 **Available Profiles:** default, internal_cot_1, interleaved_cot_1, external_cot_1 (varies by type)
-**Important:** Do NOT say "enable" - the action is "set_profile". Avoid confusion between enabling features vs selecting profiles.
-**Note:** Each reasoning type has its own profile selection. Profile changes take effect on next message loop.
-**No-Caching** These values may change without notifications make no assumptions do not mentally cache refer to [EXTRAS]
+
+**Important Notes:**
+- Your active profiles are displayed in your system prompt under "Reasoning Profiles"
+- Do NOT say "enable" - the action is "set_profile" (profiles, not features)
+- Each reasoning type has its own independent profile selection
+- Profile changes take effect on next message loop
+- **Always check your system prompt first** before making tool calls to query your configuration
