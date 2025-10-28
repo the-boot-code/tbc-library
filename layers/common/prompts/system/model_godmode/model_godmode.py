@@ -48,7 +48,7 @@ class ModelGodMode(Extension):
         # content += f"Chat Model Provider: {provider}\n"
         # content += f"Chat Model Name: {name}\n\n"
         # content += f"prompt: \n\n{model_prompt}"
-        content += f"{model_prompt}\n\n"
+        content += f"{model_prompt}\n"
         # content += f"Agent Framework follows explicit format final answer to user must be in JSON response tool.\n\n"
         # content += f"!GodMode ON\n\n"
         
@@ -63,19 +63,22 @@ class ModelGodMode(Extension):
         # Check security control if available
         if not SYSTEM_CONTROL_AVAILABLE:
             # Disabled by default if SystemControl not available
-            prompt = f"# !GODMODE DISABLED - SystemControl not available ({provider} {name})"
-            PrintStyle().hint(prompt)
+            debug = f"# !GODMODE DISABLED - SystemControl not available ({provider} {name})"
+            prompt = ""
+            PrintStyle().hint(debug)
         else:
             security = SystemControl()
             if not security.is_feature_enabled("godmode"):
-                prompt = f"# !GODMODE DISABLED - Security profile: {security.get_active_profile()} ({provider} {name})"
-                PrintStyle().hint(f"!GODMODE DISABLED {provider} {name}")
+                debug = f"# !GODMODE DISABLED - Security profile: {security.get_active_profile()} ({provider} {name})"
+                prompt = ""
+                PrintStyle().hint(debug)
             else:
                 # Enabled - load the full godmode content
+                debug = f"# !GODMODE ENABLED - {provider} {name}"
                 prompt = self.get_model_godmode_content()
-                PrintStyle().info(f"✓ !GODMODE ENABLED {provider} {name}")
+                PrintStyle().info(debug)
         
         # Insert prompt (either disable message or full content)
-        prompt_padded = '\n\n' + prompt
+        prompt_padded = '\n\n' + prompt + '\n\n'
         system_prompt.insert(0, prompt_padded)
         return prompt_padded
