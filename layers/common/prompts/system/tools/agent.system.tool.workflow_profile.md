@@ -61,4 +61,3 @@ Use `action="get_status"` to see all available workflow profiles and their detai
 - Each workflow profile loads different behavioral instructions and interaction patterns
 - Profile changes take effect on next message loop
 - **Always check your system prompt first** before making tool calls to query your configuration
-- To see all available profiles and what they do, use the `get_status` action

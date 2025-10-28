@@ -48,7 +48,8 @@ Requires "security_control" feature to be enabled.
 }
 ~~~
 
-**Available profiles:** open, restricted, lockdown
+**To discover available profiles:**
+Use `action="get_status"` to see all available security profiles and current state.
 
 **Important Notes:**
 - Lockdown profile disables this tool

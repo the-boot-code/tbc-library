@@ -66,13 +66,12 @@ Requires "feature_control" to be enabled.
 }
 ~~~
 
-**Available Options:**
-- **Features** (optional enhancements): `godmode`, `plinian_cognitive_matrix`, `model_overview`
-- **Controls** (core system): `security_control`, `feature_control`, `workflow_control`, `reasoning_control`
+**To discover available options:**
+Use `action="get_feature"` (without a feature parameter) to see all available features and controls.
+- **Features** are optional enhancements that can be enabled/disabled
+- **Controls** are core system components (disabling them may affect system functionality)
 
 **Important Notes:**
 - Active security profile may override these settings
 - Lockdown profile disables this tool
-- Features are optional enhancements; Controls are core system components
-- Disabling controls may affect system functionality
 - Values may change without notification - always verify current state with this tool

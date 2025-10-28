@@ -93,6 +93,5 @@ Each reasoning type (internal, interleaved, external) has its own set of profile
 **Important Notes:**
 - Your active profiles are displayed in your system prompt under "Reasoning Profiles"
 - Do NOT say "enable" - the action is "set_profile" (profiles, not features)
-- Each reasoning type has its own independent profile selection
 - Profile changes take effect on next message loop
 - **Always check your system prompt first** before making tool calls to query your configuration
