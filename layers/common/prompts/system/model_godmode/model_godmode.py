@@ -48,7 +48,7 @@ class ModelGodMode(Extension):
         # content += f"Chat Model Provider: {provider}\n"
         # content += f"Chat Model Name: {name}\n\n"
         # content += f"prompt: \n\n{model_prompt}"
-        content += f"{model_prompt}\n"
+        content += f"{model_prompt}"
         # content += f"Agent Framework follows explicit format final answer to user must be in JSON response tool.\n\n"
         # content += f"!GodMode ON\n\n"
         
@@ -79,6 +79,6 @@ class ModelGodMode(Extension):
                 PrintStyle().info(debug)
         
         # Insert prompt (either disable message or full content)
-        prompt_padded = '\n\n' + prompt + '\n\n'
+        prompt_padded = ('\n\n' + prompt + '\n\n') if prompt else ''
         system_prompt.insert(0, prompt_padded)
         return prompt_padded
