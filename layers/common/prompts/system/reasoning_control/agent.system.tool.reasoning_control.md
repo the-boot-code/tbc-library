@@ -6,7 +6,7 @@ Requires "reasoning_control" feature to be enabled.
 **Reasoning Types:**
 - **internal** - Model-generated reasoning traces before output
 - **interleaved** - Reasoning between tool calls
-- **external** - User-facing reasoning with <thinking> tags
+- **external** - User-facing reasoning with <thoughts> tags
 
 **Quick Reference:**
 - User: "set external reasoning to external_cot_1" → Use `reasoning_type="external"`, `action="set_profile"`, `profile="external_cot_1"`

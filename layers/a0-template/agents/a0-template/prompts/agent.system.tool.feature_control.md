@@ -1,1 +1,1 @@
-{{ include "prompts/system/agent.system.tool.feature_control.md" }}
+{{ include "prompts/system/feature_control/agent.system.tool.feature_control.md" }}

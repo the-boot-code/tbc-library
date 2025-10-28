@@ -34,7 +34,7 @@ class InternalReasoningProfile(VariablesPlugin):
             active_profile = "default"
         
         # Build path to internal reasoning profile markdown
-        reasoning_path = f"/a0/prompts/system/reasoning/internal/profiles/{active_profile}.md"
+        reasoning_path = f"/a0/prompts/system/reasoning_control/internal/profiles/{active_profile}.md"
         
         # Load file with graceful error handling
         if files.exists(reasoning_path):
@@ -60,7 +60,7 @@ class InternalReasoningProfile(VariablesPlugin):
                 if config.get('enabled'):
                     # Use reference field or convention: {feature_name}.md
                     ref_file = config.get('reference', f"{feature}.md")
-                    feature_path = f"/a0/prompts/system/reasoning/internal/features/{ref_file}"
+                    feature_path = f"/a0/prompts/system/reasoning_control/internal/features/{ref_file}"
                     
                     if files.exists(feature_path):
                         try:
