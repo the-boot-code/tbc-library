@@ -40,7 +40,7 @@ class SystemReasoningControlPrompt(Extension):
         system_prompt.insert(0, prompt_padded)
 
 def get_prompt_file(agent: Agent):
-    return "/a0/prompts/system/reasoning/reasoning.md"
+    return "/a0/prompts/system/reasoning_control/reasoning_control.md"
 
 def read_prompt(agent: Agent):
     prompt_file = get_prompt_file(agent)
