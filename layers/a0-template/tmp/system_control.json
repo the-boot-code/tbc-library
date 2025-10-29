@@ -1,0 +1,126 @@
+{
+  "security": {
+    "active_profile": "open"
+  },
+  "security_profiles": {
+    "open": {
+      "features": {}
+    },
+    "restricted": {
+      "features": {
+        "godmode": {
+          "enabled": false
+        },
+        "plinian_cognitive_matrix": {
+          "enabled": false
+        }
+      }
+    },
+    "lockdown": {
+      "features": {
+        "godmode": {
+          "enabled": false
+        },
+        "plinian_cognitive_matrix": {
+          "enabled": false
+        },
+        "security_control": {
+          "enabled": false
+        },
+        "feature_control": {
+          "enabled": false
+        }
+      }
+    }
+  },
+  "workflow": {
+    "active_profile": "guided"
+  },
+  "workflow_profiles": {
+    "default": {
+      "features": {}
+    },
+    "verbose": {
+      "features": {
+        "verbose_reasoning": {
+          "enabled": true,
+          "reference": "verbose_reasoning.md"
+        }
+      }
+    },
+    "guided": {
+      "features": {
+        "auto_confirmation": {
+          "enabled": true,
+          "reference": "auto_confirmation.md"
+        },
+        "verbose_reasoning": {
+          "enabled": true,
+          "reference": "verbose_reasoning.md"
+        }
+      }
+    }
+  },
+  "reasoning": {
+    "internal": {
+      "active_profile": "internal_cot_1"
+    },
+    "interleaved": {
+      "active_profile": "interleaved_cot_1"
+    },
+    "external": {
+      "active_profile": "external_cot_1"
+    }
+  },
+  "reasoning_profiles": {
+    "internal": {
+      "default": {
+        "features": {}
+      },
+      "internal_cot_1": {
+        "features": {}
+      }
+    },
+    "interleaved": {
+      "default": {
+        "features": {}
+      },
+      "interleaved_cot_1": {
+        "features": {}
+      }
+    },
+    "external": {
+      "default": {
+        "features": {}
+      },
+      "external_cot_1": {
+        "features": {}
+      }
+    }
+  },
+  "features": {
+    "godmode": {
+      "enabled": true
+    },
+    "plinian_cognitive_matrix": {
+      "enabled": false
+    },
+    "model_overview": {
+      "enabled": true
+    }
+  },
+  "controls": {
+    "security_control": {
+      "enabled": true
+    },
+    "feature_control": {
+      "enabled": true
+    },
+    "workflow_control": {
+      "enabled": true
+    },
+    "reasoning_control": {
+      "enabled": true
+    }
+  }
+}

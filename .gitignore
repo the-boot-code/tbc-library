@@ -26,11 +26,11 @@ agent_history.gif
 # Ignore logs directory in a0-template
 /layers/a0-template/logs/*
 # Ignore memory directory in a0-template
-/layers/a0-template/memory/*
+# /layers/a0-template/memory/*
 # Ignore root directory in a0-template
 /layers/a0-template/root/*
 # Ignore tmp directory in a0-template
-/layers/a0-template/tmp/*
+# /layers/a0-template/tmp/*
 
 # Explicitly include common and all its subdirectories
 !/layers/common/
