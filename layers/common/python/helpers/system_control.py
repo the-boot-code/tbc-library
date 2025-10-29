@@ -592,6 +592,85 @@ class SystemControl:
             "available_profiles": self.get_available_external_reasoning_profiles(),
             "features": reasoning_features
         }
+    
+    # Philosophy control methods
+    
+    def get_active_philosophy_profile(self) -> str:
+        """Get name of active philosophy profile"""
+        config = self._load_config()
+        profile = config.get("philosophy", {}).get("active_profile", "default")
+        print(f"DEBUG: Active philosophy profile: {profile}", flush=True)
+        return profile
+    
+    def get_available_philosophy_profiles(self) -> list[str]:
+        """Get list of available philosophy profiles"""
+        config = self._load_config()
+        profiles = list(config.get("philosophy_profiles", {}).keys())
+        print(f"DEBUG: Available philosophy profiles: {profiles}", flush=True)
+        return profiles
+    
+    def set_active_philosophy_profile(self, profile: str) -> dict:
+        """
+        Change active philosophy profile.
+        Returns dict with success status and details.
+        """
+        config = self._load_config()
+        
+        # Validate profile exists
+        available = config.get("philosophy_profiles", {})
+        if profile not in available:
+            return {
+                "success": False,
+                "error": f"Philosophy profile '{profile}' not found",
+                "available_profiles": list(available.keys())
+            }
+        
+        # Get old profile
+        old_profile = config.get("philosophy", {}).get("active_profile", "default")
+        
+        # No change needed
+        if old_profile == profile:
+            return {
+                "success": True,
+                "message": f"Already on philosophy profile '{profile}'",
+                "profile": profile
+            }
+        
+        # Make change
+        if "philosophy" not in config:
+            config["philosophy"] = {}
+        config["philosophy"]["active_profile"] = profile
+        
+        # Write back
+        if not self._write_config(config):
+            return {
+                "success": False,
+                "error": "Failed to write configuration"
+            }
+        
+        print(f"DEBUG: Philosophy profile changed: {old_profile} → {profile}", flush=True)
+        
+        return {
+            "success": True,
+            "previous_profile": old_profile,
+            "new_profile": profile,
+            "message": f"Philosophy profile changed from '{old_profile}' to '{profile}'"
+        }
+    
+    def get_philosophy_state(self) -> dict:
+        """Get full philosophy state for monitoring"""
+        config = self._load_config()
+        profile_name = self.get_active_philosophy_profile()
+        
+        # Get philosophy profile features
+        profile = config.get("philosophy_profiles", {}).get(profile_name, {})
+        philosophy_features = profile.get("features", {})
+        
+        return {
+            "active_profile": profile_name,
+            "available_profiles": self.get_available_philosophy_profiles(),
+            "features": philosophy_features
+        }
 
 
 # FUTURE ENHANCEMENTS (commented placeholders):

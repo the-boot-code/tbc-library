@@ -10,6 +10,9 @@ Active Security Profile: {{security_profile}}
 Admin Override: {{security_admin_override}}
 Security Features: {{security_features}}
 
+Active Philosophy Profile: {{philosophy_profile}}
+Philosophy Features: {{philosophy_features}}
+
 Active Workflow Profile: {{workflow_profile}}
 Workflow Features: {{workflow_features}}
 

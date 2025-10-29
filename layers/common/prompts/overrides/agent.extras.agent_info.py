@@ -43,6 +43,11 @@ class AgentInfo(VariablesPlugin):
             external_profile = external_state.get('active_profile', 'unknown')
             external_features = self._build_features_summary(external_state.get('features', {}))
             
+            # Get philosophy state
+            philosophy_state = system.get_philosophy_state()
+            philosophy_profile = philosophy_state.get('active_profile', 'unknown')
+            philosophy_features_summary = self._build_features_summary(philosophy_state.get('features', {}))
+            
         except ImportError:
             PrintStyle().hint("SystemControl not available - using default agent info")
             return self._get_default_variables(agent)
@@ -73,6 +78,9 @@ class AgentInfo(VariablesPlugin):
             "interleaved_reasoning_features": interleaved_features,
             "external_reasoning_profile": external_profile,
             "external_reasoning_features": external_features,
+            # Philosophy info
+            "philosophy_profile": philosophy_profile,
+            "philosophy_features": philosophy_features_summary,
         }
     
     def _build_features_summary(self, features: dict, include_source: bool = False) -> str:
@@ -113,6 +121,8 @@ class AgentInfo(VariablesPlugin):
             "interleaved_reasoning_features": "(none)",
             "external_reasoning_profile": "unknown",
             "external_reasoning_features": "(none)",
+            "philosophy_profile": "unknown",
+            "philosophy_features": "(none)",
         }
     
     def _get_default_variables(self, agent) -> dict[str, Any]:
@@ -135,4 +145,6 @@ class AgentInfo(VariablesPlugin):
             "interleaved_reasoning_features": "(none)",
             "external_reasoning_profile": "(SystemControl unavailable)",
             "external_reasoning_features": "(none)",
+            "philosophy_profile": "(SystemControl unavailable)",
+            "philosophy_features": "(none)",
         }
