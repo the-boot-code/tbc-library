@@ -11,7 +11,7 @@ class WorkflowProfile(VariablesPlugin):
             from python.helpers.system_control import SystemControl
             system = SystemControl()
             
-            if not system.is_feature_enabled("workflow_control"):
+            if not system.is_feature_enabled("workflow_profile_control"):
                 PrintStyle().hint(f"Workflow Control DISABLED - Security profile: {system.get_active_profile()}")
                 return {
                     "workflow_profile": "",

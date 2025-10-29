@@ -2,7 +2,7 @@ from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
 
 
-class SecurityControlTool(Tool):
+class SecurityProfileControlTool(Tool):
     """
     Tool for managing security profiles.
     Allows agent to view and switch between security profiles.
@@ -21,7 +21,7 @@ class SecurityControlTool(Tool):
         security = SystemControl()
         
         # Check if tool itself is enabled
-        if not security.is_feature_enabled("security_control"):
+        if not security.is_feature_enabled("security_profile_control"):
             return Response(
                 message="Security control tool is disabled by current security profile. Admin override required.",
                 break_loop=False

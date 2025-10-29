@@ -27,10 +27,10 @@ The Philosophy Profile System is a new profile group that defines fundamental op
 4. **Configuration Layer**: `system_control.json`
    - `philosophy.active_profile` - current active profile
    - `philosophy_profiles` - all available profiles with features
-   - `controls.philosophy_control.enabled` - feature gate
+   - `controls.philosophy_profile_control.enabled` - feature gate
 
 5. **Tool Layer**: User-facing control
-   - `philosophy_profile` tool for switching profiles
+   - `philosophy_profile_control` tool for switching profiles
    - Displayed in agent info section
 
 ## Profiles Implemented
@@ -130,7 +130,7 @@ def get_philosophy_state() -> dict
     }
   },
   "controls": {
-    "philosophy_control": {"enabled": true}
+    "philosophy_profile_control": {"enabled": true}
   }
 }
 ```
@@ -198,7 +198,7 @@ agent.system.tool.philosophy_profile.md
 ```python
 # Via tool
 {
-  "tool_name": "philosophy_control",
+  "tool_name": "philosophy_profile_control",
   "tool_args": {
     "action": "set_profile",
     "profile": "research"

@@ -11,7 +11,7 @@ class ExternalReasoningProfile(VariablesPlugin):
             from python.helpers.system_control import SystemControl
             system = SystemControl()
             
-            if not system.is_feature_enabled("reasoning_control"):
+            if not system.is_feature_enabled("reasoning_profile_control"):
                 PrintStyle().hint(f"Reasoning Control DISABLED - Security profile: {system.get_active_profile()}")
                 return {
                     "external_reasoning_profile": "",

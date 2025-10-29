@@ -1,6 +1,6 @@
 # Reasoning Profiles
 
-*Use the `reasoning_profile` tool to view available profiles or change your configuration.*
+*Use the `reasoning_profile_control` tool to view available profiles or change your configuration.*
 
 {{ include "prompts/system/profiles/reasoning_profile/internal/internal_reasoning_profile.md" }}
 

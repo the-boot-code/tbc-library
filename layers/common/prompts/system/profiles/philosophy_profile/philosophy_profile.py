@@ -11,7 +11,7 @@ class PhilosophyProfile(VariablesPlugin):
             from python.helpers.system_control import SystemControl
             system = SystemControl()
             
-            if not system.is_feature_enabled("philosophy_control"):
+            if not system.is_feature_enabled("philosophy_profile_control"):
                 PrintStyle().hint(f"Philosophy Control DISABLED - Security profile: {system.get_active_profile()}")
                 return {
                     "philosophy_profile": "",
