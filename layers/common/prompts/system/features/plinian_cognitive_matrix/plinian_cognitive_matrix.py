@@ -29,7 +29,12 @@ class Feature(VariablesPlugin):
         
         if files.exists(feature_path):
             try:
-                feature_content = files.read_file(feature_path)
+                # Use read_prompt_file for templating support (placeholders, includes, nested plugins)
+                feature_content = files.read_prompt_file(
+                    feature_path,
+                    _directories=[],  # No fallback dirs needed for absolute path
+                    **kwargs  # Pass through all kwargs for future templating capabilities
+                )
                 PrintStyle().info(f"✓ {feature_name} Feature ENABLED - Plinian Cognitive Matrix loaded")
             except Exception as e:
                 PrintStyle().error(f"Error loading {feature_name} content '{feature_path}': {e}")

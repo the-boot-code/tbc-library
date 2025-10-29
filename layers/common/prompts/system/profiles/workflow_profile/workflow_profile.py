@@ -55,7 +55,12 @@ class WorkflowProfile(VariablesPlugin):
         # Load file with graceful error handling
         if files.exists(workflow_path):
             try:
-                workflow_content = files.read_file(workflow_path)
+                # Use read_prompt_file for templating support (placeholders, includes, nested plugins)
+                workflow_content = files.read_prompt_file(
+                    workflow_path,
+                    _directories=[],  # No fallback dirs needed for absolute path
+                    **kwargs  # Pass through all kwargs for future templating capabilities
+                )
                 PrintStyle().info(f"✓ Loaded workflow profile: {active_profile}")
             except Exception as e:
                 PrintStyle().error(f"Error loading workflow '{workflow_path}': {e}")
@@ -80,7 +85,12 @@ class WorkflowProfile(VariablesPlugin):
                     
                     if files.exists(feature_path):
                         try:
-                            feature_content = files.read_file(feature_path)
+                            # Use read_prompt_file for templating support in feature files
+                            feature_content = files.read_prompt_file(
+                                feature_path,
+                                _directories=[],
+                                **kwargs  # Pass through for nested templating
+                            )
                             enabled_features_content.append(feature_content)
                             PrintStyle().info(f"  ✓ Loaded feature: {feature}")
                         except Exception as e:

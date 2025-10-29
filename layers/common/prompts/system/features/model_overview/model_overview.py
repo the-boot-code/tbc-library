@@ -20,16 +20,26 @@ class ModelOverview(VariablesPlugin):
         except Exception as e:
             PrintStyle().hint(f"Error checking model_overview feature: {e}")
         
-        # Extract agent config from kwargs (passed from extension)
-        chat_model_provider = kwargs.get('chat_model_provider', 'unknown')
-        chat_model_name = kwargs.get('chat_model_name', 'unknown')
+        # Extract agent from kwargs and get chat model info from it
+        agent = kwargs.get('agent')
+        if agent and hasattr(agent, 'config'):
+            chat_model_provider = agent.config.chat_model.provider
+            chat_model_name = agent.config.chat_model.name
+        else:
+            chat_model_provider = 'unknown'
+            chat_model_name = 'unknown'
         
         # Try to load model-specific persona file
         model_overview_path = f"/a0/prompts/system/features/model_overview/{chat_model_provider}/{chat_model_name}_overview.md"
         
         if files.exists(model_overview_path):
             try:
-                model_overview = files.read_file(model_overview_path)
+                # Use read_prompt_file for templating support (placeholders, includes, nested plugins)
+                model_overview = files.read_prompt_file(
+                    model_overview_path,
+                    _directories=[],  # No fallback dirs needed for absolute path
+                    **kwargs  # Pass through all kwargs for future templating capabilities
+                )
                 PrintStyle().info(f"✓ Loaded model overview: {chat_model_provider}/{chat_model_name}")
             except Exception as e:
                 PrintStyle().error(f"Error loading model overview '{model_overview_path}': {e}")

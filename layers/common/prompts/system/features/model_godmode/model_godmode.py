@@ -26,9 +26,14 @@ class ModelGodMode(Extension):
         # Build path to model-specific prompt file
         model_file = f"/a0/prompts/system/features/model_godmode/{provider}/{name}_godmode.md"
         
-        # Read the model-specific prompt file
+        # Read the model-specific prompt file with templating support
         if files.exists(model_file):
-            return files.read_file(model_file)
+            # Use read_prompt_file for templating support (placeholders, includes, nested plugins)
+            return files.read_prompt_file(
+                model_file,
+                _directories=[],  # No fallback dirs needed for absolute path
+                agent=self.agent  # Pass agent for future templating capabilities
+            )
         else:
             PrintStyle().warning(f"!GODMODE Unavailable (Model-specific prompt file not found: {model_file})")
         return f"!GODMODE Unavailable (Model-specific prompt file not found: {model_file})"

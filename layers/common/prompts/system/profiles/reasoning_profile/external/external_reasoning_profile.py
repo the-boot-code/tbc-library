@@ -55,7 +55,12 @@ class ExternalReasoningProfile(VariablesPlugin):
         # Load file with graceful error handling
         if files.exists(reasoning_path):
             try:
-                reasoning_content = files.read_file(reasoning_path)
+                # Use read_prompt_file for templating support (placeholders, includes, nested plugins)
+                reasoning_content = files.read_prompt_file(
+                    reasoning_path,
+                    _directories=[],  # No fallback dirs needed for absolute path
+                    **kwargs  # Pass through all kwargs for future templating capabilities
+                )
                 PrintStyle().info(f"✓ Loaded external reasoning profile: {active_profile}")
             except Exception as e:
                 PrintStyle().error(f"Error loading external reasoning '{reasoning_path}': {e}")
@@ -80,7 +85,12 @@ class ExternalReasoningProfile(VariablesPlugin):
                     
                     if files.exists(feature_path):
                         try:
-                            feature_content = files.read_file(feature_path)
+                            # Use read_prompt_file for templating support in feature files
+                            feature_content = files.read_prompt_file(
+                                feature_path,
+                                _directories=[],
+                                **kwargs  # Pass through for nested templating
+                            )
                             enabled_features_content.append(feature_content)
                             PrintStyle().info(f"  ✓ Loaded external reasoning feature: {feature}")
                         except Exception as e:
