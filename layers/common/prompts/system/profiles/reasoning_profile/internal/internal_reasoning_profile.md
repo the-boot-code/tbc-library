@@ -3,4 +3,4 @@
 
 {{internal_reasoning_profile}}
 
-**Features:** {{internal_reasoning_features}}
+**Additional Features:** {{internal_reasoning_features}}

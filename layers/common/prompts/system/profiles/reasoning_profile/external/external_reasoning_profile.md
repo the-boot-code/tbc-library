@@ -3,4 +3,4 @@
 
 {{external_reasoning_profile}}
 
-**Features:** {{external_reasoning_features}}
+**Additional Features:** {{external_reasoning_features}}
