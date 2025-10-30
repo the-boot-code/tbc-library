@@ -14,25 +14,74 @@ class AgentIdentity(VariablesPlugin):
         agent_identity_filename = f"{agent_profile}.md"
         agent_identity_dir = "prompts/tbc/agent_identity/identities"
         agent_profile_dir = f"agents/{agent_profile}/prompts"
+        agent_identity_dir_msg_found = f"## '{agent_profile}' in The Book of Agent Identities\n\n" # directory '{agent_identity_dir}'.\n\n"
+        # agent_identity_dir_msg_not_found = f"Agent profile '{agent_profile}' not found in directory '{agent_identity_dir}'."
+        agent_identity_dir_msg_not_found = ""
+        agent_profile_dir_msg_found = f"## '{agent_profile}' in agent profile prompts directory\n\n" #  '{agent_profile_dir}'\n\n"
+        # agent_profile_dir_msg_not_found = f"Agent profile '{agent_profile}' not found in directory '{agent_profile_dir}'."
+        agent_profile_dir_msg_not_found = ""
+        agent_identity_found_true = "Agent identity located"
+        agent_identity_found_false = "Agent identity not found"
 
-        try:
-            # Use read_prompt_file for full templating support:
-            # - Placeholder replacement with {{variable}} syntax
-            # - Include statement processing {{include 'file.md'}}
-            # - Nested plugin variable loading
-            # - Code fence removal
-            agent_identity = files.read_prompt_file(
-                agent_identity_filename,
-                _directories=[agent_profile_dir, agent_identity_dir],  # Search in set directories
-                **kwargs  # Pass through all kwargs for nested templating
-            )
-        except FileNotFoundError:
-            agent_identity = f"(Agent profile prompt file not found: {agent_identity_filename})"
-        except Exception as e:
-            PrintStyle().error(f"Error loading agent profile '{agent_profile}': {e}")
-            agent_identity = f"(Error loading agent profile: {agent_profile})"
+        def load_prompt(directory: str, found_msg: str, missing_msg: str):
+            try:
+                content = files.read_prompt_file(
+                    agent_identity_filename,
+                    _directories=[directory],
+                    **kwargs
+                )
+                return content, found_msg, True
+            except FileNotFoundError:
+                return missing_msg, missing_msg, False
+            except Exception as e:
+                error_msg = f"Error loading agent profile '{agent_profile}' from '{directory}': {e}"
+                PrintStyle().error(error_msg)
+                error_prompt = f"(Error loading agent profile: {agent_profile})"
+                return error_prompt, error_msg, False
+
+        profile_prompt, profile_status_msg, profile_success = load_prompt(
+            agent_profile_dir,
+            agent_profile_dir_msg_found,
+            agent_profile_dir_msg_not_found,
+        )
+        identity_prompt, identity_status_msg, identity_success = load_prompt(
+            agent_identity_dir,
+            agent_identity_dir_msg_found,
+            agent_identity_dir_msg_not_found,
+        )
+
+        if profile_success:
+            agent_identity = profile_prompt
+            agent_identity_source = "agent profile"
+        elif identity_success:
+            agent_identity = identity_prompt
+            agent_identity_source = "shared"
+        else:
+            agent_identity = profile_prompt or identity_prompt
+            agent_identity_source = "missing"
+
+        if profile_success and identity_success:
+            agent_identity_where = " in both the agent profile prompts directory and The Book of Agent Identities"
+        elif profile_success:
+            agent_identity_where = "" # "in the agent profile prompts directory"
+        elif identity_success:
+            agent_identity_where = "" # "in The Book of Agent Identities"
+        else:
+            agent_identity_where = " in either the agent profile prompts directory or The Book of Agent Identities"
+
+        agent_identity_found_msg = agent_identity_found_true if profile_success or identity_success else agent_identity_found_false
+        agent_identity_found_where = agent_identity_found_msg + agent_identity_where if profile_success or identity_success else ""
 
         return {
-            # "agent_identity_path": agent_identity_path,
-            "agent_identity": agent_identity
+            "agent_identity": agent_identity,
+            "agent_identity_source": agent_identity_source,
+            "agent_profile_prompt": profile_prompt,
+            "agent_profile_prompt_status": profile_status_msg,
+            "agent_identity_prompt": identity_prompt,
+            "agent_identity_prompt_status": identity_status_msg,
+            "agent_identity_found": profile_success or identity_success,
+            "agent_identity_found_msg": agent_identity_found_msg,
+            "agent_identity_where": agent_identity_where,
+            "agent_identity_found_where": agent_identity_found_where
         }
+

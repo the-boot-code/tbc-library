@@ -1,5 +1,7 @@
 # Agent Identity
 
-The Library of Knowing in The Boot Code Storybook includes The Book of Agent Identities, which contains the profiles of all agents.
+**{{agent_identity_found_where}}**
 
-{{agent_identity}}
+{{agent_identity_prompt_status}}{{agent_identity_prompt}}
+
+{{agent_profile_prompt_status}}{{agent_profile_prompt}}
