@@ -1,1 +1,0 @@
-{{ include "prompts/tbc/agent_identity/agent_identity.md" }}
