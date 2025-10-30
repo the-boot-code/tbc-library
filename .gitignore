@@ -41,6 +41,10 @@ agent_history.gif
 !/layers/common/
 !/layers/common/**
 
+# Explicitly include symlink and all its subdirectories
+!/layers/symlink/
+!/layers/symlink/**
+
 # Track only the 4 existing directories in volumes/
 /volumes/**
 !/volumes/common/

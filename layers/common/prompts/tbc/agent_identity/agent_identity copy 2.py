@@ -10,11 +10,10 @@ class AgentIdentity(VariablesPlugin):
         agent = kwargs.get('agent')
         agent_profile = agent.config.profile if agent and agent.config.profile else 'default'
         
-        # Load model-specific persona file using prompt-relative path
-        agent_identity_filename = f"{agent_profile}.md"
-        agent_identity_dir = "prompts/tbc/agent_identity/identities"
-        agent_profile_dir = f"agents/{agent_profile}/prompts"
-
+        # Load model-specific persona file using relative path
+        # agent_identity_path = f"tbc/agent_identity/identities/{agent_profile}.md"
+        agent_identity_path = f"./identities/{agent_profile}.md"
+        
         try:
             # Use read_prompt_file for full templating support:
             # - Placeholder replacement with {{variable}} syntax
@@ -22,17 +21,18 @@ class AgentIdentity(VariablesPlugin):
             # - Nested plugin variable loading
             # - Code fence removal
             agent_identity = files.read_prompt_file(
-                agent_identity_filename,
-                _directories=[agent_profile_dir, agent_identity_dir],  # Search in set directories
+                agent_identity_path,
+                _directories=[],  # Search in default prompt directories
                 **kwargs  # Pass through all kwargs for nested templating
             )
-        except FileNotFoundError:
-            agent_identity = f"(Agent profile prompt file not found: {agent_identity_filename})"
         except Exception as e:
-            PrintStyle().error(f"Error loading agent profile '{agent_profile}': {e}")
+            PrintStyle().error(f"Error loading agent profile '{agent_identity_path}': {e}")
             agent_identity = f"(Error loading agent profile: {agent_profile})"
-
+        else:
+            # Default persona if model-specific file doesn't exist
+            agent_identity = f"(Agent profile prompt file not found: {agent_identity_path})"
+        
         return {
-            # "agent_identity_path": agent_identity_path,
+            "agent_identity_path": agent_identity_path,
             "agent_identity": agent_identity
         }
