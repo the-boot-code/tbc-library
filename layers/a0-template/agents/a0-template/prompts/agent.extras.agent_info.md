@@ -1,1 +1,1 @@
-{{ include "prompts/overrides/agent.extras.agent_info.md" }}
+/a0/agents/_symlink/prompts/agent.extras.agent_info.md

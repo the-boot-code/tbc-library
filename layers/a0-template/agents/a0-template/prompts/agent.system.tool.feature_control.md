@@ -1,1 +1,1 @@
-{{ include "prompts/system/tools/agent.system.tool.feature_control.md" }}
+/a0/agents/_symlink/prompts/agent.system.tool.feature_control.md

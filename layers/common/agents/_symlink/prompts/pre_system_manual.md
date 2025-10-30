@@ -1,0 +1,1 @@
+{{ include "prompts/system/pre_system_manual.md" }}

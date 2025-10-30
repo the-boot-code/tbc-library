@@ -1,1 +1,1 @@
-{{ include "prompts/overrides/agent.system.tool.response.md" }}
+/a0/agents/_symlink/prompts/agent.system.tool.response.md

@@ -1,1 +1,1 @@
-{{ include "prompts/system/pre_behaviour.md" }}
+/a0/agents/_symlink/prompts/pre_behaviour.md

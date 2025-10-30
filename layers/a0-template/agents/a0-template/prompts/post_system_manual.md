@@ -1,1 +1,1 @@
-{{ include "prompts/system/post_system_manual.md" }}
+/a0/agents/_symlink/prompts/post_system_manual.md

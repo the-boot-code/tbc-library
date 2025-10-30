@@ -1,1 +1,1 @@
-{{ include "prompts/system/pre_system_manual.md" }}
+/a0/agents/_symlink/prompts/pre_system_manual.md

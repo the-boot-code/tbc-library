@@ -6,5 +6,5 @@ from python.helpers.extension import Extension
 class ExampleExtension(Extension):
 
     async def execute(self, **kwargs):
-        # rename the agent to A0-Template + number
+        # rename the agent to agent name + number
         self.agent.agent_name = "A0-Template-" + str(self.agent.number)
