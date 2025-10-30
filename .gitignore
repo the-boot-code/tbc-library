@@ -23,11 +23,16 @@ agent_history.gif
 # Allow a0-template and its contents to be tracked
 !/layers/a0-template/
 !/layers/a0-template/**
-# Ignore logs directory in a0-template
+
+# Ignore logs directory
+/layers/a0-demo/logs/*
 /layers/a0-template/logs/*
+
 # Ignore memory directory in a0-template
 # /layers/a0-template/memory/*
-# Ignore root directory in a0-template
+
+# Ignore root directory
+/layers/a0-demo/root/*
 /layers/a0-template/root/*
 # Ignore tmp directory in a0-template
 # /layers/a0-template/tmp/*
