@@ -2,6 +2,7 @@
 
 Pre-behaviour
 
+{{ include "prompts/tbc/agent_identity/agent_identity.md" }}
 
 {{ include "prompts/system/features/model_overview/model_overview.md" }}
 

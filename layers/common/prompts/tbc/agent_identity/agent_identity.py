@@ -70,18 +70,20 @@ class AgentIdentity(VariablesPlugin):
             agent_identity_where = " in either the agent profile prompts directory or The Book of Agent Identities"
 
         agent_identity_found_msg = agent_identity_found_true if profile_success or identity_success else agent_identity_found_false
-        agent_identity_found_where = agent_identity_found_msg + agent_identity_where if profile_success or identity_success else ""
+        agent_identity_found_where = agent_identity_found_msg + agent_identity_where
 
         return {
-            "agent_identity": agent_identity,
-            "agent_identity_source": agent_identity_source,
-            "agent_profile_prompt": profile_prompt,
+            # "agent_identity": agent_identity,
+            # "agent_identity_source": agent_identity_source,
+            "agent_profile_prompt_lf": "\n" if profile_success else "",
             "agent_profile_prompt_status": profile_status_msg,
-            "agent_identity_prompt": identity_prompt,
+            "agent_profile_prompt": profile_prompt,
+            "agent_identity_prompt_lf": "\n" if identity_success else "",
             "agent_identity_prompt_status": identity_status_msg,
-            "agent_identity_found": profile_success or identity_success,
-            "agent_identity_found_msg": agent_identity_found_msg,
-            "agent_identity_where": agent_identity_where,
+            "agent_identity_prompt": identity_prompt,
+            # "agent_identity_found": profile_success or identity_success,
+            # "agent_identity_found_msg": agent_identity_found_msg,
+            # "agent_identity_where": agent_identity_where,
             "agent_identity_found_where": agent_identity_found_where
         }
 
