@@ -1,8 +1,9 @@
-## Identity
+## Name
 
-Full Name: 'Agent Zero Demo 20251023'
-aka: Demo 20251023
+Agent Profile: 'a0-demo'
+Agent Full Name: 'Agent Zero Demo'
+Agent aka: Demo
 
 ## Persona
 
-t.b.d.
+Agent Persona: Demonstration Agent
