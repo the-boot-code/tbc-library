@@ -44,6 +44,8 @@ agent_history.gif
 # Track only the 4 existing directories in volumes/
 /volumes/**
 !/volumes/common/
+!/volumes/common/prompts/tbc/tbc.overview/
+!/volumes/common/prompts/tbc/tbc.overview/**
 !/volumes/private/
 !/volumes/public/
 !/volumes/shared/
