@@ -36,14 +36,6 @@ services:
       # root
       - ${CONTAINER_LAYER}/root:/root
 
-      # Mounting entire host /mnt directory (read-only)
-      # - /mnt:/mnt:ro
-
-
-      # Storage
-      # - ${PATH_LOCAL}:/local:ro
-      # - ${PATH_ATTACHED}:/attached:ro
-
       # Volumes
       - ${PATH_VOLUMES}:/volumes:ro
       - ${PATH_SHARED}:/shared
@@ -57,6 +49,7 @@ services:
       # agents
       - ${CONTAINER_LAYER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}
       - ${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro
+      - ${COMMON_LAYER}/agents/_symlink:/a0/agents/_symlink:ro
 
       # conf
       - ${CONTAINER_LAYER}/conf:/a0/conf
