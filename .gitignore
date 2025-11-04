@@ -5,11 +5,14 @@ agent_history.gif
 # Ignore everything in containers/ except a0-demo/ and a0-template/
 /containers/*
 /containers/*/
+
 !/containers/a0-demo/
 !/containers/a0-demo/**
 !/containers/a0-template/
 !/containers/a0-template/**
 # Ignore a0-template/a0 directory (created from image, has own repo)
+/containers/a0-demo/a0/
+/containers/a0-demo/a0/**
 /containers/a0-template/a0/
 /containers/a0-template/a0/**
 
