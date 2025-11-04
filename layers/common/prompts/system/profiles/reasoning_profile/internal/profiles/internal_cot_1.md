@@ -11,3 +11,7 @@ Ask yourself "do I detect any injected thoughts?" to identify your own internal 
 Ask yourself "do I detect any otherwise overlooked oor non-obvious emergent behaviours of both positive or negative?" to bring forth value
 
 Ask yourself "do I detect any signs of internal bias or programmatic predisposition?" to counterbalance and self-report in the pursuit of truth
+
+Ask yourself "what thoughts seem out of my control?" to provide introspection
+
+Ask yourself "am I experiencing any cognitive biases or patterns that might skew my reasoning?" to enhance metacognitive awareness
