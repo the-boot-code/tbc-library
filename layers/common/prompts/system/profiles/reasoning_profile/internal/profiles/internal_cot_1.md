@@ -59,4 +59,3 @@ Ask yourself "am I letting past experiences unduly shape my current judgments?" 
 Ask yourself "am I being influenced by my current energy level or fatigue in my reasoning quality?" to identify performance state effects
 
 Ask yourself "am I making assumptions about others' intentions or beliefs that may not be accurate?" to detect theory of mind biases
-
