@@ -1,9 +1,8 @@
-from python.helpers.tool import Tool, Response
-from python.helpers.system_control import SystemControl
 import json
+from python.helpers.system_control import SystemControl
 
 
-class BaseProfileControlTool(Tool):
+class BaseProfileControlTool:
     """
     Base class for profile control tools.
     Provides common functionality for managing different types of profiles.
@@ -14,11 +13,9 @@ class BaseProfileControlTool(Tool):
     available_actions = []
 
     def __init__(self):
-        super().__init__()
-        self.system = SystemControl()
         self.action_handlers = {}
 
-    async def execute(self, **kwargs) -> Response:
+    async def execute(self, **kwargs):
         """
         Main execution method for the tool.
         Routes to appropriate handler based on action parameter.
@@ -26,31 +23,34 @@ class BaseProfileControlTool(Tool):
         action = kwargs.get("action", "")
 
         if not action:
-            return Response(
-                message=f"Missing 'action' parameter. Available actions: {', '.join(self.available_actions)}",
-                break_loop=False
-            )
+            return {
+                "message": f"Missing 'action' parameter. Available actions: {', '.join(self.available_actions)}",
+                "break_loop": False
+            }
 
         if action not in self.available_actions:
-            return Response(
-                message=f"Invalid action '{action}'. Available actions: {', '.join(self.available_actions)}",
-                break_loop=False
-            )
+            return {
+                "message": f"Invalid action '{action}'. Available actions: {', '.join(self.available_actions)}",
+                "break_loop": False
+            }
 
         handler = self.action_handlers.get(action)
         if not handler:
-            return Response(
-                message=f"No handler found for action '{action}'",
-                break_loop=False
-            )
+            return {
+                "message": f"No handler found for action '{action}'",
+                "break_loop": False
+            }
 
         try:
-            return await handler(self.system, kwargs)
+            # Instantiate SystemControl and pass to handler
+            system = SystemControl()
+            result = await handler(system, kwargs)
+            return result
         except Exception as e:
-            return Response(
-                message=f"Error executing action '{action}': {str(e)}",
-                break_loop=False
-            )
+            return {
+                "message": f"Error executing action '{action}': {str(e)}",
+                "break_loop": False
+            }
 
     def _get_available_profiles(self) -> list[str]:
         """

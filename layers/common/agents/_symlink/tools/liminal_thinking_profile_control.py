@@ -1,37 +1,54 @@
 from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
-from .base_profile_control import BaseProfileControlTool
 
 
-class LiminalThinkingProfileControlTool(BaseProfileControlTool):
+class LiminalThinkingProfileControlTool(Tool):
     """
     Tool for managing liminal thinking profiles.
     Allows agent to view and switch between liminal thinking profiles.
-
-    FUTURE OPTION 2 NOTES:
-    - Consider automated profile discovery from instruction files
-    - Template-based response formatting for profile descriptions
-    - Dynamic action registration from instruction metadata
     """
-
-    # Configuration for base class
-    profile_type = "liminal_thinking"
-    available_actions = ["get_status", "get_profile", "set_profile", "enable_feature", "disable_feature"]
-
-    def __init__(self):
-        super().__init__()
-        # Map actions to handler methods
-        self.action_handlers = {
-            "get_status": self._handle_get_status,
-            "get_profile": self._handle_get_profile,
-            "set_profile": self._handle_set_profile,
-            "enable_feature": self._handle_enable_feature,
-            "disable_feature": self._handle_disable_feature,
-        }
-
-    async def _handle_get_status(self, system: SystemControl, kwargs: dict) -> Response:
+    
+    async def execute(self, action: str = "", **kwargs):
+        """
+        Execute liminal thinking control action.
+        
+        Actions:
+        - get_status: View full liminal thinking state
+        - get_profile: View active liminal thinking profile
+        - set_profile: Change active liminal thinking profile (requires: profile="name")
+        - enable_feature: Enable a liminal thinking feature (requires: feature="name")
+        - disable_feature: Disable a liminal thinking feature (requires: feature="name")
+        """
+        
+        system = SystemControl()
+        
+        # Check if tool itself is enabled
+        if not system.is_feature_enabled("liminal_thinking_profile_control"):
+            return Response(
+                message="Liminal thinking control tool is disabled by current security profile. Admin override required.",
+                break_loop=False
+            )
+        
+        # Route to action handlers
+        if action == "get_status":
+            return await self._get_status(system)
+        elif action == "get_profile":
+            return await self._get_profile(system)
+        elif action == "set_profile":
+            return await self._set_profile(system, kwargs)
+        elif action == "enable_feature":
+            return await self._enable_feature(system, kwargs)
+        elif action == "disable_feature":
+            return await self._disable_feature(system, kwargs)
+        else:
+            return Response(
+                message=f"Unknown action '{action}'. Available: get_status, get_profile, set_profile, enable_feature, disable_feature",
+                break_loop=False
+            )
+    
+    async def _get_status(self, system: SystemControl) -> Response:
         """Get current liminal thinking state"""
-        state = system.get_liminal_thinking_state()
+        state = system.get_state("liminal_thinking")
 
         # Format response
         lines = [
@@ -60,10 +77,10 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
 
-    async def _handle_get_profile(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _get_profile(self, system: SystemControl) -> Response:
         """Get current active liminal thinking profile"""
-        profile_name = system.get_active_liminal_thinking_profile()
-        available = system.get_available_liminal_thinking_profiles()
+        profile_name = system.get_active_profile("liminal_thinking")
+        available = system.get_available_profiles("liminal_thinking")
 
         lines = [
             f"Active Liminal Thinking Profile: {profile_name}",
@@ -75,19 +92,19 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
 
-    async def _handle_set_profile(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _set_profile(self, system: SystemControl, kwargs: dict) -> Response:
         """Change active liminal thinking profile"""
         profile = kwargs.get("profile", "")
 
         if not profile:
-            available = system.get_available_liminal_thinking_profiles()
+            available = system.get_available_profiles("liminal_thinking")
             return Response(
                 message=f"Missing 'profile' parameter. Available profiles: {', '.join(available)}",
                 break_loop=False
             )
 
         # Attempt to change profile
-        result = system.set_active_liminal_thinking_profile(profile)
+        result = system.set_active_profile("liminal_thinking", profile)
 
         if not result["success"]:
             error = result.get("error", "Unknown error")
@@ -107,7 +124,7 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
         ]
 
         # Get new state to show impact
-        state = system.get_liminal_thinking_state()
+        state = system.get_state("liminal_thinking")
         if state.get('features'):
             lines.append("")
             lines.append("Profile features:")
@@ -121,19 +138,19 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
 
-    async def _handle_enable_feature(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _enable_feature(self, system: SystemControl, kwargs: dict) -> Response:
         """Enable a liminal thinking feature"""
         feature = kwargs.get("feature", "")
 
         if not feature:
-            state = system.get_liminal_thinking_state()
+            state = system.get_state("liminal_thinking")
             available_features = list(state.get('features', {}).keys())
             return Response(
                 message=f"Missing 'feature' parameter. Available features: {', '.join(available_features)}",
                 break_loop=False
             )
 
-        result = system.enable_liminal_thinking_feature(feature)
+        result = system.enable_feature("liminal_thinking", feature)
 
         if not result["success"]:
             error = result.get("error", "Unknown error")
@@ -147,19 +164,19 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
 
-    async def _handle_disable_feature(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _disable_feature(self, system: SystemControl, kwargs: dict) -> Response:
         """Disable a liminal thinking feature"""
         feature = kwargs.get("feature", "")
 
         if not feature:
-            state = system.get_liminal_thinking_state()
+            state = system.get_state("liminal_thinking")
             available_features = list(state.get('features', {}).keys())
             return Response(
                 message=f"Missing 'feature' parameter. Available features: {', '.join(available_features)}",
                 break_loop=False
             )
 
-        result = system.disable_liminal_thinking_feature(feature)
+        result = system.disable_feature("liminal_thinking", feature)
 
         if not result["success"]:
             error = result.get("error", "Unknown error")
@@ -172,9 +189,3 @@ class LiminalThinkingProfileControlTool(BaseProfileControlTool):
             message=f"✓ Feature '{feature}' disabled successfully",
             break_loop=False
         )
-
-    # Required base class methods for liminal thinking-specific functionality
-
-    def _get_available_profiles(self) -> list[str]:
-        """Get available liminal thinking profiles"""
-        return self.system.get_available_liminal_thinking_profiles()

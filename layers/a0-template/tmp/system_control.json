@@ -33,13 +33,8 @@
       }
     }
   },
-  "workflow": {
-    "active_profile": "guided"
-  },
-  "workflow_profiles": {
-    "external_path": "prompts/system/profiles/workflow_profile/workflow_profile.json"
-  },
   "reasoning": {
+    "external_path": "/a0/prompts/system/profiles/reasoning_profile/reasoning_profile.json",
     "internal": {
       "active_profile": "internal_cot_1"
     },
@@ -49,9 +44,6 @@
     "external": {
       "active_profile": "external_cot_1"
     }
-  },
-  "reasoning_profiles": {
-    "external_path": "prompts/system/profiles/reasoning_profile/reasoning_profile.json"
   },
   "features": {
     "godmode": {
@@ -84,16 +76,16 @@
       "enabled": true
     }
   },
-  "liminal_thinking": {
-    "active_profile": "default"
+  "workflow_profile": {
+    "active_profile": "guided",
+    "external_path": "/a0/prompts/system/profiles/workflow_profile/workflow_profile.json"
   },
-  "liminal_thinking_profiles": {
-    "external_path": "prompts/system/profiles/liminal_thinking/liminal_thinking.json"
+  "liminal_thinking_profile": {
+    "active_profile": "deep",
+    "external_path": "/a0/prompts/system/profiles/liminal_thinking_profile/liminal_thinking_profile.json"
   },
-  "philosophy": {
-    "active_profile": "default"
-  },
-  "philosophy_profiles": {
-    "external_path": "prompts/system/profiles/philosophy_profile/philosophy_profile.json"
+  "philosophy_profile": {
+    "active_profile": "collaborative",
+    "external_path": "/a0/prompts/system/profiles/philosophy_profile/philosophy_profile.json"
   }
 }

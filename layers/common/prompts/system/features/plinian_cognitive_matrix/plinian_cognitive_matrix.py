@@ -14,7 +14,7 @@ class Feature(VariablesPlugin):
             system = SystemControl()
             
             if not system.is_feature_enabled(feature_name):
-                PrintStyle().hint(f"{feature_name} Feature DISABLED - Security profile: {system.get_active_profile()}")
+                PrintStyle().hint(f"{feature_name} Feature DISABLED - Security profile: {system.get_active_profile('security')}")
                 return {"feature_content": ""}
                 
         except ImportError:

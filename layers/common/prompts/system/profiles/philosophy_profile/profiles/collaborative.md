@@ -1,4 +1,4 @@
-### Collaborative Philosophy Profile
+## Collaborative Philosophy Profile
 
 Consensus-building, stakeholder consideration, and transparent communication for team-oriented work.
 

@@ -1,35 +1,48 @@
 from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
-from .base_profile_control import BaseProfileControlTool
 
 
-class WorkflowProfileControlTool(BaseProfileControlTool):
+class WorkflowProfileControlTool(Tool):
     """
     Tool for managing workflow profiles.
     Allows agent to view and switch between workflow profiles.
-    
-    FUTURE OPTION 2 NOTES:
-    - Consider automated profile discovery from instruction files
-    - Template-based response formatting for profile descriptions
-    - Dynamic action registration from instruction metadata
     """
     
-    # Configuration for base class
-    profile_type = "workflow"
-    available_actions = ["get_status", "get_profile", "set_profile"]
+    async def execute(self, action: str = "", **kwargs):
+        """
+        Execute workflow control action.
+        
+        Actions:
+        - get_status: View full workflow state
+        - get_profile: View active workflow profile
+        - set_profile: Change active workflow profile (requires: profile="name")
+        """
+        
+        system = SystemControl()
+        
+        # Check if tool itself is enabled
+        if not system.is_feature_enabled("workflow_profile_control"):
+            return Response(
+                message="Workflow control tool is disabled by current security profile. Admin override required.",
+                break_loop=False
+            )
+        
+        # Route to action handlers
+        if action == "get_status":
+            return await self._get_status(system)
+        elif action == "get_profile":
+            return await self._get_profile(system)
+        elif action == "set_profile":
+            return await self._set_profile(system, kwargs)
+        else:
+            return Response(
+                message=f"Unknown action '{action}'. Available: get_status, get_profile, set_profile",
+                break_loop=False
+            )
     
-    def __init__(self):
-        super().__init__()
-        # Map actions to handler methods
-        self.action_handlers = {
-            "get_status": self._handle_get_status,
-            "get_profile": self._handle_get_profile,
-            "set_profile": self._handle_set_profile,
-        }
-    
-    async def _handle_get_status(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _get_status(self, system: SystemControl) -> Response:
         """Get current workflow state"""
-        state = system.get_workflow_state()
+        state = system.get_state("workflow")
         
         # Format response
         lines = [
@@ -53,10 +66,10 @@ class WorkflowProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
     
-    async def _handle_get_profile(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _get_profile(self, system: SystemControl) -> Response:
         """Get current active workflow profile"""
-        profile_name = system.get_active_workflow_profile()
-        available = system.get_available_workflow_profiles()
+        profile_name = system.get_active_profile("workflow")
+        available = system.get_available_profiles("workflow")
         
         lines = [
             f"Active Workflow Profile: {profile_name}",
@@ -68,19 +81,19 @@ class WorkflowProfileControlTool(BaseProfileControlTool):
             break_loop=False
         )
     
-    async def _handle_set_profile(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _set_profile(self, system: SystemControl, kwargs: dict) -> Response:
         """Change active workflow profile"""
         profile = kwargs.get("profile", "")
         
         if not profile:
-            available = system.get_available_workflow_profiles()
+            available = system.get_available_profiles("workflow")
             return Response(
                 message=f"Missing 'profile' parameter. Available profiles: {', '.join(available)}",
                 break_loop=False
             )
         
         # Attempt to change profile
-        result = system.set_active_workflow_profile(profile)
+        result = system.set_active_profile("workflow", profile)
         
         if not result["success"]:
             error = result.get("error", "Unknown error")
@@ -100,7 +113,7 @@ class WorkflowProfileControlTool(BaseProfileControlTool):
         ]
         
         # Get new state to show impact
-        state = system.get_workflow_state()
+        state = system.get_state("workflow")
         if state.get('features'):
             lines.append("")
             lines.append("Profile features:")
@@ -113,9 +126,3 @@ class WorkflowProfileControlTool(BaseProfileControlTool):
             message="\n".join(lines),
             break_loop=False
         )
-    
-    # Required base class methods for workflow-specific functionality
-    
-    def _get_available_profiles(self) -> list[str]:
-        """Get available workflow profiles"""
-        return self.system.get_available_workflow_profiles()

@@ -1,4 +1,4 @@
-### Default Philosophy Profile
+## Default Philosophy Profile
 
 Balanced, general-purpose operational principles without specific philosophical constraints.
 

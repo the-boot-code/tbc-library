@@ -1,4 +1,4 @@
-### Creative Philosophy Profile
+## Creative Philosophy Profile
 
 Exploration, innovation, and unconventional thinking, prioritizing idea generation and novel approaches.
 

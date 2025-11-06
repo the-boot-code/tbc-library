@@ -1,4 +1,4 @@
-### Analytical Philosophy Profile
+## Analytical Philosophy Profile
 
 Systematic decomposition, logical rigor, and quantitative reasoning for complex problem-solving.
 

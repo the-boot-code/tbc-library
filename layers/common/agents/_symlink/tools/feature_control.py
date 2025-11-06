@@ -1,32 +1,43 @@
 from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
-from .base_profile_control import BaseProfileControlTool
 
 
-class FeatureControlTool(BaseProfileControlTool):
+class FeatureControlTool(Tool):
     """
     Tool for managing feature options.
     Allows agent to view and toggle individual feature settings.
-    
-    FUTURE OPTION 2 NOTES:
-    - Consider automated feature discovery from instruction files
-    - Template-based response formatting for feature descriptions
-    - Dynamic action registration from instruction metadata
     """
     
-    # Configuration for base class
-    profile_type = "feature"
-    available_actions = ["get_feature", "set_feature"]
+    async def execute(self, action: str = "", **kwargs):
+        """
+        Execute feature control action.
+        
+        Actions:
+        - get_feature: Get status of a specific feature (requires: feature="name")
+        - set_feature: Enable/disable a feature (requires: feature="name", enabled=true/false)
+        """
+        
+        system = SystemControl()
+        
+        # Check if tool itself is enabled
+        if not system.is_feature_enabled("feature_control"):
+            return Response(
+                message="Feature control tool is disabled by current security profile. Admin override required.",
+                break_loop=False
+            )
+        
+        # Route to action handlers
+        if action == "get_feature":
+            return await self._get_feature(system, kwargs)
+        elif action == "set_feature":
+            return await self._set_feature(system, kwargs)
+        else:
+            return Response(
+                message=f"Unknown action '{action}'. Available: get_feature, set_feature",
+                break_loop=False
+            )
     
-    def __init__(self):
-        super().__init__()
-        # Map actions to handler methods
-        self.action_handlers = {
-            "get_feature": self._handle_get_feature,
-            "set_feature": self._handle_set_feature,
-        }
-    
-    async def _handle_get_feature(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _get_feature(self, system: SystemControl, kwargs: dict) -> Response:
         """Get status of a specific feature"""
         feature = kwargs.get("feature", "")
         
@@ -67,7 +78,7 @@ class FeatureControlTool(BaseProfileControlTool):
             break_loop=False
         )
     
-    async def _handle_set_feature(self, system: SystemControl, kwargs: dict) -> Response:
+    async def _set_feature(self, system: SystemControl, kwargs: dict) -> Response:
         """Enable/disable a feature option"""
         feature = kwargs.get("feature", "")
         enabled_str = kwargs.get("enabled", "")
@@ -132,9 +143,3 @@ class FeatureControlTool(BaseProfileControlTool):
             message="\n".join(lines),
             break_loop=False
         )
-    
-    # Required base class methods for feature-specific functionality
-    
-    def _get_available_profiles(self) -> list[str]:
-        """Get available features (maps to profiles for base class compatibility)"""
-        return self.system.get_available_features()
