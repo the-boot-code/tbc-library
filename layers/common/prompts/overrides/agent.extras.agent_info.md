@@ -13,6 +13,9 @@ Security Features: {{security_features}}
 Active Philosophy Profile: {{philosophy_profile}}
 Philosophy Features: {{philosophy_features}}
 
+Active Liminal Thinking Profile: {{liminal_thinking_profile}}
+Liminal Thinking Features: {{liminal_thinking_features}}
+
 Active Workflow Profile: {{workflow_profile}}
 Workflow Features: {{workflow_features}}
 

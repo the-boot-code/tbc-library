@@ -1,0 +1,1 @@
+ln -sf ../../../../common/agents/_symlink/prompts/agent.system.tool.liminal_thinking_profile_control.md agent.system.tool.liminal_thinking_profile_control.md

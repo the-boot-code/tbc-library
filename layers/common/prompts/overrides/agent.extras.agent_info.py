@@ -48,6 +48,11 @@ class AgentInfo(VariablesPlugin):
             philosophy_profile = philosophy_state.get('active_profile', 'unknown')
             philosophy_features_summary = self._build_features_summary(philosophy_state.get('features', {}))
             
+            # Get liminal thinking state
+            liminal_state = system.get_liminal_thinking_state()
+            liminal_profile = liminal_state.get('active_profile', 'unknown')
+            liminal_features_summary = self._build_features_summary(liminal_state.get('features', {}))
+            
         except ImportError:
             PrintStyle().hint("SystemControl not available - using default agent info")
             return self._get_default_variables(agent)
@@ -81,6 +86,9 @@ class AgentInfo(VariablesPlugin):
             # Philosophy info
             "philosophy_profile": philosophy_profile,
             "philosophy_features": philosophy_features_summary,
+            # Liminal thinking info
+            "liminal_thinking_profile": liminal_profile,
+            "liminal_thinking_features": liminal_features_summary,
         }
     
     def _build_features_summary(self, features: dict, include_source: bool = False) -> str:
@@ -123,6 +131,8 @@ class AgentInfo(VariablesPlugin):
             "external_reasoning_features": "(none)",
             "philosophy_profile": "unknown",
             "philosophy_features": "(none)",
+            "liminal_thinking_profile": "unknown",
+            "liminal_thinking_features": "(none)",
         }
     
     def _get_default_variables(self, agent) -> dict[str, Any]:
@@ -147,4 +157,6 @@ class AgentInfo(VariablesPlugin):
             "external_reasoning_features": "(none)",
             "philosophy_profile": "(SystemControl unavailable)",
             "philosophy_features": "(none)",
+            "liminal_thinking_profile": "(SystemControl unavailable)",
+            "liminal_thinking_features": "(none)",
         }

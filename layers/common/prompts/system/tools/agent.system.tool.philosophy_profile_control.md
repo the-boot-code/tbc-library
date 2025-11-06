@@ -1,58 +1,33 @@
 ### philosophy_profile_control:
-Manage philosophy profiles that define operational principles, ethical guidelines, and decision-making frameworks.
+Manage philosophy profiles defining operational principles, ethical guidelines, and decision-making frameworks.
 
-**YOUR ACTIVE PROFILE is displayed in the "Philosophy Profile" section of your system prompt.**
+**ACTIVE PROFILE**: Displayed in "Philosophy Profile" section of system prompt.
 
 **Quick Reference:**
-- User asks "what philosophy am I using?" → **Check your system prompt first**
-- User asks "what philosophies are available?" → Use `action="get_status"`
-- User says "switch to research philosophy" → Use `action="set_profile"`, `profile="research"`
+- "what philosophy am I using?" → **Check system prompt first**
+- "what philosophies available?" → `action="get_status"`
+- "switch to research" → `action="set_profile"`, `profile="research"`
 
 **Available Actions:**
+**get_status** - View current profile, available profiles, and active features
+**get_profile** - View just the active profile
+**set_profile** - Change active profile (requires `profile` parameter)
 
-**get_status** - View current philosophy profile, available profiles, and active features
+**JSON Example Pattern:**
 ~~~json
 {
-    "thoughts": ["User wants to see available philosophy profiles and current configuration"],
-    "headline": "Checking philosophy profile status",
+    "thoughts": ["User request description"],
+    "headline": "Action description",
     "tool_name": "philosophy_profile_control",
     "tool_args": {
-        "action": "get_status"
+        "action": "action_name",
+        "parameter": "value"
     }
 }
 ~~~
-
-**get_profile** - View just the active philosophy profile
-~~~json
-{
-    "thoughts": ["What philosophy profile am I currently using?"],
-    "headline": "Checking active philosophy profile",
-    "tool_name": "philosophy_profile_control",
-    "tool_args": {
-        "action": "get_profile"
-    }
-}
-~~~
-
-**set_profile** - Change active philosophy profile
-~~~json
-{
-    "thoughts": ["User wants research philosophy for rigorous, evidence-based analysis"],
-    "headline": "Switching to research philosophy profile",
-    "tool_name": "philosophy_profile_control",
-    "tool_args": {
-        "action": "set_profile",
-        "profile": "research"
-    }
-}
-~~~
-
-**To discover available profiles:**
-Use `action="get_status"` to see all available philosophy profiles with their descriptions and which features each profile enables.
 
 **Important Notes:**
-- Your active profile is displayed in your system prompt under "Philosophy Profile"
-- Each philosophy profile defines different operational principles, ethical guidelines, and decision frameworks
-- Profile changes take effect immediately on the next message loop
-- **Always check your system prompt first** before making tool calls to query your configuration
-- Do not hardcode profile names - use `get_status` to discover what profiles are available
+- Active profile displayed in system prompt
+- Changes take effect immediately on next message loop
+- **Check system prompt first** before querying configuration
+- Use `get_status` to discover available options (don't hardcode)

@@ -1,60 +1,36 @@
 ### security_profile_control:
-Manage security profiles that control feature access and operational restrictions.
+Manage security profiles controlling feature access and operational restrictions.
 
-**YOUR ACTIVE PROFILE is displayed in the "Security Profile" section of your system prompt.**
+**ACTIVE PROFILE**: Displayed in "Security Profile" section of system prompt.
 
 **Quick Reference:**
-- User asks "what security profile am I using?" → **Check your system prompt first**
-- User asks "what security profiles are available?" → Use `action="get_status"`
-- User says "switch to restricted profile" → Use `action="set_profile"`, `profile="restricted"`
+- "what security profile am I using?" → **Check system prompt first**
+- "what security profiles available?" → `action="get_status"`
+- "switch to restricted" → `action="set_profile"`, `profile="restricted"`
 
 **Available Actions:**
-
-**get_status** - View current security profile, available profiles, admin override status, and feature restrictions
-~~~json
-{
-    "thoughts": ["User wants to see available security profiles and current restrictions"],
-    "headline": "Checking security profile status",
-    "tool_name": "security_profile_control",
-    "tool_args": {
-        "action": "get_status"
-    }
-}
-~~~
-
+**get_status** - View current profile, available profiles, admin override status, and feature restrictions
 **get_profile** - View just the active security profile
+**set_profile** - Change active security profile (requires `profile` parameter)
+
+**JSON Example Pattern:**
 ~~~json
 {
-    "thoughts": ["What security profile am I currently using?"],
-    "headline": "Checking active security profile",
+    "thoughts": ["User request description"],
+    "headline": "Action description",
     "tool_name": "security_profile_control",
     "tool_args": {
-        "action": "get_profile"
+        "action": "action_name",
+        "parameter": "value"
     }
 }
 ~~~
-
-**set_profile** - Change active security profile
-~~~json
-{
-    "thoughts": ["User wants restricted profile for enhanced security"],
-    "headline": "Switching to restricted security profile",
-    "tool_name": "security_profile_control",
-    "tool_args": {
-        "action": "set_profile",
-        "profile": "restricted"
-    }
-}
-~~~
-
-**To discover available profiles:**
-Use `action="get_status"` to see all available security profiles with their feature restrictions and current admin override status.
 
 **Important Notes:**
-- Your active profile is displayed in your system prompt under "Security Profile"
-- Each security profile controls which features and tools are available
-- Lockdown profile may disable this tool - admin override required to escape lockdown
-- Profile changes take effect immediately on the next message loop
-- Security profile changes may occur without notification - verify current state if behavior seems restricted
-- **Always check your system prompt first** before making tool calls to query your configuration
-- Do not hardcode profile names - use `get_status` to discover what profiles are available
+- Active profile displayed in system prompt
+- Each security profile controls available features and tools
+- Lockdown profile may disable this tool (admin override required)
+- Changes take effect immediately on next message loop
+- Security changes may occur without notification
+- **Check system prompt first** before querying configuration
+- Use `get_status` to discover available profiles

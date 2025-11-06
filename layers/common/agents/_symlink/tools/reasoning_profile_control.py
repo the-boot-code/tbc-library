@@ -1,53 +1,45 @@
 from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
+from .base_profile_control import BaseProfileControlTool
 
 
-class ReasoningProfileControlTool(Tool):
+class ReasoningProfileControlTool(BaseProfileControlTool):
     """
     Tool for managing reasoning profiles across three types: internal, interleaved, external.
     Allows agent to view and switch between reasoning profiles for each type.
+    
+    FUTURE OPTION 2 NOTES:
+    - Consider automated reasoning type discovery from instruction files
+    - Template-based response formatting for reasoning type descriptions
+    - Dynamic action registration from instruction metadata
     """
     
-    async def execute(self, reasoning_type: str = "", action: str = "", **kwargs):
-        """
-        Execute reasoning profile control action.
-        
-        Parameters:
-        - reasoning_type: Type of reasoning (internal, interleaved, external) - required for most actions
-        - action: Action to perform (get_all, get_status, get_profile, set_profile)
-        
-        Actions:
-        - get_all: View all reasoning types and their active profiles (no reasoning_type needed)
-        - get_status: View full state for a specific reasoning type (requires reasoning_type)
-        - get_profile: View active profile for a specific reasoning type (requires reasoning_type)
-        - set_profile: Change profile for a specific reasoning type (requires reasoning_type and profile)
-        """
-        
-        system = SystemControl()
-        
-        # Check if tool itself is enabled
-        if not system.is_feature_enabled("reasoning_profile_control"):
-            return Response(
-                message="Reasoning profile control tool is disabled by current security profile. Admin override required.",
-                break_loop=False
-            )
-        
-        # Route to action handlers
-        if action == "get_all":
-            return await self._get_all(system)
-        elif action == "get_status":
-            return await self._get_status(system, reasoning_type)
-        elif action == "get_profile":
-            return await self._get_profile(system, reasoning_type)
-        elif action == "set_profile":
-            return await self._set_profile(system, reasoning_type, kwargs)
-        else:
-            return Response(
-                message=f"Unknown action '{action}'. Available: get_all, get_status, get_profile, set_profile",
-                break_loop=False
-            )
+    # Configuration for base class
+    profile_type = "reasoning"
+    available_actions = ["get_all", "get_status", "get_profile", "set_profile"]
+    reasoning_types = ["internal", "interleaved", "external"]
     
-    async def _get_all(self, system: SystemControl) -> Response:
+    def __init__(self):
+        super().__init__()
+        # Map actions to handler methods
+        self.action_handlers = {
+            "get_all": self._handle_get_all,
+            "get_status": self._handle_get_status,
+            "get_profile": self._handle_get_profile,
+            "set_profile": self._handle_set_profile,
+        }
+    
+    async def execute(self, reasoning_type: str = "", **kwargs):
+        """
+        Override execute to handle reasoning_type parameter before base class routing
+        """
+        # Store reasoning_type for handler methods
+        kwargs["_reasoning_type"] = reasoning_type
+        
+        # Use base class execute for security checks and action routing
+        return await super().execute(**kwargs)
+    
+    async def _handle_get_all(self, system: SystemControl, kwargs: dict) -> Response:
         """Get all reasoning types and their active profiles"""
         lines = [
             "=== All Reasoning Profiles ===",
@@ -74,8 +66,9 @@ class ReasoningProfileControlTool(Tool):
             break_loop=False
         )
     
-    async def _get_status(self, system: SystemControl, reasoning_type: str) -> Response:
+    async def _handle_get_status(self, system: SystemControl, kwargs: dict) -> Response:
         """Get full reasoning state for a specific type"""
+        reasoning_type = kwargs.get("_reasoning_type", "")
         if not reasoning_type:
             return Response(
                 message="Missing 'reasoning_type' parameter. Required values: internal, interleaved, external",
@@ -120,8 +113,9 @@ class ReasoningProfileControlTool(Tool):
             break_loop=False
         )
     
-    async def _get_profile(self, system: SystemControl, reasoning_type: str) -> Response:
+    async def _handle_get_profile(self, system: SystemControl, kwargs: dict) -> Response:
         """Get active profile for a specific reasoning type"""
+        reasoning_type = kwargs.get("_reasoning_type", "")
         if not reasoning_type:
             return Response(
                 message="Missing 'reasoning_type' parameter. Required values: internal, interleaved, external",
@@ -157,8 +151,9 @@ class ReasoningProfileControlTool(Tool):
             break_loop=False
         )
     
-    async def _set_profile(self, system: SystemControl, reasoning_type: str, kwargs: dict) -> Response:
+    async def _handle_set_profile(self, system: SystemControl, kwargs: dict) -> Response:
         """Change reasoning profile for a specific type"""
+        reasoning_type = kwargs.get("_reasoning_type", "")
         if not reasoning_type:
             return Response(
                 message="Missing 'reasoning_type' parameter. Required values: internal, interleaved, external",
@@ -233,3 +228,19 @@ class ReasoningProfileControlTool(Tool):
             message="\n".join(lines),
             break_loop=False
         )
+    
+    # Required base class methods for reasoning-specific functionality
+    
+    def _get_available_profiles(self) -> list[str]:
+        """Get available reasoning profiles for all types"""
+        # Return combined list of all reasoning profiles
+        all_profiles = []
+        for reasoning_type in self.reasoning_types:
+            if reasoning_type == "internal":
+                profiles = self.system.get_available_internal_reasoning_profiles()
+            elif reasoning_type == "interleaved":
+                profiles = self.system.get_available_interleaved_reasoning_profiles()
+            else:  # external
+                profiles = self.system.get_available_external_reasoning_profiles()
+            all_profiles.extend([f"{reasoning_type}:{p}" for p in profiles])
+        return all_profiles

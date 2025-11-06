@@ -1,77 +1,29 @@
 ### feature_control:
-Manage individual features and controls (enable/disable options).
-Provides direct control over optional features and core system controls, independent of security profiles.
-Requires "feature_control" to be enabled.
+Manage individual features and controls (enable/disable options). Provides direct control over optional features and core system controls, independent of security profiles. Requires "feature_control" to be enabled.
 
-**Actions:**
-
+**Available Actions:**
 **get_feature** - View feature status (all features if no parameter)
+**set_feature** - Enable/disable specific feature (requires `feature` and `enabled` parameters)
+
+**JSON Example Pattern:**
 ~~~json
 {
-    "thoughts": [
-        "Let me check all available features"
-    ],
-    "headline": "Checking feature states",
+    "thoughts": ["User request description"],
+    "headline": "Action description",
     "tool_name": "feature_control",
     "tool_args": {
-        "action": "get_feature"
+        "action": "action_name",
+        "parameter": "value"
     }
 }
 ~~~
 
-**get_feature** - View specific feature status
-~~~json
-{
-    "thoughts": [
-        "Is godmode currently enabled?"
-    ],
-    "headline": "Checking godmode feature",
-    "tool_name": "feature_control",
-    "tool_args": {
-        "action": "get_feature",
-        "feature": "godmode"
-    }
-}
-~~~
-
-**set_feature** - Enable a feature
-~~~json
-{
-    "thoughts": [
-        "I need godmode enabled for this complex task"
-    ],
-    "headline": "Enabling godmode",
-    "tool_name": "feature_control",
-    "tool_args": {
-        "action": "set_feature",
-        "feature": "godmode",
-        "enabled": "true"
-    }
-}
-~~~
-
-**set_feature** - Disable a feature
-~~~json
-{
-    "thoughts": [
-        "Task complete, disabling godmode"
-    ],
-    "headline": "Disabling godmode",
-    "tool_name": "feature_control",
-    "tool_args": {
-        "action": "set_feature",
-        "feature": "godmode",
-        "enabled": "false"
-    }
-}
-~~~
-
-**To discover available options:**
-Use `action="get_feature"` (without a feature parameter) to see all available features and controls.
-- **Features** are optional enhancements that can be enabled/disabled
-- **Controls** are core system components (disabling them may affect system functionality)
+**Additional Options:**
+Use `action="get_feature"` (without parameter) to see all available features and controls.
+- **Features**: Optional enhancements that can be enabled/disabled
+- **Controls**: Core system components (disabling may affect functionality)
 
 **Important Notes:**
 - Active security profile may override these settings
 - Lockdown profile disables this tool
-- Values may change without notification - always verify current state with this tool
+- Values may change without notification - verify current state

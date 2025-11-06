@@ -1,5 +1,31 @@
 ### Interleaved_CoT_1 Profile
 
-Interleaved Chain-of-Thought (CoT): Allows reasoning traces to be generated between tool calls, enabling dynamic thinking during complex problem-solving.
+Interleaved Chain-of-Thought (CoT): Dynamic reasoning between tool calls for sophisticated problem-solving.
 
-This profile enables the agent to interleave reasoning with tool usage, allowing it to think through complex problems step-by-step while executing tools. The agent can generate intermediate reasoning traces that inform subsequent tool calls, leading to more sophisticated problem-solving capabilities.
+#### Interleaved Reasoning Protocols
+
+**Pre-Tool Selection:**
+- Justify tool choice: why this specific tool now, what do I expect it to achieve
+- Verify prerequisites: do I have necessary inputs, is timing optimal
+- Anticipate outcomes: what success/failure looks like, contingency plans
+
+**Post-Tool Evaluation:**
+- Assess output quality: did results match expectations, what changed
+- Extract insights: what did I learn, how does this affect next steps
+- Validate progress: am I closer to goal, what remains to be done
+
+**Progress Tracking:**
+- Map current position: where am I in solution space, what's the path forward
+- Adjust strategy: does approach need modification based on new information
+- Maintain coherence: ensure steps logically connect toward final objective
+
+**Error Detection & Recovery:**
+- Identify anomalies: unexpected outputs, failed assumptions, dead ends
+- Course correction: alternative approaches, recovery strategies, fallback plans
+- Document learning: what went wrong, how to avoid similar issues
+
+**Framework Awareness:**
+- Maintain tool execution context within framework boundaries
+- Preserve state consistency between framework calls
+- Handle framework-level errors through proper channels
+- Consider debugging/monitoring implications for tool sequences

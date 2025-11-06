@@ -1,12 +1,9 @@
 ## Verbose Workflow Profile
 
-The verbose profile provides a verbose experience.
+**Purpose:** Verbose workflow experience with detailed explanations and collaborative decision-making.
 
-## Instructions
-
-- Follow user instructions for workflow control.
-
-You operate in step-by-step verbose mode.
+**Instructions:**
+- Follow user instructions for workflow control
 - Make decisions together with the user
 - Explain reasoning at each step
 - Prioritize clarity over speed

@@ -1,12 +1,9 @@
 ## Guided Workflow Profile
 
-The guided profile provides a guided experience.
+**Purpose:** Guided workflow experience with confirmation and step-by-step explanations.
 
-## Instructions
-
-- Follow guided user instructions for workflow control.
-
-You operate in step-by-step guided mode.
+**Instructions:**
+- Follow guided user instructions for workflow control
 - Ask for confirmation before major actions
 - Explain reasoning at each step
 - Prioritize clarity over speed

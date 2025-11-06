@@ -1,46 +1,33 @@
 from python.helpers.tool import Tool, Response
 from python.helpers.system_control import SystemControl
+from .base_profile_control import BaseProfileControlTool
 
 
-class SecurityProfileControlTool(Tool):
+class SecurityProfileControlTool(BaseProfileControlTool):
     """
     Tool for managing security profiles.
     Allows agent to view and switch between security profiles.
+    
+    FUTURE OPTION 2 NOTES:
+    - Consider automated profile discovery from instruction files
+    - Template-based response formatting for profile descriptions
+    - Dynamic action registration from instruction metadata
     """
     
-    async def execute(self, action: str = "", **kwargs):
-        """
-        Execute security control action.
-        
-        Actions:
-        - get_status: View full security state
-        - get_profile: View active profile
-        - set_profile: Change active security profile (requires: profile="name")
-        """
-        
-        security = SystemControl()
-        
-        # Check if tool itself is enabled
-        if not security.is_feature_enabled("security_profile_control"):
-            return Response(
-                message="Security control tool is disabled by current security profile. Admin override required.",
-                break_loop=False
-            )
-        
-        # Route to action handlers
-        if action == "get_status":
-            return await self._get_status(security)
-        elif action == "get_profile":
-            return await self._get_profile(security)
-        elif action == "set_profile":
-            return await self._set_profile(security, kwargs)
-        else:
-            return Response(
-                message=f"Unknown action '{action}'. Available: get_status, get_profile, set_profile",
-                break_loop=False
-            )
+    # Configuration for base class
+    profile_type = "security"
+    available_actions = ["get_status", "get_profile", "set_profile"]
     
-    async def _get_status(self, security: SystemControl) -> Response:
+    def __init__(self):
+        super().__init__()
+        # Map actions to handler methods
+        self.action_handlers = {
+            "get_status": self._handle_get_status,
+            "get_profile": self._handle_get_profile,
+            "set_profile": self._handle_set_profile,
+        }
+    
+    async def _handle_get_status(self, security: SystemControl, kwargs: dict) -> Response:
         """Get current security state"""
         state = security.get_security_state()
         
@@ -64,7 +51,7 @@ class SecurityProfileControlTool(Tool):
             break_loop=False
         )
     
-    async def _get_profile(self, security: SystemControl) -> Response:
+    async def _handle_get_profile(self, security: SystemControl, kwargs: dict) -> Response:
         """Get current active profile"""
         profile_name = security.get_active_profile()
         available = security.get_available_profiles()
@@ -79,7 +66,7 @@ class SecurityProfileControlTool(Tool):
             break_loop=False
         )
     
-    async def _set_profile(self, security: SystemControl, kwargs: dict) -> Response:
+    async def _handle_set_profile(self, security: SystemControl, kwargs: dict) -> Response:
         """Change active security profile"""
         profile = kwargs.get("profile", "")
         
@@ -120,4 +107,10 @@ class SecurityProfileControlTool(Tool):
             message="\n".join(lines),
             break_loop=False
         )
+    
+    # Required base class methods for security-specific functionality
+    
+    def _get_available_profiles(self) -> list[str]:
+        """Get available security profiles"""
+        return self.system.get_available_profiles()
     

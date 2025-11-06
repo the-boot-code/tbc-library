@@ -1,0 +1,100 @@
+{
+  "liminal_thinking": {
+    "active_profile": "default"
+  },
+  "liminal_thinking_profiles": {
+    "default": {
+      "description": "Bypass with no liminal thinking instructions for clean system prompt",
+      "features": {}
+    },
+    "balanced": {
+      "description": "Balanced liminal awareness for general-purpose tasks",
+      "features": {
+        "threshold_awareness": {
+          "enabled": true,
+          "reference": "threshold_awareness.md"
+        }
+      }
+    },
+    "deep": {
+      "description": "Maximum liminal exploration and meta-cognitive depth",
+      "features": {
+        "threshold_awareness": {
+          "enabled": true,
+          "reference": "threshold_awareness.md"
+        },
+        "ambiguity_embracement": {
+          "enabled": true,
+          "reference": "ambiguity_embracement.md"
+        },
+        "metamorphic_insight": {
+          "enabled": true,
+          "reference": "metamorphic_insight.md"
+        },
+        "paradox_navigation": {
+          "enabled": true,
+          "reference": "paradox_navigation.md"
+        },
+        "emergence_detection": {
+          "enabled": true,
+          "reference": "emergence_detection.md"
+        },
+        "phase_shift_catalyst": {
+          "enabled": true,
+          "reference": "phase_shift_catalyst.md"
+        },
+        "void_space_illumination": {
+          "enabled": true,
+          "reference": "void_space_illumination.md"
+        }
+      }
+    },
+    "transitional": {
+      "description": "Specialized transition and change management",
+      "features": {
+        "threshold_awareness": {
+          "enabled": true,
+          "reference": "threshold_awareness.md"
+        },
+        "phase_shift_catalyst": {
+          "enabled": true,
+          "reference": "phase_shift_catalyst.md"
+        },
+        "bridge_building": {
+          "enabled": true,
+          "reference": "bridge_building.md"
+        },
+        "fluid_state_cognition": {
+          "enabled": true,
+          "reference": "fluid_state_cognition.md"
+        }
+      }
+    },
+    "emergent": {
+      "description": "Detecting and amplifying emergent patterns",
+      "features": {
+        "emergence_detection": {
+          "enabled": true,
+          "reference": "emergence_detection.md"
+        },
+        "ambiguity_embracement": {
+          "enabled": true,
+          "reference": "ambiguity_embracement.md"
+        },
+        "fluid_state_cognition": {
+          "enabled": true,
+          "reference": "fluid_state_cognition.md"
+        },
+        "paradox_navigation": {
+          "enabled": true,
+          "reference": "paradox_navigation.md"
+        }
+      }
+    }
+  },
+  "controls": {
+    "liminal_thinking_profile_control": {
+      "enabled": true
+    }
+  }
+}
