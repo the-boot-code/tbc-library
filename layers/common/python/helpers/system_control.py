@@ -20,6 +20,7 @@ Design Principles:
 """
 
 import json
+import os
 from dataclasses import dataclass
 from typing import Optional, Dict, List
 from python.helpers import files
@@ -446,6 +447,11 @@ class SystemControl:
             if profile_type == "liminal_thinking":
                 return lambda feature: self.disable_feature(profile_type, feature)
         
+        # Control methods: *_profile_control(), feature_control()
+        elif name.endswith("_control"):
+            # Return a callable that checks if this control is enabled
+            return lambda: self.is_control_enabled(name)
+        
         # Security profile methods (backward compatibility)
         elif name == "get_active_profile":
             return lambda: self.get_active_profile("security")
@@ -668,6 +674,20 @@ class SystemControl:
         return {"success": True, "feature": feature, "previous_value": old_value, "new_value": enabled,
                 "message": f"Feature '{feature}' {('enabled' if enabled else 'disabled')}",
                 "note": "Active security profile may still override this setting"}
+    
+    def is_control_enabled(self, control_name: str) -> bool:
+        """Check if a control is enabled in the config.
+        
+        Args:
+            control_name: Name of the control to check (e.g., 'workflow_profile_control')
+        
+        Returns:
+            bool: True if control is enabled, False otherwise
+        """
+        config = self.config_store.load()
+        controls = config.get("controls", {})
+        control_config = controls.get(control_name, {})
+        return control_config.get("enabled", False)
     
     def get_security_state(self) -> dict:
         """Get full security state for monitoring."""

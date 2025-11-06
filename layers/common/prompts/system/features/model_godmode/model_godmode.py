@@ -72,7 +72,7 @@ class ModelGodMode(Extension):
         else:
             security = SystemControl()
             if not security.is_feature_enabled("godmode"):
-                debug = f"# !GODMODE DISABLED - Security profile: {security.get_active_profile()} ({provider} {name})"
+                debug = f"# !GODMODE DISABLED - Security profile: {security.get_active_profile('security')} ({provider} {name})"
                 prompt = ""
                 PrintStyle().hint(debug)
             else:
