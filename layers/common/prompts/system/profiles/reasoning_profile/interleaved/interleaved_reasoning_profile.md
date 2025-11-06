@@ -5,5 +5,3 @@
 *Use the `interleaved_reasoning_profile_control` tool to view available profiles or change your configuration.*
 
 {{interleaved_reasoning_profile}}
-
-**Additional Features:** {{interleaved_reasoning_features}}

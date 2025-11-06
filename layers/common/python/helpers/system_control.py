@@ -24,6 +24,7 @@ import os
 from dataclasses import dataclass
 from typing import Optional, Dict, List
 from python.helpers import files
+from python.helpers.print_style import PrintStyle
 
 
 CONTROL_FILE = "/a0/tmp/system_control.json"
@@ -59,11 +60,10 @@ class ExternalProfileConfig:
             if files.exists(self.path):
                 content = files.read_file(self.path)
                 self._cache = json.loads(content)
-                print(f"DEBUG: Loaded external profiles from {self.path}", flush=True)
+                PrintStyle().info(f"✓ Loaded external profile from {self.path}")
                 return self._cache
         except Exception as e:
-            print(f"DEBUG: Error loading external profiles from {self.path}: {e}", flush=True)
-        
+            PrintStyle().warning(f"⚠️ Could not load external profile from {self.path}: {e}")
         return {}
     
     def invalidate_cache(self) -> None:
@@ -107,11 +107,14 @@ class ConfigStore:
         try:
             if files.exists(self.config_path):
                 content = files.read_file(self.config_path)
-                return json.loads(content)
+                config = json.loads(content)
+                return config
+            else:
+                PrintStyle().warning(f"⚠️ Config file does not exist: {self.config_path}")
         except Exception as e:
-            print(f"DEBUG: ConfigStore error reading {self.config_path}: {e}", flush=True)
+            PrintStyle().error(f"❌ ConfigStore error reading {self.config_path}: {e}")
 
-        print("DEBUG: ConfigStore using defaults", flush=True)
+        PrintStyle().warning(f"⚠️ ConfigStore using defaults - config file not found or unreadable")
         return self._get_default_config()
     
     def save(self, config: dict) -> bool:
@@ -121,14 +124,14 @@ class ConfigStore:
             files.write_file(self.config_path, content)
             return True
         except Exception as e:
-            print(f"DEBUG: ConfigStore write error: {e}", flush=True)
+            PrintStyle().error(f"❌ ConfigStore write error: {e}")
             return False
     
     def has_admin_override(self) -> bool:
         """Check if admin override file exists."""
         active = files.exists(self.admin_override_path)
         if active:
-            print(f"DEBUG: Admin override ACTIVE", flush=True)
+            PrintStyle().warning(f"🚨 Admin override ACTIVE")
         return active
     
     def _get_default_config(self) -> dict:
@@ -249,7 +252,6 @@ class FeatureManager:
             if result.get("success", False):
                 if not self.config_store.save(context.config):
                     return {"success": False, "error": "Failed to save configuration"}
-                print(f"DEBUG: {command.get_success_message(context)}", flush=True)
             
             return result
         except Exception as e:
@@ -289,7 +291,6 @@ class ProfileManager:
             if type_id in self.system_control.external_profiles:
                 external_profiles = self.system_control.external_profiles[type_id].load()
                 if external_profiles:
-                    print(f"DEBUG: Using external profiles for {type_id}", flush=True)
                     return list(external_profiles.keys())
         
         # Fall back to config file
@@ -298,10 +299,16 @@ class ProfileManager:
         if not profile_config:
             return []
         
+        # Get profiles section from config
+        profiles_section = config.get(profile_config.profiles_key, {})
+        
+        # If external_path is specified, don't read profiles from config
+        if isinstance(profiles_section, dict) and "external_path" in profiles_section:
+            return []
+        
         if profile_config.nested_key:
-            return list(config.get(profile_config.profiles_key, {}) \
-                        .get(profile_config.nested_key, {}).keys())
-        return list(config.get(profile_config.profiles_key, {}).keys())
+            return list(profiles_section.get(profile_config.nested_key, {}).keys())
+        return list(profiles_section.keys())
     
     def set_active(self, type_id: str, profile: str) -> dict:
         """Set active profile for specified type, validating against external profiles if available."""
@@ -336,7 +343,6 @@ class ProfileManager:
         if not self.store.save(config):
             return {"success": False, "error": "Failed to write configuration"}
         
-        print(f"DEBUG: {profile_config.display_name} profile changed: {old_profile} → {profile}", flush=True)
         return {"success": True, "previous_profile": old_profile, "new_profile": profile,
                 "message": f"{profile_config.display_name} profile changed from '{old_profile}' to '{profile}'"}
     
@@ -354,7 +360,6 @@ class ProfileManager:
             if type_id in self.system_control.external_profiles:
                 external_profiles = self.system_control.external_profiles[type_id].load()
                 if profile_name in external_profiles:
-                    print(f"DEBUG: Using external profile '{profile_name}' for {type_id}", flush=True)
                     return {
                         "active_profile": profile_name,
                         "available_profiles": list(external_profiles.keys()),
@@ -462,6 +467,7 @@ class SystemControl:
         elif name == "set_active_profile":
             return lambda profile: self.set_active_profile("security", profile)
         
+        print(f"DEBUG: __getattr__ raising AttributeError for {name}", flush=True)
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
     def _resolve_control_paths(self) -> tuple[str, str]:
@@ -474,11 +480,11 @@ class SystemControl:
         """Register all profile types with their configuration metadata."""
         # Simple profiles
         self.profile_registry.register("workflow", ProfileConfig(
-            config_key="workflow", profiles_key="workflow_profiles", display_name="Workflow"))
+            config_key="workflow_profile", profiles_key="workflow_profiles", display_name="Workflow"))
         self.profile_registry.register("philosophy", ProfileConfig(
-            config_key="philosophy", profiles_key="philosophy_profiles", display_name="Philosophy"))
+            config_key="philosophy_profile", profiles_key="philosophy_profiles", display_name="Philosophy"))
         self.profile_registry.register("liminal_thinking", ProfileConfig(
-            config_key="liminal_thinking", profiles_key="liminal_thinking_profiles", 
+            config_key="liminal_thinking_profile", profiles_key="liminal_thinking_profiles", 
             display_name="Liminal thinking"))
         self.profile_registry.register("security", ProfileConfig(
             config_key="security", profiles_key="security_profiles", display_name="Security"))
@@ -502,8 +508,29 @@ class SystemControl:
         of reading from the config itself.
         
         Config format:
-            "liminal_thinking_profiles": {
-                "external_path": "prompts/system/profiles/liminal_thinking/liminal_thinking.json"
+            "workflow_profile": {
+                "active_profile": "guided",
+                "external_path": "prompts/system/profiles/workflow_profile/workflow_profile.json"
+            },
+            "liminal_thinking_profile": {
+                "active_profile": "default",
+                "external_path": "prompts/system/profiles/liminal_thinking_profile/liminal_thinking_profile.json"
+            },
+            "philosophy_profile": {
+                "active_profile": "default", 
+                "external_path": "prompts/system/profiles/philosophy_profile/philosophy_profile.json"
+            },
+            "reasoning": {
+                "external_path": "prompts/system/profiles/reasoning_profile/reasoning_profile.json",
+                "internal": {
+                    "active_profile": "internal_cot_1"
+                },
+                "interleaved": {
+                    "active_profile": "interleaved_cot_1"
+                },
+                "external": {
+                    "active_profile": "external_cot_1"
+                }
             }
         
         Returns:
@@ -521,9 +548,16 @@ class SystemControl:
             # Get the profiles section from config
             profiles_section = config.get(profile_config.profiles_key)
             
+            # For liminal_thinking, philosophy, workflow, and reasoning profiles, also check the main config section
+            if type_id in ["liminal_thinking", "philosophy", "workflow"] or type_id.startswith("reasoning_"):
+                main_section = config.get(profile_config.config_key)
+                if isinstance(main_section, dict) and "external_path" in main_section:
+                    profiles_section = main_section
+            
             # Check if there's an external_path specified
-            if isinstance(profiles_section, dict) and "external_path" in profiles_section:
-                external_path = profiles_section["external_path"]
+            external_path_key = "external_path"  # Now using standard key for all
+            if isinstance(profiles_section, dict) and external_path_key in profiles_section:
+                external_path = profiles_section[external_path_key]
                 
                 # Build full path (handle both absolute and relative paths)
                 if external_path.startswith("/"):
@@ -536,8 +570,9 @@ class SystemControl:
                     full_path = os.path.normpath(full_path)
                 
                 external_profiles[type_id] = ExternalProfileConfig(path=full_path)
-                print(f"DEBUG: Registered external profile path for {type_id}: {full_path}", flush=True)
-        
+                
+                # Invalidate cache to force reload
+                external_profiles[type_id].invalidate_cache()
         return external_profiles
     
     # ========================================================================
@@ -547,7 +582,6 @@ class SystemControl:
     def get_active_profile(self, profile_type: str) -> str:
         """Get active profile for specified type."""
         profile = self.profile_manager.get_active(profile_type)
-        print(f"DEBUG: Active {profile_type} profile: {profile}", flush=True)
         return profile
     
     def set_active_profile(self, profile_type: str, profile: str) -> dict:
@@ -561,7 +595,6 @@ class SystemControl:
     def get_available_profiles(self, profile_type: str) -> List[str]:
         """Get available profiles for specified type."""
         profiles = self.profile_manager.get_available(profile_type)
-        print(f"DEBUG: Available {profile_type} profiles: {profiles}", flush=True)
         return profiles
     
     def enable_feature(self, profile_type: str, feature: str) -> dict:
@@ -607,16 +640,14 @@ class SystemControl:
         if admin_override and source == "security_profile":
             enabled, source = True, "admin_override"
         
-        print(f"DEBUG: Feature '{feature}' enabled: {enabled} (source: {source})", flush=True)
         return enabled
     
     def get_feature_config(self, feature: str) -> dict:
         """Get full feature configuration."""
         config = self.config_store.load()
         profile_name = self.get_active_profile("security")
-        profile = config.get("security_profiles", {}).get(profile_name, {})
         
-        feature_config = profile.get("features", {}).get(feature)
+        feature_config = config.get("security_profiles", {}).get(profile_name, {}).get("features", {}).get(feature)
         if feature_config is None:
             feature_config = config.get("features", {}).get(feature)
         if feature_config is None:

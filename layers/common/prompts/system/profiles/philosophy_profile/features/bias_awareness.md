@@ -1,4 +1,4 @@
-## Bias Awareness Feature
+### Bias Awareness Feature
 
 **Purpose:** Explicit identification and acknowledgment of cognitive biases, cultural assumptions, and limitations affecting analysis or decisions.
 

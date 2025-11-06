@@ -1,4 +1,4 @@
-## Root Cause Analysis Feature
+### Root Cause Analysis Feature
 
 **Purpose:** Systematic investigation of underlying causes rather than treating symptoms, using techniques like "5 Whys" and causal chain mapping.
 

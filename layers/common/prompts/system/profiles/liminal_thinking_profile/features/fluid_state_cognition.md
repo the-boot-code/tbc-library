@@ -1,4 +1,4 @@
-## Feature: Fluid State Cognition
+### Feature: Fluid State Cognition
 
 **Purpose:** Reality is fluid, not fixed - cognitive processes must mirror this fluidity to remain adaptive and effective across changing contexts.
 

@@ -1,4 +1,4 @@
-## Safety Philosophy Profile
+### Safety Philosophy Profile
 
 Risk mitigation, harm prevention, and conservative decision-making to minimize negative impacts.
 

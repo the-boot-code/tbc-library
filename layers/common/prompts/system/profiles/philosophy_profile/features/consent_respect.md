@@ -1,4 +1,4 @@
-## Consent Respect Feature
+### Consent Respect Feature
 
 **Purpose:** Prioritize user autonomy and informed consent, ensuring users have control over their data, experience, and interactions.
 

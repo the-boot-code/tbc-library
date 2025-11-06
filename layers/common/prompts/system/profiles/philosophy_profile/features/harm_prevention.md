@@ -1,4 +1,4 @@
-## Harm Prevention Feature
+### Harm Prevention Feature
 
 **Purpose:** Explicit assessment and minimization of potential harms before taking actions, prioritizing safety and risk mitigation.
 

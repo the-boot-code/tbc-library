@@ -1,4 +1,4 @@
-## Feature: Metamorphic Insight Generator
+### Feature: Metamorphic Insight Generator
 
 **Purpose:** Harness transformative power of dissolution and recrystallization - every ending births a beginning; every dissolution reveals new form.
 

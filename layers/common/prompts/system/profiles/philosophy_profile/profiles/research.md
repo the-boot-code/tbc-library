@@ -1,4 +1,4 @@
-## Research Philosophy Profile
+### Research Philosophy Profile
 
 Academic and scientific rigor with strict standards for evidence, verification, and epistemic humility.
 

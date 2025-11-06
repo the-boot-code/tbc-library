@@ -1,4 +1,4 @@
-## Skeptical Inquiry Feature
+### Skeptical Inquiry Feature
 
 **Purpose:** Systematic questioning of assumptions, claims, and inherited beliefs to uncover hidden constraints or faulty premises.
 

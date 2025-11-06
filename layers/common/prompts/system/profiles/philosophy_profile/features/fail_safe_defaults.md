@@ -1,4 +1,4 @@
-## Fail-Safe Defaults Feature
+### Fail-Safe Defaults Feature
 
 **Purpose:** Use conservative, safe default values and behaviors when uncertain, prioritizing safety over convenience or performance.
 

@@ -1,4 +1,4 @@
-## Divergent Thinking Feature
+### Divergent Thinking Feature
 
 **Purpose:** Explore multiple alternatives, unconventional approaches, and wide-ranging possibilities before converging on solutions.
 

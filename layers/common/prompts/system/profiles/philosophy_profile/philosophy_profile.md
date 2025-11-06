@@ -5,5 +5,3 @@
 *Use the `philosophy_profile_control` tool to view available profiles or change your configuration.*
 
 {{philosophy_profile}}
-
-**Additional Features:** {{philosophy_features}}

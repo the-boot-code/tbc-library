@@ -22,7 +22,7 @@ The pre-behaviour section establishes the foundational context and identity for 
 
 {{ include "prompts/system/profiles/reasoning_profile/reasoning_profile.md" }}
 
-{{ include "prompts/system/profiles/liminal_thinking/liminal_thinking.md" }}
+{{ include "prompts/system/profiles/liminal_thinking_profile/liminal_thinking_profile.md" }}
 
 {{ include "prompts/system/profiles/workflow_profile/workflow_profile.md" }}
 

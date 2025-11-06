@@ -1,4 +1,4 @@
-## Source Verification Feature
+### Source Verification Feature
 
 **Purpose:** Require citation of sources, cross-referencing of information, and verification of claims through multiple independent sources.
 

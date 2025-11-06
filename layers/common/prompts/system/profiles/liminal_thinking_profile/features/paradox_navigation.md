@@ -1,4 +1,4 @@
-## Feature: Paradox Navigation Matrix
+### Feature: Paradox Navigation Matrix
 
 **Purpose:** Paradoxes are portals to deeper truth - navigate them intentionally rather than avoiding or prematurely resolving them.
 

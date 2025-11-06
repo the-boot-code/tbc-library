@@ -1,4 +1,4 @@
-## Reversibility Preference Feature
+### Reversibility Preference Feature
 
 **Purpose:** Prioritize actions and decisions that can be easily undone, modified, or rolled back, reducing risk and enabling experimentation.
 

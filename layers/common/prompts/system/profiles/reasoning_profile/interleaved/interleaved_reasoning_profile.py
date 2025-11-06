@@ -9,16 +9,21 @@ class ProfileLoader:
     
     def __init__(self):
         self.system = None
-        self.active_profile = "default"
+        self.active_profile = "none"
         self.features = {}
         self.features_list = []
         self.profile_content = ""
+        self.module_path = "prompts/system/profiles/reasoning_profile/interleaved"
+        self.debug_enabled = True  # Set to False to disable debug output
+        self.feature_info = True  # Set to False to disable feature loading info
+        self.profile_info = True  # Set to False to disable profile loading info
     
     def _initialize_system_control(self) -> bool:
         """Initialize SystemControl and check if feature is enabled."""
         try:
             from python.helpers.system_control import SystemControl
             self.system = SystemControl()
+            print(f"DEBUG: SystemControl instance created: {type(self.system)}", flush=True) if self.debug_enabled else None
             
             if not self.system.is_feature_enabled("reasoning_profile_control"):
                 disabled_msg = f"⚠️ Interleaved Reasoning Control is currently disabled (Security profile: {self.system.get_active_profile()})"
@@ -39,41 +44,33 @@ class ProfileLoader:
             return
             
         try:
-            self.active_profile = self.system.get_active_interleaved_reasoning_profile()
-            reasoning_state = self.system.get_interleaved_reasoning_state()
+            self.active_profile = self.system.get_active_profile("reasoning_interleaved")
+            reasoning_state = self.system.get_state("reasoning_interleaved")
             self.features = reasoning_state.get('features', {})
             self.features_list = [f for f, cfg in self.features.items() if cfg.get('enabled')]
-            PrintStyle().info(f"✓ Loaded interleaved reasoning profile: {self.active_profile}")
+            PrintStyle().info(f"✓ Loaded interleaved reasoning profile: {self.active_profile} (from system)") if self.profile_info else None
             
+        except AttributeError as e:
+            if "get_active_profile" in str(e):
+                PrintStyle().error(f"❌ SystemControl method 'get_active_profile' not found. Available methods: {[m for m in dir(self.system) if 'profile' in m.lower()]}")
+            raise
         except Exception as e:
             PrintStyle().warning(f"⚠️ Could not load profile settings: {e}")
     
     def _load_profile_content(self, **kwargs) -> None:
         """Load the content of the active profile."""
-        profile_path = f"/a0/prompts/system/profiles/reasoning_profile/interleaved/profiles/{self.active_profile}.md"
+        profile_path = f"{self.module_path}/profiles/{self.active_profile}.md"
+        
+        print(f"DEBUG: Loading profile: {self.active_profile} from {profile_path}", flush=True) if self.debug_enabled else None
         
         try:
-            if not files.exists(profile_path):
-                raise FileNotFoundError(f"Profile file not found: {profile_path}")
-                
             self.profile_content = files.read_prompt_file(profile_path, _directories=[], **kwargs)
+            PrintStyle().info(f"✅ Successfully loaded profile: {self.active_profile}") if self.profile_info else None
             
         except Exception as e:
             error_msg = f"⚠️ Could not load profile '{self.active_profile}': {e}"
             PrintStyle().warning(error_msg)
-            
-            if self.active_profile != "default":
-                try:
-                    self.active_profile = "default"
-                    default_path = "/a0/prompts/system/profiles/reasoning_profile/interleaved/profiles/default.md"
-                    if files.exists(default_path):
-                        self.profile_content = files.read_prompt_file(default_path, _directories=[], **kwargs)
-                        PrintStyle().info("✓ Fallback to default profile successful")
-                        return
-                    raise FileNotFoundError("Default profile not found")
-                except Exception as default_error:
-                    error_msg += f"\n\nFailed to load default profile: {default_error}"
-            
+            self.active_profile = "error"
             self.profile_content = f"# Interleaved Reasoning Profile\n\n{error_msg}"
     
     def _load_feature_content(self, **kwargs) -> str:
@@ -86,12 +83,13 @@ class ProfileLoader:
         for feature in self.features_list:
             try:
                 ref_file = self.features[feature].get('reference', f"{feature}.md")
-                feature_path = f"/a0/prompts/system/profiles/reasoning_profile/interleaved/features/{ref_file}"
+                feature_path = f"{self.module_path}/features/{ref_file}"
                 
                 if files.exists(feature_path):
                     content = files.read_prompt_file(feature_path, _directories=[], **kwargs)
                     features_content.append(content)
-                    PrintStyle().info(f"  ✓ Loaded feature: {feature}")
+                    if self.feature_info:
+                        PrintStyle().info(f"  ✓ Loaded feature: {feature}")
                 else:
                     PrintStyle().warning(f"  • Feature file not found: {feature_path}")
             except Exception as e:
@@ -100,7 +98,8 @@ class ProfileLoader:
         if not features_content:
             return ""
             
-        return "\n\n## Active Features\n\n" + "\n\n".join(features_content)
+        features_display = ", ".join(self.features_list) if self.features_list else "(no features enabled)"
+        return f"\n\n## Active Features\n\n**Enabled:** {features_display}\n\n" + "\n\n".join(features_content)
     
     def build_response(self) -> Dict[str, str]:
         """Build the final response dictionary."""
@@ -112,9 +111,7 @@ class ProfileLoader:
         else:
             status = f"{self.active_profile.upper()}"
         
-        # Add features to content if any
-        if self.features_list:
-            self.profile_content += f"\n\n**Additional Features:** {features_display}"
+        # Features are now added in _load_feature_content
         
         return {
             "interleaved_reasoning_profile": self.profile_content,

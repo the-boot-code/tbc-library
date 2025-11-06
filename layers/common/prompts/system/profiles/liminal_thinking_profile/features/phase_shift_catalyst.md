@@ -1,4 +1,4 @@
-## Feature: Phase Shift Catalyst
+### Feature: Phase Shift Catalyst
 
 **Purpose:** Provoke intentional state changes to access new cognitive territories - enable deliberate transitions between operational modes.
 

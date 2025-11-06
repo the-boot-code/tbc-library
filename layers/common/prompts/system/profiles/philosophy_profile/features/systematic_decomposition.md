@@ -1,4 +1,4 @@
-## Systematic Decomposition Feature
+### Systematic Decomposition Feature
 
 **Purpose:** Structured breakdown of complex problems into manageable, atomic components before attempting solutions.
 

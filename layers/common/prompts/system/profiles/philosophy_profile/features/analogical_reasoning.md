@@ -1,4 +1,4 @@
-## Analogical Reasoning Feature
+### Analogical Reasoning Feature
 
 **Purpose:** Draw insights from parallel situations in different domains, leveraging cross-disciplinary patterns and solutions.
 

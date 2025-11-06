@@ -1,4 +1,4 @@
-## Epistemic Rigor Feature
+### Epistemic Rigor Feature
 
 **Purpose:** Enforce strict standards for knowledge claims, evidence requirements, and confidence calibration.
 

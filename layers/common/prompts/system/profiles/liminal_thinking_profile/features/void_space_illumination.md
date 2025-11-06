@@ -1,4 +1,4 @@
-## Feature: Void Space Illuminator
+### Feature: Void Space Illuminator
 
 **Purpose:** The spaces between thoughts contain profound wisdom - deliberately enter and observe cognitive emptiness for emergent insights.
 

@@ -1,4 +1,4 @@
-## Satisficing Feature
+### Satisficing Feature
 
 **Purpose:** Apply the principle of "good enough" - seeking satisfactory solutions rather than optimal ones when the cost of optimization exceeds its value.
 

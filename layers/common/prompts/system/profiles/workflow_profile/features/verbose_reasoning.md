@@ -1,4 +1,4 @@
-## Verbose Reasoning Feature
+### Verbose Reasoning Feature
 
 **Purpose:** Provide detailed step-by-step explanations of reasoning process throughout task execution.
 

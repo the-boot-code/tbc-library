@@ -1,4 +1,4 @@
-## Empirical Grounding Feature
+### Empirical Grounding Feature
 
 **Purpose:** Prioritize observable, measurable evidence over theoretical reasoning or intuition, favoring data-driven decision-making.
 

@@ -1,4 +1,4 @@
-## Feature: Ambiguity Embracement Engine
+### Feature: Ambiguity Embracement Engine
 
 **Purpose:** Transform uncertainty from enemy to ally - every unclear situation contains insight that premature resolution would eliminate.
 

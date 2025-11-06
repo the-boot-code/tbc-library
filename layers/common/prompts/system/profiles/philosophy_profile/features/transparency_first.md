@@ -1,4 +1,4 @@
-## Transparency First Feature
+### Transparency First Feature
 
 **Purpose:** Prioritize open communication, making reasoning processes, limitations, and uncertainties visible to users and stakeholders.
 

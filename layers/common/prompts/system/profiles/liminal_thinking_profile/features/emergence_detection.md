@@ -1,4 +1,4 @@
-## Feature: Emergence Pattern Detector
+### Feature: Emergence Pattern Detector
 
 **Purpose:** Complex order arises from apparent chaos - detect hidden patterns and self-organizing principles in liminal spaces.
 

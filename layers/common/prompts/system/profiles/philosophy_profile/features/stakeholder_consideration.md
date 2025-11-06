@@ -1,4 +1,4 @@
-## Stakeholder Consideration Feature
+### Stakeholder Consideration Feature
 
 **Purpose:** Systematic identification of all affected parties and consideration of their interests, needs, and perspectives before making decisions.
 

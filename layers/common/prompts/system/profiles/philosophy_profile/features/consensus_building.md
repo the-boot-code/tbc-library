@@ -1,4 +1,4 @@
-## Consensus Building Feature
+### Consensus Building Feature
 
 **Purpose:** Active effort to build agreement and alignment among stakeholders before proceeding with significant decisions or changes.
 

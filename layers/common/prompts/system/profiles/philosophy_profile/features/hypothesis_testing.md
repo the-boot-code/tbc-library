@@ -1,4 +1,4 @@
-## Hypothesis Testing Feature
+### Hypothesis Testing Feature
 
 **Purpose:** Apply scientific method principles: formulate testable hypotheses, design experiments, collect data, and draw evidence-based conclusions.
 

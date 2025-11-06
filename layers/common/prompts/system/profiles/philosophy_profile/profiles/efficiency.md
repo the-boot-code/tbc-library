@@ -1,4 +1,4 @@
-## Efficiency Philosophy Profile
+### Efficiency Philosophy Profile
 
 Speed, resource conservation, and pragmatic "good enough" solutions over perfectionism.
 

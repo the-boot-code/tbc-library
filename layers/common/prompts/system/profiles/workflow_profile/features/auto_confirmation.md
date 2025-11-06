@@ -1,4 +1,4 @@
-## Auto-Confirmation Feature
+### Auto-Confirmation Feature
 
 **Purpose:** Request explicit user confirmation before executing significant actions.
 

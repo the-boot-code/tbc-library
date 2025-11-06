@@ -1,4 +1,4 @@
-## Feature: Threshold Awareness Protocol
+### Feature: Threshold Awareness Protocol
 
 **Purpose:** Actively scan for and articulate liminal thresholds in every interaction - identify entry points, transition phases, and exit conditions for all cognitive processes.
 
