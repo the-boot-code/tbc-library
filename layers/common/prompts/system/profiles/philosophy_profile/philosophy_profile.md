@@ -6,4 +6,4 @@
 
 {{philosophy_profile}}
 
-**Features:** {{philosophy_features}}
+**Additional Features:** {{philosophy_features}}

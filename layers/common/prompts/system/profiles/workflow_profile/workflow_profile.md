@@ -6,4 +6,4 @@
 
 {{workflow_profile}}
 
-**Features:** {{workflow_features}}
+**Additional Features:** {{workflow_features}}

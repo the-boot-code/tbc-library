@@ -26,6 +26,10 @@ from typing import Optional, Dict, List
 from python.helpers import files
 
 
+CONTROL_FILE = "/a0/tmp/system_control.json"
+ADMIN_OVERRIDE_FILE = "/a0/tmp/admin_override.lock"
+
+
 # ============================================================================
 # CONFIGURATION MODELS
 # ============================================================================
@@ -106,8 +110,8 @@ class ConfigStore:
                 return json.loads(content)
         except Exception as e:
             print(f"DEBUG: ConfigStore error reading {self.config_path}: {e}", flush=True)
-        
-        print(f"DEBUG: ConfigStore using defaults", flush=True)
+
+        print("DEBUG: ConfigStore using defaults", flush=True)
         return self._get_default_config()
     
     def save(self, config: dict) -> bool:
@@ -381,12 +385,10 @@ class SystemControl:
     maintaining perfect backward compatibility with all existing tools.
     """
     
-    CONTROL_FILE = "/a0/tmp/system_control.json"
-    ADMIN_OVERRIDE_FILE = "/a0/tmp/admin_override.lock"
-    
     def __init__(self):
         """Initialize SystemControl with modular components and external profile support."""
-        self.config_store = ConfigStore(self.CONTROL_FILE, self.ADMIN_OVERRIDE_FILE)
+        control_file, admin_override_file = self._resolve_control_paths()
+        self.config_store = ConfigStore(control_file, admin_override_file)
         self.profile_registry = ProfileRegistry()
         self._setup_profile_registry()
         
@@ -462,6 +464,12 @@ class SystemControl:
         
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
     
+    def _resolve_control_paths(self) -> tuple[str, str]:
+        """Resolve control and admin override paths from environment or defaults."""
+        control_file = os.environ.get("SYSTEM_CONTROL_FILE", CONTROL_FILE)
+        admin_override = os.environ.get("SYSTEM_CONTROL_OVERRIDE", ADMIN_OVERRIDE_FILE)
+        return control_file, admin_override
+
     def _setup_profile_registry(self) -> None:
         """Register all profile types with their configuration metadata."""
         # Simple profiles
@@ -521,8 +529,8 @@ class SystemControl:
                 if external_path.startswith("/"):
                     full_path = external_path
                 else:
-                    # Relative path - resolve from config file directory for portability
-                    config_dir = os.path.dirname(self.CONTROL_FILE)
+                    # Relative path - resolve from the active control file directory for portability
+                    config_dir = os.path.dirname(self.config_store.config_path)
                     full_path = os.path.join(config_dir, external_path)
                     # Normalize the path to handle .. and . components
                     full_path = os.path.normpath(full_path)

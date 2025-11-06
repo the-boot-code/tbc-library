@@ -1,5 +1,8 @@
 ## External Reasoning Profile
-**Active:** {{external_reasoning_status}}
+
+**ACTIVE PROFILE:** {{external_reasoning_status}}
+
+*Use the `external_reasoning_profile_control` tool to view available profiles or change your configuration.*
 
 {{external_reasoning_profile}}
 

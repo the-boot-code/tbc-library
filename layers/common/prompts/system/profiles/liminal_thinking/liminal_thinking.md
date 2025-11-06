@@ -6,4 +6,4 @@
 
 {{liminal_thinking_profile}}
 
-**Features:** {{liminal_thinking_features}}
+**Additional Features:** {{liminal_thinking_features}}
