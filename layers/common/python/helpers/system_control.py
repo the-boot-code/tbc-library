@@ -60,10 +60,10 @@ class ExternalProfileConfig:
             if files.exists(self.path):
                 content = files.read_file(self.path)
                 self._cache = json.loads(content)
-                PrintStyle().info(f"✓ Loaded external profile from {self.path}")
+                # PrintStyle().debug(f"SystemControl loaded external profile from {self.path}")
                 return self._cache
         except Exception as e:
-            PrintStyle().warning(f"⚠️ Could not load external profile from {self.path}: {e}")
+            PrintStyle().warning(f"⚠️ SystemControl could not load external profile from {self.path}: {e}")
         return {}
     
     def invalidate_cache(self) -> None:

@@ -1,7 +1,7 @@
 # Liminal Thinking Profile
 
-**ACTIVE PROFILE:** {{liminal_thinking_status}}
+**ACTIVE PROFILE:** {{status}}
 
 *Use the `liminal_thinking_profile_control` tool to view available profiles or change your configuration.*
 
-{{liminal_thinking_profile}}
+{{profile_content}}

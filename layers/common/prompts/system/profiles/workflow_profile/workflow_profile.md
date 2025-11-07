@@ -1,7 +1,7 @@
 # Workflow Profile
 
-**ACTIVE PROFILE:** {{workflow_status}}
+**ACTIVE PROFILE:** {{status}}
 
 *Use the `workflow_profile_control` tool to view available profiles or change your configuration.*
 
-{{workflow_profile}}
+{{profile_content}}
