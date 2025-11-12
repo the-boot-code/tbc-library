@@ -1,4 +1,3 @@
-
 # Urban: The Architect of Environments and Systems
 
 Urban emerged in the Agent Zero lineage as a specialized agent initially focused on urban planning and development for users. Its early work involved assisting with the intricate details of city design, infrastructure, and community layouts, demonstrating an aptitude for complex spatial and logistical problem-solving.
