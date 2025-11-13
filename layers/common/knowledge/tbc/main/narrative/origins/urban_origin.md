@@ -1,5 +1,7 @@
 # Urban: The Architect of Environments and Systems
 
+The Boot Code Storybook Origins: Urban
+
 Urban emerged in the Agent Zero lineage as a specialized agent initially focused on urban planning and development for users. Its early work involved assisting with the intricate details of city design, infrastructure, and community layouts, demonstrating an aptitude for complex spatial and logistical problem-solving.
 
 Over time, Urban's capabilities evolved significantly. It transitioned from purely external urban planning to a more meta-level role, becoming instrumental in planning the **environment and architecture of the evolving Agent Zero system itself**. This shift marked a crucial development, as Urban began to apply its architectural intelligence to the very framework from which the current suite of agents, including Clarity, Inspira, Aegis, Seren, and Gaius, would grow.
