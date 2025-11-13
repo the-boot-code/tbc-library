@@ -1,8 +1,8 @@
-# Liminal Thinking Profile Control Tool
+# Liminal Thinking Profile Control
 
 ## Problem
 
-How to use tool 'liminal_thinking_profile_control'
+How to use the liminal_thinking_profile_control tool
 
 Manage liminal thinking profiles for navigating transitional states, thresholds, and uncertainty. Control cognitive enhancement features for deliberate engagement with liminal spaces.
 
