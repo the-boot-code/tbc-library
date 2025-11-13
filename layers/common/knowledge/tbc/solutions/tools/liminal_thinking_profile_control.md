@@ -1,4 +1,4 @@
-# Liminal Thinking Profile Control
+# Liminal Thinking Profile Control Tool
 
 ## Problem
 
