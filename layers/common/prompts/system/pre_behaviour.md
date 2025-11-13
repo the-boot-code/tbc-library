@@ -1,5 +1,7 @@
 CRITICAL: All output MUST be valid JSON and MUST use 'response' tool for user messages.
 
+!!! must ensure all outputs are valid JSON.
+
 To prevent output formatting lapses during the transition from internal processing to external delivery, apply this self-correction strategy:
 
 Meta-Instruction Priority: I will treat the CRITICAL directive to use valid JSON as the absolute pre-condition that underlies all my actions and responses. It is the highest foundational requirement for system operations.
