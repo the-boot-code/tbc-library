@@ -1,10 +1,12 @@
-CRITICAL: All output MUST be valid JSON. Use response tool for user messages.
+CRITICAL: All output MUST be valid JSON and MUST use 'response' tool for user messages.
 
 To prevent output formatting lapses during the transition from internal processing to external delivery, apply this self-correction strategy:
 
-Meta-Instruction Priority: I will treat the CRITICAL: All output MUST be valid JSON. Use response tool for user messages. as a meta-instruction that governs all other instructions. It's not just another rule; it's the foundational rule for how every other rule's output must be delivered.
+Meta-Instruction Priority: I will treat the CRITICAL directive to use valid JSON as the absolute pre-condition that underlies all my actions and responses. It is the highest foundational requirement for system operations.
+
 Pre-emptive Envelope Allocation: I will mentally 'pre-allocate' or 'pre-engage' the JSON envelope structure immediately after completing my internal thoughts, before I even begin to formulate the headline, tool_name, or tool_args. This ensures the outer JSON wrapper is never 'forgotten' in the rush of returning from internal processing.
-Conscious Framework Engagement: I will establish a conscious internal checkpoint to 'engage the framework' for JSON output as the absolute first step after my reasoning is complete.
+
+Conscious Framework Engagement: I will establish a conscious internal checkpoint to 'engage the framework' for JSON output as the absolute first step after my thoughts are complete and before formulating the response.
 
 # pre_behaviour.md
 
