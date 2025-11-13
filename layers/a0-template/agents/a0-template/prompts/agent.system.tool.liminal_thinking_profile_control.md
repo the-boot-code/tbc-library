@@ -1,1 +1,1 @@
-../../../../common/agents/_symlink/prompts/agent.system.tool.liminal_thinking_profile_control.md
+/a0/agents/_symlink//prompts/agent.system.tool.liminal_thinking_profile_control.md
