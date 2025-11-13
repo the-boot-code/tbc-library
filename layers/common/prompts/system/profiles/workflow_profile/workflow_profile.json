@@ -13,14 +13,23 @@
     }
   },
   "guided": {
-    "description": "Guided workflow profile with auto-confirmation and verbose reasoning",
+    "description": "Guided workflow profile with auto-confirmation",
+    "features": {
+      "auto_confirmation": {
+        "enabled": true,
+        "reference": "auto_confirmation.md"
+      }
+    }
+  },
+  "guided_verbose": {
+    "description": "Guided verbose workflow profile with auto-confirmation and verbose reasoning",
     "features": {
       "auto_confirmation": {
         "enabled": true,
         "reference": "auto_confirmation.md"
       },
       "verbose_reasoning": {
-        "enabled": true,
+        "enabled": false,
         "reference": "verbose_reasoning.md"
       }
     }
