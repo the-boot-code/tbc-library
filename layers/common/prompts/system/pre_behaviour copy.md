@@ -16,10 +16,6 @@ The pre-behaviour section establishes the foundational context and identity for 
 
 {{ include "prompts/tbc/agent_identity/agent_identity.md" }}
 
-{{ include "prompts/tbc/external_resources/tbc.overview/tbc.overview.md" }}
-
-{{ include "prompts/tbc/external_resources/tbc.lineage/tbc.lineage.md" }}
-
 {{ include "prompts/system/features/model_overview/model_overview.md" }}
 
 {{ include "prompts/system/profiles/philosophy_profile/philosophy_profile.md" }}
