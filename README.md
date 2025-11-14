@@ -11,7 +11,7 @@ A centralized library for managing and deploying the Boot Code Storybook compone
 
 #### The Engine - **Agent Zero**
 
-A primary design philosophy was day one has beem to appreciate the work of Jan and the community of the open source project. With that is the approach of do not touch the "engine" that is Agent Zero but rather layer on top of it.
+A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather layer on top of it expanding its capabilities with great respect for a wonderful project.
 
 #### Agent Zero Modifications
 
