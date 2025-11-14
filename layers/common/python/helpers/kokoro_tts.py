@@ -99,82 +99,36 @@ async def synthesize_sentences(sentences: list[str]):
         # return await _synthesize_sentences(sentences)
 
 
-async def _synthesize_sentences(sentences: list[str]) -> str:
+async def _synthesize_sentences(sentences: list[str]):
     await _preload()
-    
+
+    audio_chunks = []
+
     try:
-        audio_chunks = []
-        
         for sentence in sentences:
             if not sentence.strip():
                 continue
-                
+
             segments = _pipeline(sentence.strip(), voice=_voice, speed=_speed)  # type: ignore
-            
+
             for segment in segments:
-                audio_numpy = segment.audio.detach().cpu().numpy()  # type: ignore
+                audio_tensor = segment.audio
+                audio_numpy = audio_tensor.detach().cpu().numpy()  # type: ignore
                 audio_chunks.append(audio_numpy)
-                del segment  # Explicitly free PyTorch tensor memory
-        
-        # Concatenate all audio chunks at once
+                del segment  # free tensor promptly
+
         if not audio_chunks:
-            PrintStyle.warning("No audio generated - all sentences were empty")
-        
-        combined_audio = np.concatenate(audio_chunks) if audio_chunks else np.array([])
-        
-        # Write as single WAV file
+            PrintStyle.warning("Kokoro TTS: no audio generated (all sentences empty).")
+            return ""
+
+        combined_audio = np.concatenate(audio_chunks)
+
         buffer = io.BytesIO()
         sf.write(buffer, combined_audio, 24000, format="WAV")
         audio_bytes = buffer.getvalue()
-        
-        # Return base64 encoded audio
+
         return base64.b64encode(audio_bytes).decode("utf-8")
 
     except Exception as e:
         PrintStyle.error(f"Error in Kokoro TTS synthesis: {e}")
-        raise
-
-
-async def synthesize_sentences_streaming(sentences: list[str]):
-    """Generate audio for sentences and yield base64 audio chunks as they're ready"""
-    try:
-        async for chunk in _synthesize_sentences_streaming(sentences):
-            yield chunk
-    except Exception as e:
-        raise e
-
-
-async def _synthesize_sentences_streaming(sentences: list[str]):
-    """Stream audio chunks sentence-by-sentence to reduce latency"""
-    await _preload()
-    
-    try:
-        for sentence in sentences:
-            if not sentence.strip():
-                continue
-                
-            segments = _pipeline(sentence.strip(), voice=_voice, speed=_speed)  # type: ignore
-            sentence_audio = []
-            
-            for segment in segments:
-                audio_numpy = segment.audio.detach().cpu().numpy()  # type: ignore
-                sentence_audio.append(audio_numpy)
-                del segment  # Explicitly free PyTorch tensor memory
-            
-            if not sentence_audio:
-                continue
-            
-            # Concatenate this sentence's audio
-            combined_audio = np.concatenate(sentence_audio)
-            
-            # Write as WAV file
-            buffer = io.BytesIO()
-            sf.write(buffer, combined_audio, 24000, format="WAV")
-            audio_bytes = buffer.getvalue()
-            
-            # Yield this sentence's audio immediately
-            yield base64.b64encode(audio_bytes).decode("utf-8")
-            
-    except Exception as e:
-        PrintStyle.error(f"Error in Kokoro TTS streaming synthesis: {e}")
-        raise
+        raise    
