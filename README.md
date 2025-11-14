@@ -9,6 +9,10 @@ A centralized library for managing and deploying the Boot Code Storybook compone
 ### Origins
 ### Design
 
+#### The Engine
+
+A primary design philosophy was day one has beem to appreciate the work of Jan and the community of the open source project. With that is the approach of do not touch the "engine" that is Agent Zero but rather layer on top of it.
+
 #### Modified Files
 
 At this point in time, only two (2) files of Agent Zero are being replaced. All others are by means of the frameworks extensibility and flexibility. **No other files of the image need modification** and it should be noted these two files are **not modified** but rather are **layered** on top of the image using docker compose.
