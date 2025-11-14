@@ -43,8 +43,10 @@ https://github.com/agent0ai/agent-zero
 
 ## How to Use
 
+## Features and Updates
+
+2025-11-14 Starting work on the README file to document the project
+
 ## Disclaimers
 
-This is an ongoing live constantly changing project and best is being done to maintain all functionality in rapidly evolving early stages. There is no "version" and changes are happening nealy every day and typically multiple times per day.
-
-## Features and Updates
+This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving early stages. There is no "version" and changes are happening nealy every day and typically multiple times per day.
