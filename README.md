@@ -8,6 +8,16 @@ A centralized library for managing and deploying the Boot Code Storybook compone
 ### Purpose
 ### Origins
 ### Design
+
+#### Modified Files
+
+At this point in time, only two (2) files of Agent Zero are being replaced. All others are by means of the frameworks extensibility and flexibility
+
+- files.py - the addition of **kwargs is a few places that VariablesPlugin class is able to support intelligent prompts
+- kokoro.py - a few experimental tweaks in hopes to reduce resource usage
+
+**No other files are modified**
+
 ### Attribution
 
 Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
