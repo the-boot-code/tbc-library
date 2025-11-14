@@ -49,4 +49,4 @@ https://github.com/agent0ai/agent-zero
 
 ## Disclaimers
 
-This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving early stages. There is no "version" and changes are happening nealy every day and typically multiple times per day.
+This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving early stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
