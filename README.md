@@ -15,7 +15,7 @@ A primary design philosophy from day one has been to appreciate the work of Jan 
 
 #### Agent Zero Modifications
 
-At this point in time, only two (2) files of Agent Zero are being replaced. All others are by means of the frameworks extensibility and flexibility. **No other files of the image need modification** and it should be noted these two files are **not modified** but rather are **layered** on top of the image using docker compose.
+At this point in time, only two (2) files of Agent Zero are being replaced. All capabilities are by means of the extreme extensibility and flexibility of the Agent Zero framework. **No other files of the image need modification** and it should be noted these two files are **not modified** but rather are **layered** on top of the image using docker compose.
 
 - [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` is a few places such that VariablesPlugin class is able to support intelligent prompts (**required**)
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - a few experimental tweaks in hopes to reduce resource usage (**optional**)
@@ -49,4 +49,4 @@ https://github.com/agent0ai/agent-zero
 
 ## Disclaimers
 
-This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving early stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
+This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
