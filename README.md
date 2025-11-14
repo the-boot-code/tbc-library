@@ -11,10 +11,10 @@ A centralized library for managing and deploying the Boot Code Storybook compone
 
 #### Modified Files
 
-At this point in time, only two (2) files of Agent Zero are being replaced. All others are by means of the frameworks extensibility and flexibility. **No other files of the image need modification** and as well it should be noted these two files are not **modified** but rather layered on top of the image using docker compose.
+At this point in time, only two (2) files of Agent Zero are being replaced. All others are by means of the frameworks extensibility and flexibility. **No other files of the image need modification** and it should be noted these two files are **not modified** but rather are **layered** on top of the image using docker compose.
 
-- files.py - the addition of **kwargs is a few places that VariablesPlugin class is able to support intelligent prompts
-- kokoro.py - a few experimental tweaks in hopes to reduce resource usage
+- files.py - the addition of `**kwargs` is a few places such that VariablesPlugin class is able to support intelligent prompts (**required**)
+- kokoro.py - a few experimental tweaks in hopes to reduce resource usage (**optional**)
 
 ### Attribution
 
