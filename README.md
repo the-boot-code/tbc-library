@@ -20,7 +20,7 @@ At this point in time, only two (2) files of Agent Zero are being replaced. All 
 - [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support intelligent prompts (**required**)
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - a few experimental tweaks in hopes to reduce resource usage (**optional**)
 
-A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in /a0/python/helpers to provide a robust and flexible way to manage system profiles and features.
+A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in /a0/python/helpers to provide a robust and flexible way to manage system profiles and features as well as intelligent dynamic system prompts.
 
 ### Attribution
 
