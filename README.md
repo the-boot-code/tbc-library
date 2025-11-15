@@ -100,9 +100,15 @@ https://github.com/agent0ai/agent-zero
 
 ## ... And so much more in Agent Zero
 
-## Is it Limited to Agent Zero?
+## The Boot Code Storybook is it Limited to Agent Zero?
 
-Nope. Use your imagination. Or perhaps use Agent Zero to build it together with you.
+Nope. I just really like it and it is so perfectly fitting for the narrative-technical development.
+
+Likely there will be expansion into other areas and libraries as the public-facing side of the project evolves. Those might include any number of custom programs and public projects. Some may be more independent components nand services while some may be more integrated; think layers.
+
+The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework for building and maintaining any kind of similar idea.
+
+Use your imagination. Or perhaps use Agent Zero to build it together with you.
 
 ## How to Use
 
