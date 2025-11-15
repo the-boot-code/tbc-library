@@ -41,7 +41,7 @@ The technical development of The Boot Code Storybook is a collection of technica
 
 The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, it was possible to eliminate redundancy and enhance the overall experience for the user... and for the agents.
 
-#### Narrative Driven Development
+### Narrative Driven Development
 
 Most powerful aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
