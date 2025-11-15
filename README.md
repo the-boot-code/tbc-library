@@ -164,7 +164,7 @@ In this approach, all prompt files are mounted read-only from the common layer, 
 ```
 
 - Note how this approach allows for fine-grained control over read-only vs read-write access to different layers of the application.
-- Administration of these layers is done at the host level by managing the contents of the ${COMMON_LAYER} and ${CONTAINER_LAYER} directories if permissions are given.
+- Administration of these layers is done at the host level by managing the contents of the `${COMMON_LAYER}` and `${CONTAINER_LAYER}` directories if permissions are given.
 - Note that management may be done via IDE editor or direct file system access by the user keeping the agent safe from accidental modification.
 - This pattern can be extended to other directories as needed.
 
@@ -176,9 +176,9 @@ Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. T
       # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
 ```
 
-- Understand this .env file is the one that is mapped to the container at /a0/.env - the one that contains sensitive information used by Agent Zero for your API keys and authentication.  Careful not to confuse this with the .env file in the directory od docker-compose.yml which is different.
+- Understand this `.env` file is the one that is mapped to the container at `/a0/.env` - the one that contains sensitive information used by Agent Zero for your API keys and authentication.  Careful not to confuse this with the `.env` file in the directory of `docker-compose.yml` which is different.
 - This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise docker compose wil create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
-- Alternatively, the the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in docker-compose.yml 3. docker compose restart
+- Alternatively, the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in `docker-compose.yml` 3. docker compose restart
 
 Reverse proxy is included
 ```
@@ -195,7 +195,7 @@ Reverse proxy is included
 
 ... etc ...
 ```
-- Note that nginx also is parameterized and typically does not need any manual configuration. All nginx settings are controlled via environment variables in the .env file, such as NGINX_PORT_HTTPS, NGINX_CONTAINER_PORT_HTTPS, etc.
+- Note that nginx also is parameterized and typically does not need any manual configuration. All nginx settings are controlled via environment variables in the `.env` file, such as `NGINX_PORT_HTTPS`, `NGINX_CONTAINER_PORT_HTTPS`, etc.
 
 ### Structure
 
@@ -261,7 +261,7 @@ Reverse proxy is included
 - `kairos` - example subordinate for adversarial analysis
 - `knowledge/default/main/solutions/common/tools/a2a_chat/` and `scheduler/` are **solution-based** usage instructions for Agent Zero **tools** now **saving tokens** and providing **increased focus** in system prompt
 - `knowledge/tbc/main/solutions/tools/` contains additional **TBC** solution-based usage instructions for **new** tools saving tokens in system prompt
-- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic intelligent and **run-time adaptable** prompt logic: post_behaviour.md, post_system_manual.md, pre_behaviour.md, pre_system_manual.md, system_ready.md
+- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic intelligent and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
 
 #### /volumes/
 
