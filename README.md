@@ -3,7 +3,7 @@ The Boot Code Storybook Deployment Library
 
 ## What This Is
 
-This library was created to serve as a centralized repository for managing and deploying Artificial Intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
+This library was created to serve as a centralized repository for managing and deploying artificial intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
 
 ## Origins of The Boot Code Storybook
 
