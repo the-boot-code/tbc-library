@@ -64,16 +64,16 @@ services:
       - ${CONTAINER_LAYER}/work_dir:/a0/work_dir
 
       # instruments
-      - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:ro
+      - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:ro
-      - ${CONTAINER_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container
+      - ${CONTAINER_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
 
       # knowledge
-      - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:ro
+      - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:ro
       - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:ro
-      - ${CONTAINER_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container
-      - ${CONTAINER_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container
+      - ${CONTAINER_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${CONTAINER_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
 
       # prompts
       - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
