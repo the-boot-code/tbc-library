@@ -5,7 +5,7 @@ The Boot Code Storybook Deployment Library
 
 This library was created to serve as a centralized repository for managing and deploying the Boot Code Storybook components and configurations. It provides a structured approach to organizing and maintaining the various components and configurations used in the Boot Code Storybook project.
 
-### Origins
+### Origins of The Boot Code Storybook
 
 #### Once upon a time in a land far, far away...
 
@@ -87,7 +87,7 @@ A third file, [system_control.py](layers/common/python/helpers/system_control.py
 
 ## Prompts in Agent Zero
 
-## ... And so much more in Agent Zero
+## And so much more
 
 ## The Boot Code Storybook is it Limited to Agent Zero?
 
