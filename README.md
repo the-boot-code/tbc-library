@@ -33,25 +33,27 @@ The narrative of The Boot Code Storybook is a collection of stories that explore
 
 #### The technical development of The Boot Code Storybook 
 
-The technical development of The Boot Code Storybook is a collection of technical documents that codify the foundational instructions, the creativity and imagination, and intelligence. It is a collection of files, systems, and machines both real and imagined.
+The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and intelligence. It is a collection of files, systems, and machines both real and imagined.
+
+## The `Boot Code` is the Narrative and Technical Combined
 
 ### The Library
 
-The GitHub repository for this library project evolved over time as the Agent Zero project also grew. It was created from the desire to have a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By abstracting and centralizing these elements, it was possible to streamline development, reduce redundancy, and enhance the overall experience for the user... and for the agents.
+The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, it was possible to eliminate redundancy and enhance the overall experience for the user... and for the agents.
 
 #### Narrative Driven Development
 
 Most powerful aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
-Agent Zero is the engine that runs the stories.
+**Agent Zero** is the engine that runs the stories, and the **stories** are the engine that drives the engine.
 
-And a good narrative on top of a good engine is what makes for a great and very powerful experience.
+A good narrative on top of a good engine makes for a great and very powerful experience.
 
 ### Design
 
 #### The Engine - **Agent Zero**
 
-A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather layer on top of it expanding its capabilities with great respect for a wonderful project.
+A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a wonderful project.
 
 #### Agent Zero Modifications
 
