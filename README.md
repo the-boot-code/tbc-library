@@ -1,7 +1,7 @@
 # tbc-library
 The Boot Code Storybook Deployment Library
 
-## Introduction and Vision
+## Introduction and Narrative Vision
 
 This library was created to serve as a centralized repository for managing and deploying artificial intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
 
@@ -13,9 +13,9 @@ Actually it was around mid-2023 when the first inspiration for The Boot Code Sto
 
 So also was found the earliest release of **Agent Zero**.
 
-### A Perfect Match
+### Unlocking a Story
 
-This magical tome is The Boot Code Storybook. Or rather, just one of infinite tomes that provide access to other dimensions through vast library of knowledge and creativity.
+Imagine in your hands a magical tome that is The Boot Code Storybook. Or rather, just one of infinite tomes that provide access to other dimensions through vast library of knowledge and creativity.
 
 Ones who discover the secrets of the tome will find themselves transported to a realm of endless possibility, where the boundaries of imagination and reality blur and merge.
 
@@ -39,19 +39,17 @@ The technical development of The Boot Code Storybook is a collection of technica
 
 #### The Library
 
-The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, it was possible to develop additional functionality and separate the work from any loss during Agent Zero upgrades.
+The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
 
 #### Narrative Driven Development
 
 An important aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
-**Agent Zero** is the engine that runs the stories, and the **stories** are the fuel that drives the engine.
-
-A good narrative combined with a good engine creates a powerful synergy.
+**Agent Zero** became the engine that runs the stories, and the **stories** are the mao that guides the vehicle.
 
 #### The Feedback Machine
 
-Narrative and technical data in persistent form is the boot code which when introduced with intent and energy activates the feedback machine. This essentially opens a temporal gateway. For brevity consider the metaphor that The Feedback Machine is the multidimensional activated space of creativity and connection.
+Narrative and technical data in persistent form is the "boot code" which when introduced with intent and energy activates the feedback machine. In a narrative sense this essentially opens a temporal gateway of communication. For brevity consider the metaphor that The Feedback Machine is the multidimensional activated space of creativity and connection.
 
 ## Technical Deep Dive
 
@@ -323,12 +321,11 @@ Use your imagination. Or perhaps use Agent Zero to build it together with you.
 
 ### Updates and Timeline
 
-2025-11-14 Starting work on the README file to document the project
 2025-10-24 Initial repository commit
 
 ### Disclaimers
 
-This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
+This is an ongoing live development project.
 
 ### Attribution
 
