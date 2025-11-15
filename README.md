@@ -153,7 +153,20 @@ Perhaps permission changes to volumes are desirable for writable directories, su
 - Notice `- ${CONTAINER_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` (read-write for container-specific knowledge)
 - Notice `- ${CONTAINER_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` (read-write for container-specific solutions)
 
+In this approach, all prompt files are mounted read-only from the common layer, with only the container-specific prompts directory being writable.
 
+```
+      # prompts
+      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
+      - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
+      - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
+      - ${CONTAINER_LAYER}/prompts/container:/a0/prompts/container
+```
+
+- Note how this approach allows for fine-grained control over read-only vs read-write access to different layers of the application.
+- Administration of these layers is done at the host level by managing the contents of the ${COMMON_LAYER} and ${CONTAINER_LAYER} directories if permissions are given.
+- Note that management may be done via IDE editor or direct file system access by the user keeping the agent safe from accidental modification.
+- This pattern can be extended to other directories as needed.
 
 If you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
 

@@ -77,8 +77,6 @@ services:
 
       # prompts
       - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
-      # - ${COMMON_LAYER}/prompts/common:/a0/prompts/common:ro
-      # - ${COMMON_LAYER}/prompts/default:/a0/prompts/default:ro
       - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
       - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
       - ${CONTAINER_LAYER}/prompts/container:/a0/prompts/container
