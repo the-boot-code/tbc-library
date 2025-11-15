@@ -257,10 +257,10 @@ Reverse proxy is included
                 kokoro_tts.py
                 system_control.py - NEW functionality helper
 
-- _symlink is mapped via docker compose as an agent profile /a0/agents/_symlink/ and contains the **centralized files** for agent profile extensions, prompts, and tools to be **linked** to from other profiles such as found in **a0-template**
-- kairos - example subordinate for adversarial analysis
-- knowledge/default/main/solutions/common/tools/ a2a_chat/ and scheduler/ are **solution-based** usage instructions for Agent Zero **tools** now **saving tokens** and providing **increased focus** in system prompt
-- knowledge/tbc/main/solutions/tools/ contains additional **TBC** solution-based usage instructions for **new** tools saving tokens in system prompt
+- `_symlink` is mapped via docker compose as an agent profile `/a0/agents/_symlink/` and contains the **centralized files** for agent profile extensions, prompts, and tools to be **linked** to from other profiles such as found in **a0-template**
+- `kairos` - example subordinate for adversarial analysis
+- `knowledge/default/main/solutions/common/tools/a2a_chat/` and `scheduler/` are **solution-based** usage instructions for Agent Zero **tools** now **saving tokens** and providing **increased focus** in system prompt
+- `knowledge/tbc/main/solutions/tools/` contains additional **TBC** solution-based usage instructions for **new** tools saving tokens in system prompt
 - Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic intelligent and **run-time adaptable** prompt logic: post_behaviour.md, post_system_manual.md, pre_behaviour.md, pre_system_manual.md, system_ready.md
 
 #### /volumes/
