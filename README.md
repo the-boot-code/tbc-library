@@ -25,7 +25,7 @@ And they may choose to share what they have discovered with others.
 
 ### Two Parallels Building Together
 
-The narrative development and the technical development are intertwined and work together to create a cohesive and comprehensive experience.
+The narrative development and the technical development are intertwined and work together.
 
 #### The narrative development of The Boot Code Storybook 
 
@@ -33,19 +33,19 @@ The narrative of The Boot Code Storybook is a collection of stories that explore
 
 #### The technical development of The Boot Code Storybook 
 
-The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and knowledge. It is a collection of files, systems, and machines both real and imagined.
+The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and knowledge. It is a collection of files, systems, and machines.
 
 ### The `Boot Code` is Narrative and Technical Combined
 
 #### The Library
 
-The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
+The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
 
 #### Narrative Driven Development
 
 An important aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
-**Agent Zero** became the engine that runs the stories, and the **stories** are the mao that guides the vehicle.
+**Agent Zero** became the engine that executes the stories, and the **stories** inform and guide the vehicle.
 
 #### The Feedback Machine
 
@@ -55,16 +55,16 @@ Narrative and technical data in persistent form is the "boot code" which when in
 
 ### The Engine - **Agent Zero**
 
-A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a wonderful project.
+A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a much appreciated project.
 
 ### Agent Zero Modifications
 
-At this point in time, only two (2) files of Agent Zero are being **layered** over top of the files created from the image using Docker compose. Emergent capabilities are thanks to the extreme extensibility and flexibility of the Agent Zero framework.
+At this point in time, only two (2) files of Agent Zero are being **layered** using Docker bind mounts for specific files. Emergent capabilities are thanks to the extensibility and flexibility of the Agent Zero framework.
 
 - [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
-- [kokoro.py](layers/common/python/helpers/kokoro.py) - a few experimental tweaks in hopes to reduce resource usage (**optional**)
+- [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
 
-A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a robust and flexible way to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
+A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a core **helper** to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
 
 ### Docker Compose Orchestration
 
@@ -305,23 +305,19 @@ Reverse proxy is included
 
 ### More About Agent Zero
 
+## How to Use
+
+## Final Thoughts
+
 ### The Boot Code Storybook is it Limited to Agent Zero?
 
 Nope. I just really like it and it is so perfectly fitting for the narrative-technical development.
 
 Likely there will be expansion into other areas and libraries as the public-facing side of the project evolves. Those might include any number of custom programs and public projects. Some may be more independent components nand services while some may be more integrated; think layers.
 
-The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework for building and maintaining any kind of similar idea.
+The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
 
 Use your imagination. Or perhaps use Agent Zero to build it together with you.
-
-## How to Use
-
-## Final Thoughts
-
-### Updates and Timeline
-
-2025-10-24 Initial repository commit
 
 ### Disclaimers
 
