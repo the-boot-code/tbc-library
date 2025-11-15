@@ -24,17 +24,17 @@ services:
 
       # Layers
       - ${PATH_LAYERS}:/layers:ro
-      - ${CONTAINER_LAYER}:/container_layer:ro
+      - ${AGENT_CONTAINER}:/agent_container:ro
       - ${COMMON_LAYER}:/common_layer:ro
 
       # Agent Zero
       - ${PATH_CONTAINER}/a0:/a0
 
       # Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
-      # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
+      # - ${AGENT_CONTAINER}/.env:/a0/.env:rw
 
       # root
-      - ${CONTAINER_LAYER}/root:/root
+      - ${AGENT_CONTAINER}/root:/root
 
       # Volumes
       - ${PATH_VOLUMES}:/volumes:ro
@@ -44,42 +44,42 @@ services:
       - ${PATH_PUBLIC}:/public
 
       # memory
-      - ${CONTAINER_LAYER}/memory:/a0/memory
+      - ${AGENT_CONTAINER}/memory:/a0/memory
 
       # agents
-      - ${CONTAINER_LAYER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}
+      - ${AGENT_CONTAINER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}
       - ${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro
       - ${COMMON_LAYER}/agents/_symlink:/a0/agents/_symlink:ro
 
       # conf
-      - ${CONTAINER_LAYER}/conf:/a0/conf
+      - ${AGENT_CONTAINER}/conf:/a0/conf
 
       # logs
-      - ${CONTAINER_LAYER}/logs:/a0/logs
+      - ${AGENT_CONTAINER}/logs:/a0/logs
 
       # tmp
-      - ${CONTAINER_LAYER}/tmp:/a0/tmp
+      - ${AGENT_CONTAINER}/tmp:/a0/tmp
 
       # work_dir
-      - ${CONTAINER_LAYER}/work_dir:/a0/work_dir
+      - ${AGENT_CONTAINER}/work_dir:/a0/work_dir
 
       # instruments
       - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:ro
-      - ${CONTAINER_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+      - ${AGENT_CONTAINER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
 
       # knowledge
       - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:ro
       - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:ro
-      - ${CONTAINER_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
-      - ${CONTAINER_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+      - ${AGENT_CONTAINER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${AGENT_CONTAINER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
 
       # prompts
       - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
       - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
       - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      - ${CONTAINER_LAYER}/prompts/container:/a0/prompts/container
+      - ${AGENT_CONTAINER}/prompts/container:/a0/prompts/container
 
       # python
       # - ${COMMON_LAYER}/python/helpers/kokoro_tts.py:/a0/python/helpers/kokoro_tts.py:ro
