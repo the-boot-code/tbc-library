@@ -19,67 +19,70 @@ services:
     volumes:
 
       # Containers
-      - ${PATH_CONTAINERS}:/containers:ro
-      - ${PATH_CONTAINER}:/container:ro
+      - ${PATH_CONTAINERS}:/containers:rw
 
       # Layers
-      - ${PATH_LAYERS}:/layers:ro
-      - ${AGENT_CONTAINER}:/agent_container:ro
+      - ${PATH_LAYERS}:/layers:rw
+
+      # Composition
+      - ${AGENT_ORCHESTRATION}:/agent_orchestration:ro
+      - ${AGENT_CONTAINER}:/agent_container:rw
+      - ${AGENT_LAYER}:/agent_layer:rw
       - ${COMMON_LAYER}:/common_layer:ro
 
       # Agent Zero
-      - ${PATH_CONTAINER}/a0:/a0
+      - ${AGENT_CONTAINER}:/a0
 
       # Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
-      # - ${AGENT_CONTAINER}/.env:/a0/.env:rw
+      # - ${AGENT_LAYER}/.env:/a0/.env:rw
 
       # root
-      - ${AGENT_CONTAINER}/root:/root
+      - ${AGENT_LAYER}/root:/root
 
       # Volumes
       - ${PATH_VOLUMES}:/volumes:ro
       - ${PATH_SHARED}:/shared
       - ${PATH_COMMON}:/common
-      - ${PATH_PRIVATE}/${CONTAINER_NAME}:/private/${CONTAINER_NAME}:ro
+      - ${PATH_PRIVATE}/${CONTAINER_NAME}:/private/${CONTAINER_NAME}:rw
       - ${PATH_PUBLIC}:/public
 
       # memory
-      - ${AGENT_CONTAINER}/memory:/a0/memory
+      - ${AGENT_LAYER}/memory:/a0/memory
 
       # agents
-      - ${AGENT_CONTAINER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}
+      - ${AGENT_LAYER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}
       - ${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro
       - ${COMMON_LAYER}/agents/_symlink:/a0/agents/_symlink:ro
 
       # conf
-      - ${AGENT_CONTAINER}/conf:/a0/conf
+      - ${AGENT_LAYER}/conf:/a0/conf
 
       # logs
-      - ${AGENT_CONTAINER}/logs:/a0/logs
+      - ${AGENT_LAYER}/logs:/a0/logs
 
       # tmp
-      - ${AGENT_CONTAINER}/tmp:/a0/tmp
+      - ${AGENT_LAYER}/tmp:/a0/tmp
 
       # work_dir
-      - ${AGENT_CONTAINER}/work_dir:/a0/work_dir
+      - ${AGENT_LAYER}/work_dir:/a0/work_dir
 
       # instruments
       - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:ro
-      - ${AGENT_CONTAINER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:rw
+      - ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
 
       # knowledge
       - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:ro
-      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:ro
-      - ${AGENT_CONTAINER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
-      - ${AGENT_CONTAINER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:rw
+      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:rw
+      - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
 
       # prompts
-      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
+      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
       - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      - ${AGENT_CONTAINER}/prompts/container:/a0/prompts/container
+      - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
 
       # python
       # - ${COMMON_LAYER}/python/helpers/kokoro_tts.py:/a0/python/helpers/kokoro_tts.py:ro
@@ -105,6 +108,7 @@ services:
     #     limits:
     #       cpus: ${CPU_LIMIT}
     #       memory: ${MEMORY_LIMIT}
+    memswap_limit: ${MEMORY_SWAP_LIMIT}
 
   # Nginx reverse proxy with SSL
   nginx:

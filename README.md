@@ -114,16 +114,19 @@ Much of the mappings are read-only for system self-protection to prevent acciden
     volumes:
 
       # Containers
-      - ${PATH_CONTAINERS}:/containers:ro
-      - ${PATH_CONTAINER}:/container:ro
+      - ${PATH_CONTAINERS}:/containers:rw
 
       # Layers
-      - ${PATH_LAYERS}:/layers:ro
-      - ${AGENT_CONTAINER}:/agent_container:ro
+      - ${PATH_LAYERS}:/layers:rw
+
+      # Composition
+      - ${AGENT_ORCHESTRATION}:/agent_orchestration:ro
+      - ${AGENT_CONTAINER}:/agent_container:rw
+      - ${AGENT_LAYER}:/agent_layer:rw
       - ${COMMON_LAYER}:/common_layer:ro
 
       # Agent Zero
-      - ${PATH_CONTAINER}/a0:/a0
+      - ${AGENT_CONTAINER}:/a0
 
 ... etc ...
 ```
@@ -132,39 +135,39 @@ Perhaps permission changes to volumes are desirable for writable directories, su
 ```
       # instruments
       - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:ro
-      - ${AGENT_CONTAINER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:rw
+      - ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
 ```
 
 - Notice `- ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory named instruments)
-- Notice `- ${AGENT_CONTAINER}/instruments/default/main/container:/a0/instruments/default/main/container:rw` (read-write for container-specific instruments)
+- Notice `- ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw` (read-write for container-specific instruments)
 
 
 ```
       # knowledge
       - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:ro
-      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:ro
-      - ${AGENT_CONTAINER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
-      - ${AGENT_CONTAINER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:rw
+      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:rw
+      - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
 ```
 
 - Notice `- ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory named knowledge)
-- Notice `- ${AGENT_CONTAINER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` (read-write for container-specific knowledge)
-- Notice `- ${AGENT_CONTAINER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` (read-write for container-specific solutions)
+- Notice `- ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` (read-write for container-specific knowledge)
+- Notice `- ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` (read-write for container-specific solutions)
 
 In this approach, all prompt files are mounted read-only from the common layer, with only the container-specific prompts directory being writable.
 
 ```
       # prompts
-      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:ro
+      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
       - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      - ${AGENT_CONTAINER}/prompts/container:/a0/prompts/container
+      - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
 ```
 
 - Note how this approach allows for fine-grained control over read-only vs read-write access to different layers of the application.
-- Administration of these layers is done at the host level by managing the contents of the `${COMMON_LAYER}` and `${AGENT_CONTAINER}` directories if permissions are given.
+- Administration of these layers is done at the host level by managing the contents of the `${COMMON_LAYER}` and `${AGENT_LAYER}` directories if permissions are given.
 - Note that management may be done via IDE editor or direct file system access by the user keeping the agent safe from accidental modification.
 - This pattern can be extended to other directories as needed.
 
@@ -173,7 +176,7 @@ If you really want **everything** to be "layered" and abstracted from the /a0 ru
 Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
 
 ```
-      # - ${AGENT_CONTAINER}/.env:/a0/.env:rw
+      # - ${AGENT_LAYER}/.env:/a0/.env:rw
 ```
 
 - Understand this `.env` file is the one that is mapped to the container at `/a0/.env` - the one that contains sensitive information used by Agent Zero for your API keys and authentication.  Careful not to confuse this with the `.env` file in the directory of `docker-compose.yml` which is different.
