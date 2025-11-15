@@ -128,6 +128,29 @@ Perhaps permission changes to volumes
 ... etc ...
 ```
 
+```
+      # instruments
+      - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
+      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:ro
+      - ${CONTAINER_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+```
+
+- Notice `- ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory name instruments)
+
+```
+      # knowledge
+      - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
+      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:ro
+      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:ro
+      - ${CONTAINER_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${CONTAINER_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+```
+
+- Notice `- ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory name knowledge)
+
+
+
+
 If you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
 
 Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
