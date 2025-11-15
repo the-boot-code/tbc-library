@@ -30,7 +30,7 @@ services:
       # Agent Zero
       - ${PATH_CONTAINER}/a0:/a0
 
-      # Un-Comment the following to mount .env to container. However, this file must exist prior to compose or else the result will be docker compose creating an empty directory by the same name thus causing a failure as well as a subsequent conflict.
+      # Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
       # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
 
       # root

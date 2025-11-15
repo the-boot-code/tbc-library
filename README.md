@@ -128,11 +128,17 @@ Perhaps permission changes to volumes
 ... etc ...
 ```
 
-And this trick if you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
+If you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
+
+Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
+
 ```
-      # Un-Comment the following to mount .env to container. However, this file must exist prior to compose or else the result will be docker compose creating an empty directory by the same name thus causing a failure as well as a subsequent conflict.
       # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
 ```
+
+- Understand this .env file is the one that is mapped to the container at /a0/.env - the one that contains sensitive information used by Agent Zero for your API keys and authentication.  Careful not to confuse this with the .env file in the directory od docker-compose.yml which is different.
+- This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise docker compose wil create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
+- Alternatively, the the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in docker-compose.yml 3. docker compose restart
 
 Reverse proxy is included
 ```
@@ -149,6 +155,7 @@ Reverse proxy is included
 
 ... etc ...
 ```
+- Note that nginx also is parameterized and typically does not need any manual configuration. All nginx settings are controlled via environment variables in the .env file, such as NGINX_PORT_HTTPS, NGINX_CONTAINER_PORT_HTTPS, etc.
 
 ### Structure
 
