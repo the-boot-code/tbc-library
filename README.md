@@ -64,17 +64,6 @@ At this point in time, only two (2) files of Agent Zero are being replaced. All 
 
 A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in /a0/python/helpers to provide a robust and flexible way to manage system profiles and features as well as provide for **intelligent** and **adaptive** system prompts.
 
-### Attribution
-
-Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
-
-#### Agent Zero is a personal, organic agentic framework that grows and learns with you
-- Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it.
-- Agent Zero is fully transparent, readable, comprehensible, customizable, and interactive.
-- Agent Zero uses the computer as a tool to accomplish its (your) tasks.
-
-https://github.com/agent0ai/agent-zero
-
 ## Composition and Mapping
 
 ### Docker Compose
@@ -119,3 +108,14 @@ Use your imagination. Or perhaps use Agent Zero to build it together with you.
 ## Disclaimers
 
 This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
+
+### Attribution
+
+Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
+
+#### Agent Zero is a personal, organic agentic framework that grows and learns with you
+- Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it.
+- Agent Zero is fully transparent, readable, comprehensible, customizable, and interactive.
+- Agent Zero uses the computer as a tool to accomplish its (your) tasks.
+
+https://github.com/agent0ai/agent-zero
