@@ -82,7 +82,7 @@ services:
       - ${CONTAINER_LAYER}/prompts/container:/a0/prompts/container
 
       # python
-      - ${COMMON_LAYER}/python/helpers/kokoro_tts.py:/a0/python/helpers/kokoro_tts.py:ro
+      # - ${COMMON_LAYER}/python/helpers/kokoro_tts.py:/a0/python/helpers/kokoro_tts.py:ro
       - ${COMMON_LAYER}/python/helpers/files.py:/a0/python/helpers/files.py:ro
       - ${COMMON_LAYER}/python/helpers/system_control.py:/a0/python/helpers/system_control.py:ro
       
