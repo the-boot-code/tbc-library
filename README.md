@@ -70,7 +70,81 @@ A third file, [system_control.py](layers/common/python/helpers/system_control.py
 
 ## Composition and Mapping
 
-### Docker Compose
+Highly Parameterized Docker Compose
+
+### .env (rename from .env.example)
+
+You will notice nearly all parameters controlled by the .env file
+
+```
+# Timezone
+TZ=America/New_York
+
+# Docker Container
+IMAGE_NAME=agent0ai/agent-zero:latest
+RESTART=unless-stopped
+
+# Container
+CONTAINER_NAME=a0-template
+PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
+KNOWLEDGE_DIR=tbc
+
+... etc ...
+```
+
+### docker-compose.yml
+
+A new container instance many time does **not** require any changes to this file
+```
+services:
+  # Main service for Agent instance
+  a0:
+    <<: *common-config
+    container_name: ${CONTAINER_NAME}
+    image: ${IMAGE_NAME}
+    
+    working_dir: /a0/work_dir
+```
+Perhaps permission changes to volumes 
+```
+    volumes:
+
+      # Containers
+      - ${PATH_CONTAINERS}:/containers:ro
+      - ${PATH_CONTAINER}:/container:ro
+
+      # Layers
+      - ${PATH_LAYERS}:/layers:ro
+      - ${CONTAINER_LAYER}:/container_layer:ro
+      - ${COMMON_LAYER}:/common_layer:ro
+
+      # Agent Zero
+      - ${PATH_CONTAINER}/a0:/a0
+
+... etc ...
+```
+
+And this trick if you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
+```
+      # Un-Comment the following to mount .env to container. However, this file must exist prior to compose or else the result will be docker compose creating an empty directory by the same name thus causing a failure as well as a subsequent conflict.
+      # - ${CONTAINER_LAYER}/.env:/a0/.env:rw
+```
+
+Reverse proxy is included
+```
+  nginx:
+    <<: *common-config
+    image: nginx:alpine
+    container_name: ${CONTAINER_NAME}-nginx
+    
+    ports:
+      - "${NGINX_PORT_HTTPS}:${NGINX_CONTAINER_PORT_HTTPS}"
+    
+    env_file:
+      - .env
+
+... etc ...
+```
 
 ### Structure
 
@@ -80,6 +154,9 @@ A third file, [system_control.py](layers/common/python/helpers/system_control.py
         nginx/
         .env.example
         docker-compose.yml
+
+- Copy a0-template to a new name, rename the **.env.example** file to **.env** then edit the .env file to adjust deployment
+- docker-compose.yml is **highly parameterized**
 
 #### /layers/
 
@@ -139,7 +216,7 @@ A third file, [system_control.py](layers/common/python/helpers/system_control.py
 
     common/
         prompts/
-            tbc/ - example of external prompt files
+            tbc/ - example of external prompt file functionality
     private/
     public/
     shared/
