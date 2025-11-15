@@ -109,7 +109,7 @@ services:
     
     working_dir: /a0/work_dir
 ```
-Perhaps permission changes to volumes 
+Much of the mappings are read-only for system self-protection to prevent accidental modification of system files.
 ```
     volumes:
 
@@ -127,6 +127,7 @@ Perhaps permission changes to volumes
 
 ... etc ...
 ```
+Perhaps permission changes to volumes are desirable for writable directories, such as for user-generated content. The read-write mappings allow the container to modify files in these directories while keeping the rest of the system read-only for security.
 
 ```
       # instruments
