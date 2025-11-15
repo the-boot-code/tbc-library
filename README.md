@@ -206,8 +206,8 @@ Reverse proxy is included
         .env.example
         docker-compose.yml
 
-- Copy a0-template to a new name, rename the **.env.example** file to **.env** then edit the .env file to adjust deployment
-- docker-compose.yml is **highly parameterized**
+- Copy `a0-template` to a new name, rename the **.env.example** file to **.env** then edit the `.env` file to adjust deployment
+- `docker-compose.yml` is **highly parameterized** and uses environment variables for all configuration.
 
 #### /layers/
 
