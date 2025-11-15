@@ -98,7 +98,7 @@ KNOWLEDGE_DIR=tbc
 
 [docker-compose.yml](containers/a0-template/docker-compose.yml)
 
-A new container instance many time does **not** require any changes to this file
+A new container instance often does **not** require any changes to this file
 ```
 services:
   # Main service for Agent instance
