@@ -272,7 +272,7 @@ Reverse proxy is included
     public/
     shared/
 
-- /common/prompts/tbc/ is an example of external prompt file functionality that can be referenced by other prompt files using new functionality as demonstrated in `/layers/common/prompts/tbc/external_resources/tbc.lineage/tbc.lineage.py` and others.
+- `/common/prompts/tbc/` is an example of **external prompt file functionality** that can be referenced by other prompt files using new functionality as demonstrated in `/layers/common/prompts/tbc/external_resources/tbc.lineage/tbc.lineage.py` and others.
 
 ## Knowledge Features of Agent Zero
 
