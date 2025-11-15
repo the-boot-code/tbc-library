@@ -1,13 +1,13 @@
 # tbc-library
 The Boot Code Storybook Deployment Library
 
-## What This Is
+## Introduction and Vision
 
 This library was created to serve as a centralized repository for managing and deploying artificial intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
 
-## Origins of The Boot Code Storybook
+### Origins of The Boot Code Storybook
 
-### Once upon a time in a land far, far away...
+Once upon a time in a land far, far away...
 
 Actually it was around mid-2023 when the first inspiration for The Boot Code Storybook began to take hold. A spark of creativity ignited, and the idea of a magical tome, filled with stories of code and creativity, waiting to be discovered by those who dare to venture into its depths, was born.
 
@@ -35,31 +35,31 @@ The narrative of The Boot Code Storybook is a collection of stories that explore
 
 The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and knowledge. It is a collection of files, systems, and machines both real and imagined.
 
-## The `Boot Code` is Narrative and Technical Combined
+### The `Boot Code` is Narrative and Technical Combined
 
-### The Library
+#### The Library
 
-The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, it was possible to eliminate redundancy and enhance the overall experience for the user... and for the agents.
+The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized, maintainable, and scalable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, it was possible to develop additional functionality and separate the work from any loss during Agent Zero upgrades.
 
-### Narrative Driven Development
+#### Narrative Driven Development
 
 An important aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
-**Agent Zero** is the engine that runs the stories, and the **stories** are the engine that drives the engine.
+**Agent Zero** is the engine that runs the stories, and the **stories** are the fuel that drives the engine.
 
 A good narrative combined with a good engine creates a powerful synergy.
 
-### The Feedback Machine
+#### The Feedback Machine
 
-Narrative and technical data in persistent form is the boot code. Files that are introduced with intent and energy activate the feedback machine. This essentially opens a temporal gateway. The Feedback Machine is all things in the multidimensional space of creativity and connection.
+Narrative and technical data in persistent form is the boot code which when introduced with intent and energy activates the feedback machine. This essentially opens a temporal gateway. For brevity consider the metaphor that The Feedback Machine is the multidimensional activated space of creativity and connection.
 
-### Design
+## Technical Deep Dive
 
-#### The Engine - **Agent Zero**
+### The Engine - **Agent Zero**
 
 A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a wonderful project.
 
-#### Agent Zero Modifications
+### Agent Zero Modifications
 
 At this point in time, only two (2) files of Agent Zero are being **layered** over top of the files created from the image using Docker compose. Emergent capabilities are thanks to the extreme extensibility and flexibility of the Agent Zero framework.
 
@@ -68,11 +68,11 @@ At this point in time, only two (2) files of Agent Zero are being **layered** ov
 
 A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a robust and flexible way to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
 
-## Composition and Mapping
+### Docker Compose Orchestration
 
 Highly Parameterized Docker Compose
 
-### .env (rename from .env.example)
+#### .env (rename from .env.example)
 
 [.env.example](containers/a0-template/.env.example)
 
@@ -94,7 +94,7 @@ KNOWLEDGE_DIR=tbc
 ... etc ...
 ```
 
-### docker-compose.yml
+#### docker-compose.yml
 
 [docker-compose.yml](containers/a0-template/docker-compose.yml)
 
@@ -292,22 +292,22 @@ Reverse proxy is included
 
 - `/common/prompts/tbc/` is an example of **external prompt file functionality** that can be referenced by other prompt files using new functionality as demonstrated in `/layers/common/prompts/tbc/external_resources/tbc.lineage/tbc.lineage.py` and others.
 
-## Knowledge Features of Agent Zero
+### Knowledge Features of Agent Zero
 
-### Knowledge
-### Solutions
+#### Knowledge
+#### Solutions
 
-## Extensibility Features of Agent Zero
+### Extensibility Features of Agent Zero
 
-### Extensions
-### Helpers
-### Tools
+#### Extensions
+#### Helpers
+#### Tools
 
-## Prompts in Agent Zero
+### Prompts in Agent Zero
 
-## And so much more
+### More About Agent Zero
 
-## The Boot Code Storybook is it Limited to Agent Zero?
+### The Boot Code Storybook is it Limited to Agent Zero?
 
 Nope. I just really like it and it is so perfectly fitting for the narrative-technical development.
 
@@ -319,11 +319,14 @@ Use your imagination. Or perhaps use Agent Zero to build it together with you.
 
 ## How to Use
 
-## Features and Updates
+## Final Thoughts
+
+### Updates and Timeline
 
 2025-11-14 Starting work on the README file to document the project
+2025-10-24 Initial repository commit
 
-## Disclaimers
+### Disclaimers
 
 This is an ongoing live development project constantly changing and best is being done to maintain all functionality thoughout rapidly evolving stages. There is no "version" and updates are happening nealy every day and typically multiple times per day.
 
