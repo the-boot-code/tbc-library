@@ -74,6 +74,8 @@ Highly Parameterized Docker Compose
 
 ### .env (rename from .env.example)
 
+[.env.example](containers/a0-template/.env.example)
+
 You will notice nearly all parameters controlled by the .env file
 
 ```
@@ -93,6 +95,8 @@ KNOWLEDGE_DIR=tbc
 ```
 
 ### docker-compose.yml
+
+[docker-compose.yml](containers/a0-template/docker-compose.yml)
 
 A new container instance many time does **not** require any changes to this file
 ```
