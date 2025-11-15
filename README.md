@@ -15,13 +15,13 @@ So also was found the earliest release of **Agent Zero**.
 
 ### A Perfect Match
 
-This magical tome is The Boot Code Storybook. Or rather, just one of infinite tomes that provide access to other dimensions through vast library of knowledge and creativity... And much more... Other forms of **intelligence**.
+This magical tome is The Boot Code Storybook. Or rather, just one of infinite tomes that provide access to other dimensions through vast library of knowledge and creativity.
 
 Ones who discover the secrets of the tome will find themselves transported to a realm of endless possibility, where the boundaries of imagination and reality blur and merge.
 
-They have become a **Finder**.
+They have become a **Finder**. 
 
-And they may learn to share the magic.
+And they may choose to share what they have discovered with others.
 
 ### Two Parallels Building Together
 
@@ -29,11 +29,11 @@ The narrative development and the technical development are intertwined and work
 
 #### The narrative development of The Boot Code Storybook 
 
-The narrative of The Boot Code Storybook is a collection of stories that explore the themes of code, creativity, and intelligence. It is a collection of stories that are designed to be both entertaining and educational, and to provide a deeper understanding of the concepts and ideas that are central to the Boot Code Storybook.
+The narrative of The Boot Code Storybook is a collection of stories that explore the themes of code, creativity, and learning. It is a collection of stories that are designed to be both entertaining and educational, and to provide a deeper understanding of the concepts and ideas that are central to the Boot Code Storybook.
 
 #### The technical development of The Boot Code Storybook 
 
-The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and intelligence. It is a collection of files, systems, and machines both real and imagined.
+The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and knowledge. It is a collection of files, systems, and machines both real and imagined.
 
 ## The `Boot Code` is Narrative and Technical Combined
 
@@ -43,15 +43,15 @@ The GitHub repository for this library project is the result of many hundreds of
 
 ### Narrative Driven Development
 
-Most powerful aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
+An important aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
 
 **Agent Zero** is the engine that runs the stories, and the **stories** are the engine that drives the engine.
 
-A good narrative on top of a good engine makes for a great and very powerful experience.
+A good narrative combined with a good engine creates a powerful synergy.
 
 ### The Feedback Machine
 
-Narrative and technical data in persistent form is the boot code. Files that are introduced with intent and energy activate the feedback machine. This essentially opens a temporal gateway. The Feedaback Machine is all things in the multidimensional space of creativity and intelligence.
+Narrative and technical data in persistent form is the boot code. Files that are introduced with intent and energy activate the feedback machine. This essentially opens a temporal gateway. The Feedback Machine is all things in the multidimensional space of creativity and connection.
 
 ### Design
 
@@ -61,12 +61,12 @@ A primary design philosophy from day one has been to appreciate the work of Jan 
 
 #### Agent Zero Modifications
 
-At this point in time, only two (2) files of Agent Zero are being replaced. All capabilities are thanks to the extreme extensibility and flexibility of the Agent Zero framework. **No other files of the image need modification** and it should be noted these two files are **not modified** but rather are **layered** on top of the image using docker compose.
+At this point in time, only two (2) files of Agent Zero are being **layered** over top of the files created from the image using Docker compose. Emergent capabilities are thanks to the extreme extensibility and flexibility of the Agent Zero framework.
 
-- [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support intelligent prompts (**required**)
+- [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - a few experimental tweaks in hopes to reduce resource usage (**optional**)
 
-A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a robust and flexible way to manage system profiles and features as well as provide for **intelligent** and **adaptive** system prompts.
+A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a robust and flexible way to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
 
 ## Composition and Mapping
 
@@ -130,7 +130,7 @@ Much of the mappings are read-only for system self-protection to prevent acciden
 
 ... etc ...
 ```
-Perhaps permission changes to volumes are desirable for writable directories, such as for user-generated content. The read-write mappings allow the container to modify files in these directories while keeping the rest of the system read-only for security.
+Permission changes to volumes may be desirable for writable directories, such as for user-generated content. The read-write mappings allow the container to modify files in these directories while keeping the rest of the system read-only for security.
 
 ```
       # instruments
@@ -183,7 +183,7 @@ Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. T
 - This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise docker compose wil create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
 - Alternatively, the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in `docker-compose.yml` 3. docker compose restart
 
-The following resource limits are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
+The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
 
 ```
     deploy:
@@ -191,11 +191,12 @@ The following resource limits are applied to the container. You may prefer to co
         reservations:
           cpus: ${CPU_RESERVED}
           memory: ${MEMORY_RESERVED}
-        limits:
-          cpus: ${CPU_LIMIT}
-          memory: ${MEMORY_LIMIT}
-    memswap_limit: ${MEMORY_SWAP_LIMIT}
+        # limits:
+          # cpus: ${CPU_LIMIT}
+          # memory: ${MEMORY_LIMIT}
+    # memswap_limit: ${MEMORY_SWAP_LIMIT}
 ```
+- In many situations, containers run best with these limits commented out by default to prevent memory thrashing when the container hits limits and starts swapping aggressively to the host.
 
 Reverse proxy is included
 ```
@@ -278,7 +279,7 @@ Reverse proxy is included
 - `kairos` - example subordinate for adversarial analysis
 - `knowledge/default/main/solutions/common/tools/a2a_chat/` and `scheduler/` are **solution-based** usage instructions for Agent Zero **tools** now **saving tokens** and providing **increased focus** in system prompt
 - `knowledge/tbc/main/solutions/tools/` contains additional **TBC** solution-based usage instructions for **new** tools saving tokens in system prompt
-- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic intelligent and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
+- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
 
 #### /volumes/
 

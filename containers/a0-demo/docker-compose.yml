@@ -105,10 +105,10 @@ services:
         reservations:
           cpus: ${CPU_RESERVED}
           memory: ${MEMORY_RESERVED}
-        limits:
-          cpus: ${CPU_LIMIT}
-          memory: ${MEMORY_LIMIT}
-    memswap_limit: ${MEMORY_SWAP_LIMIT}
+        # limits:
+          # cpus: ${CPU_LIMIT}
+          # memory: ${MEMORY_LIMIT}
+    # memswap_limit: ${MEMORY_SWAP_LIMIT}
 
   # Nginx reverse proxy with SSL
   nginx:
