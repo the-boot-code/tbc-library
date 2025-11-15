@@ -85,6 +85,25 @@ https://github.com/agent0ai/agent-zero
 #### layers
 #### volumes
 
+## Knowledge Features of Agent Zero
+
+### Knowledge
+### Solutions
+
+## Extensibility Features of Agent Zero
+
+### Extensions
+### Helpers
+### Tools
+
+## Prompts in Agent Zero
+
+## ... And so much more in Agent Zero
+
+## Is it Limited to Agent Zero?
+
+Nope. Use your imagination. Or perhaps use Agent Zero to build it together with you.
+
 ## How to Use
 
 ## Features and Updates
