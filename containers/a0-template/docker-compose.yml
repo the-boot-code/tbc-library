@@ -100,14 +100,14 @@ services:
       - "${HOST_PORT_SPARE_2}:${CONTAINER_PORT_SPARE_2}"
       - "${HOST_PORT_SPARE_3}:${CONTAINER_PORT_SPARE_3}"
 
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       cpus: ${CPU_RESERVED}
-    #       memory: ${MEMORY_RESERVED}
-    #     limits:
-    #       cpus: ${CPU_LIMIT}
-    #       memory: ${MEMORY_LIMIT}
+    deploy:
+      resources:
+        reservations:
+          cpus: ${CPU_RESERVED}
+          memory: ${MEMORY_RESERVED}
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEMORY_LIMIT}
     memswap_limit: ${MEMORY_SWAP_LIMIT}
 
   # Nginx reverse proxy with SSL

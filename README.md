@@ -183,6 +183,20 @@ Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. T
 - This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise docker compose wil create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
 - Alternatively, the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in `docker-compose.yml` 3. docker compose restart
 
+The following resource limits are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
+
+```
+    deploy:
+      resources:
+        reservations:
+          cpus: ${CPU_RESERVED}
+          memory: ${MEMORY_RESERVED}
+        limits:
+          cpus: ${CPU_LIMIT}
+          memory: ${MEMORY_LIMIT}
+    memswap_limit: ${MEMORY_SWAP_LIMIT}
+```
+
 Reverse proxy is included
 ```
   nginx:
