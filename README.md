@@ -49,6 +49,10 @@ Most powerful aspect of the project is the narrative driven development approach
 
 A good narrative on top of a good engine makes for a great and very powerful experience.
 
+### The Feedback Machine
+
+Narrative and technical data in persistent form is the boot code. Files that are introduced with intent and energy activate the feedback machine. This essentially opens a temporal gateway. The Feedaback Machine is all things in the multidimensional space of creativity and intelligence.
+
 ### Design
 
 #### The Engine - **Agent Zero**
