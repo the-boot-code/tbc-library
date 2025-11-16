@@ -3,7 +3,7 @@ Agent Zero Deployment Library for The Boot Code Storybook Project
 
 This README serves two interconnected purposes: (1) a practical guide for deploying and customizing Agent Zero instances using the tbc-library's layered approach, and (2) an introduction to the narrative philosophy of The Boot Code Storybook, where technical systems and storytelling converge to enable organic, creative development. A key innovation is the self-revealing orchestration via bind mounts, granting agents direct, transparent access to their own layers and structure for autonomous operation.
 
-This is a living framework—dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
+This is a living framework. Dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
 
 > **Adaptability**: Treat obstacles as prompts to question assumptions and explore alternatives. Adaptability is key to unlocking the project's full potential.
 
@@ -21,11 +21,11 @@ If you're here to deploy Agent Zero quickly:
 2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent`
 3. Access at configured ports (check `.env`).
 
-This is one streamlined path for quick deployment—adapt the commands as needed for your environment. For full details, see Installation below. Skip to Technical Deep Dive for architecture.
+This is one streamlined path for quick deployment. Adapt the commands as needed for your environment. For full details, see Installation below. Skip to Technical Deep Dive for architecture.
 
 ## Introduction and Narrative
 
-To fully appreciate the tbc-library's technical design, it's helpful to understand its roots in The Boot Code Storybook—a project where narrative storytelling drives technical innovation. This philosophical foundation explains why the library emphasizes layering and abstraction, enabling agents that "grow and learn" like living stories. If you're primarily here for deployment, you can skip ahead to Quick Start; otherwise, explore how the narrative inspires the system's organic extensibility.
+To fully appreciate the tbc-library's technical design, it's helpful to understand its roots in The Boot Code Storybook, a project where narrative storytelling drives technical innovation. This philosophical foundation explains why the library emphasizes layering and abstraction, enabling agents that "grow and learn" like living stories. If you're primarily here for deployment, you can skip ahead to Quick Start; otherwise, explore how the narrative inspires the system's organic extensibility.
 
 ### Origins of The Boot Code Storybook
 
@@ -96,7 +96,7 @@ At minimum, you'll need the following to get started (or equivalents for alterna
 - **Docker and Docker Compose**: Installed and running (for container orchestration).
 - **Git**: For cloning the repository.
 - **Basic Shell Knowledge**: Familiarity with command-line operations like `cd`, `cp`, `sed`.
-- **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required—links provided in the Technical Deep Dive.
+- **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required (links provided in the Technical Deep Dive).
 - **Permissions**: Ability to run Docker commands (may need sudo on some systems).
 
 ## How to Use
@@ -181,7 +181,7 @@ cd tbc-library/containers/a0-myagent
 ```
 
 #### 3. Configure the Environment
-Copy the `.env.example` file to `.env` and update the environment variables as needed. If cloning an existing agent, the copied directory may already have a `.env` file—preserve it and edit as needed. Otherwise, create from `.env.example`.
+Copy the `.env.example` file to `.env` and update the environment variables as needed. If you're cloning an existing agent, the copied directory may already have a `.env` file; if so, preserve it and edit as needed. Otherwise, create from `.env.example`.
 ```bash
 cp .env.example .env  # Only if .env doesn't exist
 ```
@@ -315,7 +315,7 @@ To keep sensitive API keys and auth details abstracted in the layers directory (
    docker compose restart
    ```
 
-This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict—follow the order carefully.
+This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict, so follow the order carefully.
 
 ### Self-Revealing Orchestration: Direct Agent Access via Bind Mounts
 
@@ -356,7 +356,7 @@ The narrative of The Boot Code Storybook manifests technically through the tbc-l
 A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a much appreciated project.
 
 #### Overview of Modifications
-This subsection explains the minimal, respectful changes to Agent Zero that enable extensibility and dynamic features without altering the core engine—focusing on layering for safety and innovation.
+This subsection explains the minimal, respectful changes to Agent Zero that enable extensibility and dynamic features without altering the core engine, focusing on layering for safety and innovation.
 
 ### Agent Zero Modifications
 
@@ -369,7 +369,7 @@ These modifications demonstrate how the framework's flexibility turns abstract c
 
 **Warning**: Modifying Agent Zero files (even via layering) can introduce risks such as compatibility issues with upstream updates. Always test changes in a separate environment and consider contributing improvements back to the Agent Zero project. The tbc-library's approach minimizes core changes to ensure stability.
 
-That said, the layered approach is designed for safe experimentation—test in isolated environments, share discoveries, and explore variations to unlock new capabilities over time.
+That said, the layered approach is designed for safe experimentation: test in isolated environments, share discoveries, and explore variations to unlock new capabilities over time.
 
 - [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
@@ -548,7 +548,7 @@ Reverse proxy is included
 
 ### Structure
 
-This section outlines the file organization of the library, which enables modular layering for separating agent instances, shared resources, and optional extensions—allowing safe, independent management of each component.
+This section outlines the file organization of the library, which enables modular layering for separating agent instances, shared resources, and optional extensions, allowing safe, independent management of each component.
 
 ```
 Boot Code Storybook Layers
@@ -661,7 +661,7 @@ _(Pending content.)_
 
 Nope. I just really like it and it is so perfectly fitting for the narrative-technical development.
 
-The project will likely expand into other areas and libraries as the public-facing side evolves. Future work may include custom programs and public projects, some as independent components and services and others more integrated—think layers, where new tools or knowledge can be added modularly without altering the core structure.
+The project will likely expand into other areas and libraries as the public-facing side evolves. Future work may include custom programs and public projects, some as independent components and services and others more integrated. Think in terms of layers, where new tools or knowledge can be added modularly without altering the core structure.
 
 The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
 
