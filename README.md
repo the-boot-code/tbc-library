@@ -1,6 +1,44 @@
 # tbc-library
 The Boot Code Storybook Deployment Library
 
+## How to Use
+
+This library is organized into layers, each serving a specific purpose in the Boot Code Storybook ecosystem. To use it:
+
+1. **Understand the Layer Structure**: Each layer has its own directory and purpose. 
+2. **Explore the Codebase**: Navigate through the directories to understand how different components interact.
+3. **Customize for Your Needs**: Modify the code to fit your specific requirements while maintaining the core structure.
+
+### Installation
+
+Navigate to the directory where you want to clone the library:
+```bash
+cd /path/to/your/directory
+git clone https://github.com/the-boot-code/tbc-library.git
+```
+
+The library will be cloned into a folder named `tbc-library` in your current directory.
+
+copy the directory /path/to/your/directory/tbc-library/containers/a0-template to your desired name such as a0-myagent
+```bash
+cp -r /path/to/your/directory/tbc-library/containers/a0-template /path/to/your/directory/tbc-library/containers/a0-myagent
+```
+
+Now you can customize the agent container modifying the files in the `a0-myagent` directory. In this direcrory you will find the `docker-compose.yml` file and `.env.example` file.
+
+The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
+
+Rename the `.env.example` file to `.env` and update the environment variables as needed.
+
+```
+CONTAINER_NAME=a0-template
+PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
+KNOWLEDGE_DIR=tbc
+```
+- CONTAINER_NAME change to the directory name `a0-myagent`
+- PORT_BASE change to a unique value "prefix" for this agent (e.g., 500 for **Agent Zero** to run on ports http 50080 and ssh 50022 and **nginx** on https 50043)
+- KNOWLEDGE_DIR leave as `tbc` to get up and running with the `tbc-library` knowledgebase directory
+
 ## Introduction and Narrative Vision
 
 This library was created to serve as a centralized repository for managing and deploying artificial intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
@@ -304,8 +342,6 @@ Reverse proxy is included
 ### Prompts in Agent Zero
 
 ### More About Agent Zero
-
-## How to Use
 
 ## Final Thoughts
 
