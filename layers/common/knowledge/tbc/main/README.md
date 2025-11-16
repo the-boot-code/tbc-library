@@ -1,0 +1,653 @@
+# tbc-library
+Agent Zero Deployment Library for The Boot Code Storybook Project
+
+This README serves two interconnected purposes: (1) a practical guide for deploying and customizing Agent Zero instances using the tbc-library's layered approach, and (2) an introduction to the narrative philosophy of The Boot Code Storybook, where technical systems and storytelling converge to enable organic, creative development.
+
+### What is Agent Zero?
+Agent Zero is an open-source, personal agentic framework that grows and learns with you. It acts as a dynamic AI assistant capable of handling tasks, managing conversations, and adapting through extensions and prompts. Think of it as a customizable AI 'engine' that can be extended for various roles (e.g., creative writing, technical analysis) without deep coding knowledge. For more details, visit [Agent Zero on GitHub](https://github.com/agent0ai/agent-zero).
+
+### Project Vision
+The Boot Code Storybook blends narrative storytelling with technical innovation. Stories drive the development of adaptable AI agents, creating a "feedback machine" where creativity and code evolve together. For the full narrative, see Introduction and Narrative below.
+
+## Quick Start (For Developers)
+
+If you're here to deploy Agent Zero quickly:
+
+1. Clone the repo: `git clone https://github.com/the-boot-code/tbc-library.git && cd tbc-library`
+2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent`
+3. Access at configured ports (check `.env`).
+
+For full details, see Installation below. Skip to Technical Deep Dive for architecture.
+
+## Introduction and Narrative
+
+To fully appreciate the tbc-library's technical design, it's helpful to understand its roots in The Boot Code Storybook—a project where narrative storytelling drives technical innovation. This philosophical foundation explains why the library emphasizes layering and abstraction, enabling agents that "grow and learn" like living stories. If you're primarily here for deployment, you can skip ahead to Quick Start; otherwise, explore how the narrative inspires the system's organic extensibility.
+
+### Origins of The Boot Code Storybook
+
+The Boot Code Storybook project began in mid-2023 with a spark of creativity, envisioning a magical tome of code and stories waiting to be explored.
+
+So also was found the earliest release of **Agent Zero**.
+
+### Unlocking a Story
+
+Imagine in your hands a magical tome that is The Boot Code Storybook. Or rather, just one of infinite tomes that provide access to other dimensions through vast library of knowledge and creativity.
+
+Ones who discover the secrets of the tome will find themselves transported to a realm of endless possibility, where the boundaries of imagination and reality blur and merge.
+
+They have become a **Finder**.
+
+And they may choose to share what they have discovered with others.
+
+### Two Parallels Building Together
+
+The narrative development and the technical development are intertwined and work together.
+
+#### The narrative development of The Boot Code Storybook
+
+The narrative of The Boot Code Storybook is a collection of stories that explore the themes of code, creativity, and learning. It is a collection of stories that are designed to be both entertaining and educational, and to provide a deeper understanding of the concepts and ideas that are central to the Boot Code Storybook.
+
+#### The technical development of The Boot Code Storybook
+
+The technical development of The Boot Code Storybook is a collection of technical documents that **codify** the foundational instructions, the creativity and imagination, and knowledge. It is a collection of files, systems, and machines.
+
+### The `Boot Code` is Narrative and Technical Combined
+
+#### The Library
+
+The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
+
+#### Narrative Driven Development
+
+An important aspect of the project is the narrative driven development approach. The stories are the foundation of the project and the technical development is built upon them.
+
+**Agent Zero** became the engine that executes the stories, and the **stories** inform and guide the vehicle.
+
+#### The Feedback Machine
+
+Narrative and technical data in persistent form is the "boot code" which when introduced with intent and energy activates the feedback machine.
+
+- In a narrative sense, this opens a creative "gateway" for communication between stories and systems.
+- Technically, it enables dynamic interplay between storytelling (narratives) and code execution (Agent Zero engine).
+
+For instance, a 'story' about an agent adopting a 'creative mode' can be implemented as layered prompt files, dynamically loaded by Agent Zero to alter its behavior without restarting.
+
+```
+Feedback Machine Flow
+[Intent/Energy] ──▶ [Boot Code (Narrative + Technical)]
+                       │
+                       ▼
+[Narrative Stories] ◄──► [Agent Zero Engine]
+                       ▲
+                       │
+[Technical Systems] ◄──┘
+```
+
+This loop represents the dynamic interplay between storytelling and code execution, enabling organic growth and learning.
+
+## Prerequisites
+
+Before using the tbc-library, ensure you have:
+- **Docker and Docker Compose**: Installed and running (for container orchestration).
+- **Git**: For cloning the repository.
+- **Basic Shell Knowledge**: Familiarity with command-line operations like `cd`, `cp`, `sed`.
+- **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required—links provided in the Technical Deep Dive.
+- **Permissions**: Ability to run Docker commands (may need sudo on some systems).
+
+## How to Use
+
+1. **Understand the Layered Structure**: The library organizes deployments into containers (for individual agent instances) and layers (for shared configurations, prompts, and data).
+
+2. **Explore the Codebase**: Navigate key directories like `/containers` for base setups and `/layers` for customizations.
+
+3. **Customize for Your Needs**: Modify `.env` files for ports and settings, add prompt files for agent behaviors, or extend functionality via scripts and extensions.
+
+Choose the automated script for quick setup or follow the manual steps below.
+
+### Installation (Scripted)
+
+Navigate to the directory where you want to clone the library:
+```bash
+cd /path/to/your/directory
+git clone https://github.com/the-boot-code/tbc-library.git
+cd tbc-library
+```
+
+A script `create_agent.sh` is provided in the root of `tbc-library` to automate agent creation.
+
+**Important Notes:**
+- The script will fail if a container directory for the new agent already exists, to prevent accidental data loss. Remove it manually (e.g., `rm -rf containers/a0-myagent`) if you want to recreate.
+- Existing layers data (e.g., API keys in `/layers/[dest_container]/.env`) is preserved and not overwritten.
+- The source container can be any existing agent (e.g., `a0-template` or `a0-demo`), allowing you to clone and customize agents.
+
+**Usage:**
+```bash
+./create_agent.sh <source_container> <dest_container> <source_display> <dest_display> [port_base] [knowledge_dir]
+```
+
+**Examples:**
+
+**Example with defaults:**
+```bash
+./create_agent.sh a0-template a0-myagent Template MyAgent
+```
+
+**Example with port base:**
+```bash
+./create_agent.sh a0-template a0-myagent Template MyAgent 600
+```
+
+**Example with knowledge directory:**
+```bash
+./create_agent.sh a0-template a0-myagent Template MyAgent 600 custom
+```
+
+This script:
+- Copies the source container directory to the destination.
+- Updates configurations with the new container name, and optionally port base and/or knowledge directory (leaves unchanged from the source if not specified).
+- Starts Docker containers in detached mode.
+- Copies the entire layers directory (if not existing) to include all source agent files (e.g., tmp/, conf/), then updates agent profiles with customizations.
+- Handles replacements for lowercase container names and proper display names (e.g., 'a0-template' → 'a0-myagent', 'Template' → 'MyAgent').
+- Safely layers the `/a0/.env` file to `/layers/[dest_container]/.env` for security, preserving existing content if present, and uncommenting the volume.
+
+After running, check the `.env` file for port settings and customize further if needed.
+
+### Installation (Step by Step)
+
+**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`.
+
+#### 1. Clone the Repository
+Navigate to the directory where you want to clone the library:
+```bash
+cd /path/to/your/directory
+git clone https://github.com/the-boot-code/tbc-library.git
+```
+
+The library will be cloned into a folder named `tbc-library` in your current directory.
+
+**Note**: Ensure the source container (e.g., `a0-template`) exists: `ls tbc-library/containers/a0-template`. If not, use an existing one like `a0-demo` for cloning.
+
+#### 2. Prepare the Container Directory
+Copy the directory tbc-library/containers/a0-template to your new agent directory named a0-myagent:
+```bash
+cp -r tbc-library/containers/a0-template tbc-library/containers/a0-myagent
+```
+
+Navigate to the directory of the agent container:
+```bash
+cd tbc-library/containers/a0-myagent
+```
+
+#### 3. Configure the Environment
+Copy the `.env.example` file to `.env` and update the environment variables as needed. If cloning an existing agent, the copied directory may already have a `.env` file—preserve it and edit as needed. Otherwise, create from `.env.example`.
+```bash
+cp .env.example .env  # Only if .env doesn't exist
+```
+
+Now you can customize the agent container modifying `.env` file.
+```
+CONTAINER_NAME=a0-template
+PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
+KNOWLEDGE_DIR=tbc
+```
+- `CONTAINER_NAME` change to the directory name `a0-myagent`
+- `PORT_BASE` change to a unique value "prefix" for this agent (e.g., 500 for **Agent Zero** to run on ports http 50080 and ssh 50022 and **nginx** on https 50043)
+- `KNOWLEDGE_DIR` leave as `tbc` to get up and running with the `tbc-library` knowledgebase directory
+
+The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
+
+**For security layering**: Before running Docker, uncomment the volume line in `docker-compose.yml` to mount `.env` on startup:
+```yaml
+- ${AGENT_LAYER}/.env:/a0/.env:rw
+```
+(This avoids needing a restart later.)
+
+#### 4. Launch the Container
+Docker compose once you are ready
+```bash
+docker compose up -d
+```
+
+- This pulls the Agent Zero image and creates the bind mounts
+
+You should now see the Agent Zero directory `/a0` created in your container
+```
+tbc-library/containers/a0-myagent/a0
+```
+
+You should also see the agent directory created in the `/layers` of your **tbc-library**
+```
+tbc-library/layers/a0-myagent
+```
+
+#### 5. Customize the Agent Profile
+Navigate to the `/layers` directory
+```bash
+cd ../../layers
+```
+or
+```bash
+cd /path/to/your/directory/tbc-library/layers
+```
+
+We are going to populate your agent directory from the `a0-template`. Use `rsync` to safely copy and preserve any existing custom files:
+```bash
+rsync -a --ignore-existing a0-template/ a0-myagent/
+```
+Navigate to the agent profile directory
+```bash
+cd a0-myagent/agents/a0-myagent
+```
+
+Now you should see the agent files and subdirectories populated in your agent directory.
+```
+extensions/
+prompts/
+tools/
+_context.md
+```
+
+**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`.
+
+Agent Zero recognizes the agent profile file `_context.md` we must update the agent name from `a0-template` to `a0-myagent`
+```
+# a0-template
+- main agent of the system
+- communicates to user and delegates to subordinates
+- general purpose assistant, communication skills, formatted output
+```
+
+Edit the file or use `sed`
+```bash
+sed -i 's/a0-template/a0-myagent/g' _context.md
+```
+
+Agent Zero presents a welcome message at the beginning of each chat conversation based on the file in `prompts/fw.initial_message.md` and where it states its name.
+```
+"text": "**Hello! 👋**, I'm **Agent Zero Template**, your AI assistant. How can I help you today?"
+```
+
+Either update the file to your liking or use `sed`
+```bash
+sed -i 's/Agent Zero Template/Agent Zero MyAgent/g' prompts/fw.initial_message.md
+```
+
+Agent Zero has an extension file `extensions/agent_init/_05_agent_name.py` that sets the agent name
+```
+self.agent.agent_name = "A0-Template-" + str(self.agent.number)
+```
+
+Either edit the file or use `sed`
+```bash
+sed -i 's/A0-Template/A0-MyAgent/g' extensions/agent_init/_05_agent_name.py
+```
+
+To ensure changes to Python files take effect, restart the Docker containers:
+```bash
+docker compose restart
+```
+
+After following these steps, check the `.env` file for port settings and customize further if needed. Your agent should be accessible at the configured ports.
+
+**Troubleshooting**: If ports are in use, change `PORT_BASE` in `.env`. Ensure Docker is running and you have permissions.
+
+**Optional: Layer the /a0/.env file for security**
+
+To keep sensitive API keys and auth details abstracted in the layers directory (recommended for security):
+
+1. Wait a few seconds for the container to fully start and generate `/a0/.env`.
+2. From the `containers/a0-myagent` directory, copy the file from the container:
+   ```bash
+   docker cp a0-myagent:/a0/.env ../../layers/a0-myagent/.env
+   ```
+3. Uncomment the volume mapping in `docker-compose.yml` (remove the `#`):
+   ```yaml
+   - ${AGENT_LAYER}/.env:/a0/.env:rw
+   ```
+4. Restart the containers to apply the layering:
+   ```bash
+   docker compose restart
+   ```
+
+This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict—follow the order carefully.
+
+## Technical Deep Dive
+
+The narrative of The Boot Code Storybook manifests technically through the tbc-library's layered architecture, where agents are abstracted and extensible like evolving stories. The following sections detail how this philosophy is implemented in Docker Compose, file structures, and Agent Zero modifications.
+
+### The Engine - **Agent Zero**
+
+A primary design philosophy from day one has been to appreciate the work of Jan and the community of the open source project. With that has been a strict approach of do not touch the "engine" that is Agent Zero but rather **layer** on top of it expanding its capabilities with **great respect** for a much appreciated project.
+
+#### Overview of Modifications
+This subsection explains the minimal, respectful changes to Agent Zero that enable extensibility and dynamic features without altering the core engine—focusing on layering for safety and innovation.
+
+### Agent Zero Modifications
+
+At this point in time, only two (2) files of Agent Zero are being **layered** using Docker bind mounts for specific files. Emergent capabilities are thanks to the extensibility and flexibility of the Agent Zero framework. For example:
+
+- **Dynamic Prompts**: By layering `files.py` with `**kwargs` support, extensions can inject runtime variables into prompts, enabling adaptive conversations (e.g., changing agent personality based on user input).
+- **System Control**: The added `system_control.py` helper allows programmatic management of profiles, letting agents switch between "creative" and "analytical" modes dynamically without restarting.
+
+These modifications demonstrate how the framework's flexibility turns abstract concepts into practical features.
+
+**Warning**: Modifying Agent Zero files (even via layering) can introduce risks such as compatibility issues with upstream updates. Always test changes in a separate environment and consider contributing improvements back to the Agent Zero project. The tbc-library's approach minimizes core changes to ensure stability.
+
+- [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
+- [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
+
+A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a core **helper** to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
+
+### Docker Compose Orchestration
+
+This section details how the library uses highly parameterized Docker Compose for deploying Agent Zero, enabling easy scaling, resource management, and volume mappings without modifying core files.
+
+Highly Parameterized Docker Compose
+
+```
+Docker Compose Architecture
+┌─────────────────┐
+│   Host System   │
+│                 │
+│ /containers/ ───┼───▶ a0 container
+│ /layers/ ───────┼───▶ /layers/ (rw)
+│                 │     /common_layer/ (ro)
+│ nginx ──────────┼───▶ Reverse Proxy
+│                 │     (HTTPS on port 443)
+└─────────────────┘
+```
+
+This setup uses bind mounts for layered abstraction, with the Agent Zero container running the main logic and nginx handling web traffic.
+
+#### .env (rename from .env.example)
+
+[.env.example](containers/a0-template/.env.example)
+
+You will notice nearly all parameters controlled by the .env file. Here’s a summary of key variables:
+
+| Variable          | Description | Example |
+|-------------------|-------------|---------|
+| `CONTAINER_NAME`  | Unique name for the agent container | `a0-myagent` |
+| `PORT_BASE`       | Base port prefix for services (e.g., 500 for ports 50080, 50022) | `500` |
+| `KNOWLEDGE_DIR`   | Knowledge base directory (e.g., 'tbc' or 'default') | `tbc` |
+| `IMAGE_NAME`      | Docker image for Agent Zero | `agent0ai/agent-zero:latest` |
+| `CPU_RESERVED`    | Reserved CPU cores | `1.0` |
+| `MEMORY_RESERVED` | Reserved memory | `2g` |
+| `TZ`              | Timezone | `America/New_York` |
+
+```
+# Timezone
+TZ=America/New_York
+
+# Docker Container
+IMAGE_NAME=agent0ai/agent-zero:latest
+RESTART=unless-stopped
+
+# Container
+CONTAINER_NAME=a0-template
+PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
+KNOWLEDGE_DIR=tbc
+
+... etc ...
+```
+
+#### docker-compose.yml
+
+[docker-compose.yml](containers/a0-template/docker-compose.yml)
+
+A new container instance often does **not** require any changes to this file
+```
+services:
+  # Main service for Agent instance
+  a0:
+    <<: *common-config
+    container_name: ${CONTAINER_NAME}
+    image: ${IMAGE_NAME}
+    
+    working_dir: /a0/work_dir
+```
+Much of the mappings are read-only for system self-protection to prevent accidental modification of system files.
+```
+    volumes:
+
+      # Containers
+      - ${PATH_CONTAINERS}:/containers:rw
+
+      # Layers
+      - ${PATH_LAYERS}:/layers:rw
+
+      # Composition
+      - ${AGENT_ORCHESTRATION}:/agent_orchestration:ro
+      - ${AGENT_CONTAINER}:/agent_container:rw
+      - ${AGENT_LAYER}:/agent_layer:rw
+      - ${COMMON_LAYER}:/common_layer:ro
+
+      # Agent Zero
+      - ${AGENT_CONTAINER}:/a0
+
+... etc ...
+```
+Permission changes to volumes may be desirable for writable directories, such as for user-generated content. The read-write mappings allow the container to modify files in these directories while keeping the rest of the system read-only for security.
+
+```
+      # instruments
+      - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
+      - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:rw
+      - ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+```
+
+- Notice `- ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory named instruments)
+- Notice `- ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw` (read-write for container-specific instruments)
+
+
+```
+      # knowledge
+      - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
+      - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:rw
+      - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:rw
+      - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+```
+
+- Notice `- ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw` (read-write for knowledge directory named knowledge)
+- Notice `- ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` (read-write for container-specific knowledge)
+- Notice `- ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` (read-write for container-specific solutions)
+
+In this approach, all prompt files are mounted read-only from the common layer, with only the container-specific prompts directory being writable.
+
+```
+      # prompts
+      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
+      - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
+      - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
+      - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
+```
+
+- Note how this approach allows for fine-grained control over read-only vs read-write access to different layers of the application.
+- Administration of these layers is done at the host level by managing the contents of the `${COMMON_LAYER}` and `${AGENT_LAYER}` directories if permissions are given.
+- Note that management may be done via IDE editor or direct file system access by the user keeping the agent safe from accidental modification.
+- This pattern can be extended to other directories as needed.
+
+If you want `/a0/.env` to be "layered" and abstracted from the `a0` runtime of the Agent Zero container...
+
+Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. For best results, do this **before** running `docker compose up -d` so the layered `.env` is mounted from the start:
+
+```
+      - ${AGENT_LAYER}/.env:/a0/.env:rw
+```
+
+- Understand this `.env` file is the one that is mapped to the container at `/a0/.env` - the one that contains sensitive information used by Agent Zero for your API keys and authentication. Careful not to confuse this with the `.env` file in the directory of `docker-compose.yml` which is different.
+- This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise Docker Compose will create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
+- **Best Practice**: Uncomment the volume line before `docker compose up -d` to mount it immediately, avoiding the need for a restart. If the layered `.env` doesn't exist yet, run `docker compose up -d` with the line commented, let the container generate `/a0/.env`, then copy it to `/layers/[container_name]/.env`, uncomment the line, and restart.
+
+The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
+
+```
+    deploy:
+      resources:
+        reservations:
+          cpus: ${CPU_RESERVED}
+          memory: ${MEMORY_RESERVED}
+        # limits:
+          # cpus: ${CPU_LIMIT}
+          # memory: ${MEMORY_LIMIT}
+    # memswap_limit: ${MEMORY_SWAP_LIMIT}
+```
+- In many situations, containers run best with these limits commented out by default to prevent memory thrashing when the container hits limits and starts swapping aggressively to the host.
+
+Reverse proxy is included
+```
+  nginx:
+    <<: *common-config
+    image: nginx:alpine
+    container_name: ${CONTAINER_NAME}-nginx
+    
+    ports:
+      - "${NGINX_PORT_HTTPS}:${NGINX_CONTAINER_PORT_HTTPS}"
+    
+    env_file:
+      - .env
+
+... etc ...
+```
+- Note that nginx also is parameterized and typically does not need any manual configuration. All nginx settings are controlled via environment variables in the `.env` file, such as `NGINX_PORT_HTTPS`, `NGINX_CONTAINER_PORT_HTTPS`, etc.
+
+### Structure
+
+This section outlines the file organization of the library, which enables modular layering for separating agent instances, shared resources, and optional extensions—allowing safe, independent management of each component.
+
+```
+Boot Code Storybook Layers
+├── /containers/          # Agent instances (e.g., a0-template, a0-myagent)
+│   ├── docker-compose.yml
+│   ├── .env
+│   └── nginx/            # Reverse proxy
+├── /layers/              # Abstracted configurations and data
+│   ├── common/           # Shared across agents (tools, prompts, knowledge)
+│   └── a0-template/      # Agent-specific layers
+└── /volumes/             # Optional external volumes
+    ├── common/
+    ├── private/
+    ├── public/
+    └── shared/
+```
+
+This layered approach allows for fine-grained control, where common elements are shared read-only, and agent-specific ones are writable.
+
+#### /containers/
+
+```
+a0-template/
+├── docker-compose.yml
+├── .env.example
+└── nginx/
+    └── (nginx config)
+```
+
+- These are individual agent instances. Copy `a0-template` to a new name, rename `.env.example` to `.env`, then edit `.env` to customize.
+- `docker-compose.yml` is parameterized for easy deployment.
+
+#### /layers/
+
+```
+a0-template/          # Agent-specific layers
+common/               # Shared across agents
+├── agents/
+│   ├── _symlink/     # Centralized extensions, prompts, tools
+│   │   ├── extensions/
+│   │   ├── prompts/
+│   │   └── tools/
+│   └── kairos/       # Subordinate agent for adversarial analysis
+├── instruments/      # Knowledge bases
+│   ├── default/
+│   └── tbc/
+├── knowledge/        # Main and solution-based content
+│   ├── default/
+│   └── tbc/
+│       ├── main/     # Core content (narrative, technical)
+│       └── solutions/# Specialized solutions
+├── prompts/          # System and overrides
+│   ├── overrides/
+│   └── system/
+│       ├── external/ # External prompt references
+│       ├── features/
+│       └── profiles/ # liminal_thinking, philosophy, reasoning, workflow
+└── python/
+    └── helpers/      # Custom helpers
+        ├── files.py
+        ├── kokoro_tts.py
+        └── system_control.py
+```
+
+Detailed breakdown:
+
+- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
+
+#### /volumes/
+
+```
+common/
+├── prompts/
+│   └── tbc/          # External prompt files
+private/
+public/
+shared/
+```
+
+- Optional external volumes for additional data or configurations.
+
+### Knowledge Features of Agent Zero
+
+#### Knowledge
+#### Solutions
+
+### Extensibility Features of Agent Zero
+
+#### Extensions
+Extensions enable custom behaviors layered on top of the core framework. For example, `message_loop_prompts_after` can add post-interaction summaries, enhancing agent responsiveness.
+
+#### Helpers
+Helpers provide utility functions for advanced control. For instance, `system_control.py` manages dynamic profile switching, allowing agents to adapt modes (e.g., from "casual" to "formal") based on context.
+
+#### Tools
+Tools expand agent capabilities with new functions. An example is the `a2a_chat` tool for secure agent-to-agent messaging, enabling collaborative workflows without external APIs.
+
+### Prompts in Agent Zero
+
+### More About Agent Zero
+
+## Final Thoughts
+
+### The Boot Code Storybook is it Limited to Agent Zero?
+
+Nope. I just really like it and it is so perfectly fitting for the narrative-technical development.
+
+Likely there will be expansion into other areas and libraries as the public-facing side of the project evolves. Those might include any number of custom programs and public projects. Some may be more independent components nand services while some may be more integrated; think layers, where new tools or knowledge can be added modularly without altering the core structure.
+
+The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
+
+Use your imagination. Or perhaps use Agent Zero to build it together with you. For instance, by layering custom extensions and prompts, users can create new agent behaviors without touching the core engine, enabling organic growth through experimentation.
+
+### Disclaimers
+
+This is an ongoing live development project.
+
+### Attribution
+
+Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
+
+#### Agent Zero is a personal, organic agentic framework that grows and learns with you
+- Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it—for example, by accumulating custom knowledge bases and adapting prompts based on interactions, without requiring code changes.
+- Agent Zero is fully transparent, readable, comprehensible, customizable, and interactive.
+- Agent Zero uses the computer as a tool to accomplish its (your) tasks.
+
+https://github.com/agent0ai/agent-zero
+
+### Glossary
+
+- **Agent Zero**: An open-source AI framework for building customizable agents that learn and adapt.
+- **Boot Code**: Persistent narrative and technical data that "activates" the system's creative feedback loop.
+- **Feedback Machine**: The dynamic interplay between storytelling and code execution, enabling organic agent growth.
+- **Finder**: A user who discovers and shares the secrets of The Boot Code Storybook.
+- **Layers**: Abstracted directories (e.g., `/layers/`) for shared configs, avoiding direct core modifications.
+- **Narrative Driven Development**: Building software where stories guide technical features and user experiences.
