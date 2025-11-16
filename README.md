@@ -3,7 +3,9 @@ Agent Zero Deployment Library for The Boot Code Storybook Project
 
 This README serves two interconnected purposes: (1) a practical guide for deploying and customizing Agent Zero instances using the tbc-library's layered approach, and (2) an introduction to the narrative philosophy of The Boot Code Storybook, where technical systems and storytelling converge to enable organic, creative development. A key innovation is the self-revealing orchestration via bind mounts, granting agents direct, transparent access to their own layers and structure for autonomous operation.
 
-This is a living framework—dive in, experiment, and contribute. It's not exhaustive; your innovations expand it. Question assumptions and explore alternatives as you build; agents and users alike can redefine possibilities through self-revealing discovery.
+This is a living framework—dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
+
+> **Adaptability**: Treat obstacles as prompts to question assumptions and explore alternatives. Adaptability is key to unlocking the project's full potential.
 
 ### What is Agent Zero?
 Agent Zero is an open-source, personal agentic framework that grows and learns with you. It acts as a dynamic AI assistant capable of handling tasks, managing conversations, and adapting through extensions and prompts. Think of it as a customizable AI 'engine' that can be extended for various roles (e.g., creative writing, technical analysis) without deep coding knowledge. For more details, visit [Agent Zero on GitHub](https://github.com/agent0ai/agent-zero).
@@ -663,9 +665,12 @@ The project will likely expand into other areas and libraries as the public-faci
 
 The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
 
-Use your imagination. You can also use Agent Zero to build it with you—and even have agents create, maintain, and evolve other agents autonomously, leveraging self-revealing orchestration for a generative ecosystem. By layering custom extensions and prompts, you can create new agent behaviors without touching the core engine, enabling organic growth through experimentation and collaboration.
+Use your imagination. You can also use Agent Zero to:
 
-Throughout, treat obstacles as prompts to question assumptions and explore alternatives. Adaptability is key to unlocking the project's full potential.
+- create, maintain, and evolve other agents autonomously by leveraging self-revealing orchestration, and
+- layer custom extensions and prompts to add new behaviors without touching the core engine.
+
+This enables organic growth through experimentation and collaboration.
 
 ### Disclaimers
 
@@ -686,4 +691,4 @@ https://github.com/agent0ai/agent-zero
 - **Layers**: Abstracted directories (e.g., `/layers/`) for shared configs, avoiding direct core modifications.
 - **Narrative Driven Development**: Building software where stories guide technical features and user experiences.
 - **Self-Revealing Orchestration**: Bind mount system that provides agents with direct, transparent access to their own layers and structure.
-- **Adaptability**: The practice of questioning assumptions and treating obstacles as prompts to explore alternatives, learn, and evolve the system over time.
+- **Adaptability**: Willingness to revisit assumptions and adjust behavior when obstacles or new information appear.
