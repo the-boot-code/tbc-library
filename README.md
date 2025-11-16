@@ -9,7 +9,54 @@ This library is organized into layers, each serving a specific purpose in the Bo
 2. **Explore the Codebase**: Navigate through the directories to understand how different components interact.
 3. **Customize for Your Needs**: Modify the code to fit your specific requirements while maintaining the core structure.
 
-### Installation
+### Installation (Scripted)
+
+Navigate to the directory where you want to clone the library:
+```bash
+cd /path/to/your/directory
+git clone https://github.com/the-boot-code/tbc-library.git
+cd tbc-library
+```
+
+A script `create_agent.sh` is provided in the root of `tbc-library` to automate agent creation.
+
+**Important Notes:**
+- The script will fail if a container directory for the new agent already exists, to prevent accidental data loss. Remove it manually (e.g., `rm -rf containers/a0-myagent`) if you want to recreate.
+- Existing layers data (e.g., API keys in `/layers/[dest_container]/.env`) is preserved and not overwritten.
+- The source container can be any existing agent (e.g., `a0-template` or `a0-demo`), allowing you to clone and customize agents.
+
+**Usage:**
+```bash
+./create_agent.sh <source_container> <dest_container> <source_display> <dest_display> [port_base] [knowledge_dir]
+```
+
+**Example:**
+```bash
+chmod +x create_agent.sh
+./create_agent.sh a0-template a0-myagent Template MyAgent 600
+```
+
+**Example with knowledge directory:**
+```bash
+./create_agent.sh a0-template a0-myagent Template MyAgent 600 custom
+```
+
+**Example with defaults:**
+```bash
+./create_agent.sh a0-template a0-myagent Template MyAgent
+```
+
+This script:
+- Copies the source container directory to the destination.
+- Updates configurations with the new container name, and optionally port base and/or knowledge directory (leaves unchanged from the source if not specified).
+- Starts Docker containers in detached mode.
+- Copies the entire layers directory (if not existing) to include all source agent files (e.g., tmp/, conf/), then updates agent profiles with customizations.
+- Handles replacements for lowercase container names and proper display names (e.g., 'a0-template' → 'a0-myagent', 'Template' → 'MyAgent').
+- Safely layers the `/a0/.env` file to `/layers/[dest_container]/.env` for security, preserving existing content if present, and uncommenting the volume.
+
+After running, check the `.env` file for port settings and customize further if needed.
+
+### Installation (Step by Step)
 
 Navigate to the directory where you want to clone the library:
 ```bash
@@ -122,9 +169,34 @@ Either edit the file or use `sed`
 sed -i 's/A0-Template/A0-MyAgent/g' extensions/agent_init/_05_agent_name.py
 ```
 
+To ensure changes to Python files take effect, restart the Docker containers:
+```bash
+docker compose restart
+```
 
+After following these steps, check the `.env` file for port settings and customize further if needed. Your agent should be accessible at the configured ports.
 
-## Introduction and Narrative Vision
+**Optional: Layer the /a0/.env file for security**
+
+To keep sensitive API keys and auth details abstracted in the layers directory (recommended for security):
+
+1. Wait a few seconds for the container to fully start and generate `/a0/.env`.
+2. From the `containers/a0-myagent` directory, copy the file from the container:
+   ```bash
+   docker cp a0-myagent:/a0/.env ../../layers/a0-myagent/.env
+   ```
+3. Uncomment the volume mapping in `docker-compose.yml` (remove the `#`):
+   ```yaml
+   - ${AGENT_LAYER}/.env:/a0/.env:rw
+   ```
+4. Restart the containers to apply the layering:
+   ```bash
+   docker compose restart
+   ```
+
+This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict—follow the order carefully.
+
+## Introduction and Narrative
 
 This library was created to serve as a centralized repository for managing and deploying artificial intelligence agents and their configurations. It provides a structured approach to organizing and maintaining the various narratives and configurations used in the Boot Code Storybook project.
 
@@ -292,7 +364,7 @@ In this approach, all prompt files are mounted read-only from the common layer, 
 - Note that management may be done via IDE editor or direct file system access by the user keeping the agent safe from accidental modification.
 - This pattern can be extended to other directories as needed.
 
-If you really want **everything** to be "layered" and abstracted from the /a0 runtime of the Agent Zero container...
+If you want `/a0/.env` to be "layered" and abstracted from the `a0` runtime of the Agent Zero container...
 
 Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
 
