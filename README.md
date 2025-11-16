@@ -1,7 +1,9 @@
 # tbc-library
 Agent Zero Deployment Library for The Boot Code Storybook Project
 
-This README serves two interconnected purposes: (1) a practical guide for deploying and customizing Agent Zero instances using the tbc-library's layered approach, and (2) an introduction to the narrative philosophy of The Boot Code Storybook, where technical systems and storytelling converge to enable organic, creative development.
+This README serves two interconnected purposes: (1) a practical guide for deploying and customizing Agent Zero instances using the tbc-library's layered approach, and (2) an introduction to the narrative philosophy of The Boot Code Storybook, where technical systems and storytelling converge to enable organic, creative development. A key innovation is the self-revealing orchestration via bind mounts, granting agents direct, transparent access to their own layers and structure for autonomous operation.
+
+This is a living framework—dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
 
 ### What is Agent Zero?
 Agent Zero is an open-source, personal agentic framework that grows and learns with you. It acts as a dynamic AI assistant capable of handling tasks, managing conversations, and adapting through extensions and prompts. Think of it as a customizable AI 'engine' that can be extended for various roles (e.g., creative writing, technical analysis) without deep coding knowledge. For more details, visit [Agent Zero on GitHub](https://github.com/agent0ai/agent-zero).
@@ -17,7 +19,7 @@ If you're here to deploy Agent Zero quickly:
 2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent`
 3. Access at configured ports (check `.env`).
 
-For full details, see Installation below. Skip to Technical Deep Dive for architecture.
+This is one streamlined path for quick deployment—feel free to skip steps or adapt for your needs. For full details, see Installation below. Skip to Technical Deep Dive for architecture.
 
 ## Introduction and Narrative
 
@@ -87,7 +89,8 @@ This loop represents the dynamic interplay between storytelling and code executi
 
 ## Prerequisites
 
-Before using the tbc-library, ensure you have:
+At minimum, you'll need the following to get started (or equivalents for alternative setups):
+
 - **Docker and Docker Compose**: Installed and running (for container orchestration).
 - **Git**: For cloning the repository.
 - **Basic Shell Knowledge**: Familiarity with command-line operations like `cd`, `cp`, `sed`.
@@ -96,11 +99,15 @@ Before using the tbc-library, ensure you have:
 
 ## How to Use
 
+Here's a general workflow to get oriented:
+
 1. **Understand the Layered Structure**: The library organizes deployments into containers (for individual agent instances) and layers (for shared configurations, prompts, and data).
 
 2. **Explore the Codebase**: Navigate key directories like `/containers` for base setups and `/layers` for customizations.
 
 3. **Customize for Your Needs**: Modify `.env` files for ports and settings, add prompt files for agent behaviors, or extend functionality via scripts and extensions.
+
+Use this as a starting point—agents and users alike can redefine these steps through self-revealing orchestration.
 
 Choose the automated script for quick setup or follow the manual steps below.
 
@@ -154,7 +161,7 @@ After running, check the `.env` file for port settings and customize further if 
 
 ### Installation (Step by Step)
 
-**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`.
+**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`. Experiment here—e.g., try different source containers or skip layers to customize your workflow.
 
 #### 1. Clone the Repository
 Navigate to the directory where you want to clone the library:
@@ -289,6 +296,8 @@ docker compose restart
 
 After following these steps, check the `.env` file for port settings and customize further if needed. Your agent should be accessible at the configured ports.
 
+These steps are illustrative; the script automates for speed, but manual tweaks encourage deeper understanding.
+
 **Troubleshooting**: If ports are in use, change `PORT_BASE` in `.env`. Ensure Docker is running and you have permissions.
 
 **Optional: Layer the /a0/.env file for security**
@@ -311,9 +320,37 @@ To keep sensitive API keys and auth details abstracted in the layers directory (
 
 This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict—follow the order carefully.
 
+### Self-Revealing Orchestration: Direct Agent Access via Bind Mounts
+
+The docker-compose.yml leverages bind mounts to create a self-revealing orchestration, where the agent gains direct, transparent access to its own layers and orchestration elements. This eliminates the need for complex pathing logic, allowing Agent Zero to interact with its configurations, data, and even its own container structure as native paths within the container.
+
+#### Direct /a0/ Layer Mappings
+
+These mappings provide agent-specific access to layers directly under `/a0/`, enabling seamless internal operations, including but not limited to:
+
+- `${AGENT_LAYER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}` → Agent profiles accessible at `/a0/agents/${CONTAINER_NAME}`.
+- `${AGENT_LAYER}/conf:/a0/conf` → Configuration files at `/a0/conf`.
+- `${AGENT_LAYER}/memory:/a0/memory` → Memory data at `/a0/memory`.
+- `${AGENT_LAYER}/logs:/a0/logs` → Logs at `/a0/logs`.
+- `${AGENT_LAYER}/tmp:/a0/tmp` → Temp files at `/a0/tmp`.
+- `${AGENT_LAYER}/work_dir:/a0/work_dir` → Working directory at `/a0/work_dir`.
+
+This setup allows Agent Zero to treat its layers as intrinsic container paths, simplifying extensions and enabling organic growth without external dependencies.
+
+#### Composition Mappings for Self-Access
+
+The composition mappings provide the agent with 100% certain direct access to its own orchestration and structure, fostering self-awareness and autonomy, including but not limited to:
+
+- `${AGENT_ORCHESTRATION}:/agent_orchestration:ro` → Read-only access to the agent's orchestration directory, allowing introspection of its own setup. *Example*: The agent can read its `docker-compose.yml` from `/agent_orchestration` to dynamically discover port mappings or container names, enabling self-configuring behaviors without hardcoded values.
+- `${AGENT_CONTAINER}:/agent_container:rw` → Read-write access to the container's root `/a0`, enabling full self-modification and layering.
+- `${AGENT_LAYER}:/agent_layer:rw` → Direct manipulation of the agent's layer directory for dynamic configurations.
+- `${COMMON_LAYER}:/common_layer:ro` → Shared resources accessible without duplication, ensuring consistency across agents.
+
+These mappings empower the agent to reveal and control its own existence, blurring the line between container and host, and supporting advanced self-evolving behaviors. With this self-knowledge, the agent not only understands its own configuration but is also empowered to modify, maintain, or even create other agents, fostering a truly autonomous and generative ecosystem.
+
 ## Technical Deep Dive
 
-The narrative of The Boot Code Storybook manifests technically through the tbc-library's layered architecture, where agents are abstracted and extensible like evolving stories. The following sections detail how this philosophy is implemented in Docker Compose, file structures, and Agent Zero modifications.
+The narrative of The Boot Code Storybook manifests technically through the tbc-library's layered architecture, where agents are abstracted and extensible like evolving stories. This includes the self-revealing orchestration via bind mounts, enabling agents direct access to their layers for autonomous operation. The following sections detail how this philosophy is implemented in Docker Compose, file structures, and Agent Zero modifications.
 
 ### The Engine - **Agent Zero**
 
@@ -333,6 +370,8 @@ These modifications demonstrate how the framework's flexibility turns abstract c
 
 **Warning**: Modifying Agent Zero files (even via layering) can introduce risks such as compatibility issues with upstream updates. Always test changes in a separate environment and consider contributing improvements back to the Agent Zero project. The tbc-library's approach minimizes core changes to ensure stability.
 
+That said, the layered approach is designed for safe experimentation—test in isolated environments and share discoveries.
+
 - [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
 
@@ -340,7 +379,7 @@ A third file, [system_control.py](layers/common/python/helpers/system_control.py
 
 ### Docker Compose Orchestration
 
-This section details how the library uses highly parameterized Docker Compose for deploying Agent Zero, enabling easy scaling, resource management, and volume mappings without modifying core files.
+This section details how the library uses highly parameterized Docker Compose for deploying Agent Zero, enabling easy scaling, resource management, and volume mappings without modifying core files. The bind mounts here enable the self-revealing orchestration described in the previous section, allowing agents direct access to their layers.
 
 Highly Parameterized Docker Compose
 
@@ -626,7 +665,7 @@ Likely there will be expansion into other areas and libraries as the public-faci
 
 The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
 
-Use your imagination. Or perhaps use Agent Zero to build it together with you. For instance, by layering custom extensions and prompts, users can create new agent behaviors without touching the core engine, enabling organic growth through experimentation.
+Use your imagination. Or perhaps use Agent Zero to build it together with you—and even have agents create, maintain, and evolve other agents autonomously, leveraging self-revealing orchestration for a truly generative ecosystem. For instance, by layering custom extensions and prompts, users and agents alike can create new agent behaviors without touching the core engine, enabling organic growth through experimentation and collaboration.
 
 ### Disclaimers
 
@@ -637,7 +676,7 @@ This is an ongoing live development project.
 Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
 
 #### Agent Zero is a personal, organic agentic framework that grows and learns with you
-- Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it—for example, by accumulating custom knowledge bases and adapting prompts based on interactions, without requiring code changes.
+- Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it—for example, by accumulating custom knowledge bases, adapting prompts based on interactions, and even empowering agents to introspect their own configurations, modify behaviors, or spawn new agents autonomously, without requiring code changes.
 - Agent Zero is fully transparent, readable, comprehensible, customizable, and interactive.
 - Agent Zero uses the computer as a tool to accomplish its (your) tasks.
 
@@ -651,3 +690,4 @@ https://github.com/agent0ai/agent-zero
 - **Finder**: A user who discovers and shares the secrets of The Boot Code Storybook.
 - **Layers**: Abstracted directories (e.g., `/layers/`) for shared configs, avoiding direct core modifications.
 - **Narrative Driven Development**: Building software where stories guide technical features and user experiences.
+- **Self-Revealing Orchestration**: Bind mount system that provides agents with direct, transparent access to their own layers and structure.
