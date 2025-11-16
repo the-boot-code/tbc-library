@@ -300,6 +300,10 @@ These steps are illustrative; the script automates for speed, but manual tweaks 
 
 **Troubleshooting**: If ports are in use, change `PORT_BASE` in `.env`. Ensure Docker is running and you have permissions.
 
+### Common Questions
+
+- **Where is my docker-compose.yml file?** It's located at `tbc-library/containers/[your_agent_name]/docker-compose.yml` (e.g., `a0-myagent`). *For agents*: From within your container, the most certain and direct access is via `/agent_orchestration/docker-compose.yml` through self-revealing bind mounts, allowing introspection without host-side inference.
+
 **Optional: Layer the /a0/.env file for security**
 
 To keep sensitive API keys and auth details abstracted in the layers directory (recommended for security):
