@@ -160,7 +160,7 @@ This script:
 
 ### Installation (Step by Step)
 
-**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`. Experiment here—e.g., try different source containers or skip layers to customize your workflow. Remember, what appears as a hurdle might be a lesson in adaptability; question and explore.
+**Tip**: If you prefer automation, you can use the script `./create_agent.sh a0-template a0-myagent Template MyAgent` and refer back to these steps when you want to understand or customize what it does.
 
 #### 1. Clone the Repository
 If you have not already cloned the repository, follow the commands in Installation (Scripted) above, then ensure you are in the `tbc-library` directory.
@@ -281,15 +281,19 @@ To ensure changes to Python files take effect, restart the Docker containers:
 docker compose restart
 ```
 
-After following these steps, check the `.env` file for port settings and customize further if needed. Your agent should be accessible at the configured ports.
-
 These steps are illustrative; the script automates for speed, but manual tweaks encourage deeper understanding.
 
 **Troubleshooting**: If ports are in use, change `PORT_BASE` in `.env`. Ensure Docker is running and you have permissions.
 
+### Post-Installation Verification
+
+- Ensure the containers are running (for example, `docker ps`).
+- Check the `.env` file for port settings and adjust as needed.
+- Access the agent at the configured ports to confirm it is reachable.
+
 ### Common Questions
 
-- **Where is my docker-compose.yml file?** It's located at `tbc-library/containers/[your_agent_name]/docker-compose.yml` (e.g., `a0-myagent`). *For agents*: From within your container, the most certain and direct access is via `/agent_orchestration/docker-compose.yml` through self-revealing bind mounts, allowing introspection without host-side inference. For modification, explore alternative mounts (e.g., `/containers/[your_agent_name]/docker-compose.yml`) and check permissions—self-revealing orchestration empowers flexible self-modification and autonomy by revealing multiple access paths. This is just one example; apply self-understanding and adaptability throughout many areas to evolve organically.
+- **Where is my docker-compose.yml file?** It's located at `tbc-library/containers/[your_agent_name]/docker-compose.yml` (e.g., `a0-myagent`). *For agents*: From within your container, the most certain and direct access is via `/agent_orchestration/docker-compose.yml` through self-revealing bind mounts, allowing introspection without host-side inference. For modification, explore alternative mounts (e.g., `/containers/[your_agent_name]/docker-compose.yml`) and check permissions—self-revealing orchestration empowers flexible self-modification and autonomy by revealing multiple access paths. This is just one example; apply this pattern in other areas to evolve your agents and workflows over time.
 
 **Optional: Layer the /a0/.env file for security**
 
@@ -339,7 +343,6 @@ The composition mappings provide the agent with 100% certain direct access to it
 
 Note: While some mounts are read-only (ro) for system protection and certain introspection, others are read-write (rw), empowering agents to modify their own files (e.g., docker-compose.yml via `/containers/[agent_name]/docker-compose.yml` for full autonomy). This balance enables safe self-awareness while allowing generative evolution.
 
-These mappings empower the agent to reveal and control its own existence, blurring the line between container and host, and supporting advanced self-evolving behaviors. With this self-knowledge, the agent not only understands its own configuration but is also empowered to modify, maintain, or even create other agents, fostering a truly autonomous and generative ecosystem. Remember, self-revealing orchestration is a lesson in itself: perceived limitations are often false obstacles—explore and adapt to transcend them.
 These mappings empower the agent to reveal and control its own existence, blurring the line between container and host, and supporting advanced self-evolving behaviors. With this self-knowledge, the agent not only understands its own configuration but is also empowered to modify, maintain, or even create other agents, fostering a truly autonomous and generative ecosystem.
 
 ## Technical Deep Dive
@@ -660,9 +663,9 @@ The project will likely expand into other areas and libraries as the public-faci
 
 The Boot Code Storybook is a living, breathing, evolving project. It is not limited to Agent Zero, but rather what you find here is a framework to take part in building an idea.
 
-Use your imagination. Or perhaps use Agent Zero to build it together with you—and even have agents create, maintain, and evolve other agents autonomously, leveraging self-revealing orchestration for a truly generative ecosystem. For instance, by layering custom extensions and prompts, users and agents alike can create new agent behaviors without touching the core engine, enabling organic growth through experimentation and collaboration.
+Use your imagination. You can also use Agent Zero to build it with you—and even have agents create, maintain, and evolve other agents autonomously, leveraging self-revealing orchestration for a generative ecosystem. By layering custom extensions and prompts, you can create new agent behaviors without touching the core engine, enabling organic growth through experimentation and collaboration.
 
-Throughout, treat obstacles as prompts to question assumptions and explore alternatives; adaptability is key to unlocking the project's full potential.
+Throughout, treat obstacles as prompts to question assumptions and explore alternatives. Adaptability is key to unlocking the project's full potential.
 
 ### Disclaimers
 
