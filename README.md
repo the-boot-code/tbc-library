@@ -19,25 +19,110 @@ git clone https://github.com/the-boot-code/tbc-library.git
 
 The library will be cloned into a folder named `tbc-library` in your current directory.
 
-copy the directory /path/to/your/directory/tbc-library/containers/a0-template to your desired name such as a0-myagent
+copy the directory tbc-library/containers/a0-template to your new agent directory named a0-myagent:
 ```bash
-cp -r /path/to/your/directory/tbc-library/containers/a0-template /path/to/your/directory/tbc-library/containers/a0-myagent
+cp -r tbc-library/containers/a0-template tbc-library/containers/a0-myagent
 ```
 
-Now you can customize the agent container modifying the files in the `a0-myagent` directory. In this direcrory you will find the `docker-compose.yml` file and `.env.example` file.
+Navigate to the directory of the agent container:
+```bash
+cd tbc-library/containers/a0-myagent
+```
 
-The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
+Copy the `.env.example` file to `.env` and update the environment variables as needed.
+```bash
+cp .env.example .env
+```
 
-Rename the `.env.example` file to `.env` and update the environment variables as needed.
-
+Now you can customize the agent container modifying `.env` file.
 ```
 CONTAINER_NAME=a0-template
 PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
 KNOWLEDGE_DIR=tbc
 ```
-- CONTAINER_NAME change to the directory name `a0-myagent`
-- PORT_BASE change to a unique value "prefix" for this agent (e.g., 500 for **Agent Zero** to run on ports http 50080 and ssh 50022 and **nginx** on https 50043)
-- KNOWLEDGE_DIR leave as `tbc` to get up and running with the `tbc-library` knowledgebase directory
+- `CONTAINER_NAME` change to the directory name `a0-myagent`
+- `PORT_BASE` change to a unique value "prefix" for this agent (e.g., 500 for **Agent Zero** to run on ports http 50080 and ssh 50022 and **nginx** on https 50043)
+- `KNOWLEDGE_DIR` leave as `tbc` to get up and running with the `tbc-library` knowledgebase directory
+
+The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
+
+Docker compose once you are ready
+```bash
+docker compose up -d
+```
+
+- This pulls the Agent Zero image and creates the bind mounts
+
+You should now see the Agent Zero directoty `/a0` created in your container
+```
+tbc-library/containers/a0-myagent/a0
+```
+
+You should also see the agent directory created in the `/layers` of your **tbc-library**
+```
+tbc-library/layers/a0-myagent
+```
+
+Navigate to the `/layers` directory
+```bash
+cd ../../layers
+```
+or
+```bash
+cd /path/to/your/directory/tbc-library/layers
+```
+
+We are going to populate your agent directory from the `a0-template`
+```bash
+cp -r a0-template/agents/a0-template/* a0-myagent/agents/a0-myagent
+```
+Navigate to the agent profile directory
+```bash
+cd a0-myagent/agents/a0-myagent
+```
+
+Now you should see the agent files and subdirectories populated in your agent directory.
+```
+extensions/
+prompts/
+tools/
+_context.md
+```
+
+Agent Zero recognizes the agent profile file `_context.md` we must update the agent name from `a0-template` to `a0-myagent`
+```
+# a0-template
+- main agent of the system
+- communicates to user and delegates to subordinates
+- general purpose assistant, communication skills, formatted output
+```
+
+Edit the file or use `sed`
+```bash
+sed -i 's/a0-template/a0-myagent/g' _context.md
+```
+
+Agent Zero presents a welcome message at the beginning of each chat conversation based on the file in `prompts/fw.initial_message.md` and where it states its name.
+```
+"text": "**Hello! 👋**, I'm **Agent Zero Template**, your AI assistant. How can I help you today?"
+```
+
+Either update the file to your liking or use `sed`
+```bash
+sed -i 's/Agent Zero Template/Agent Zero MyAgent/g' prompts/fw.initial_message.md
+```
+
+Agent Zero has an extension file `extensions/agent_init/_05_agent_name.py` that sets the agent name
+```
+self.agent.agent_name = "A0-Template-" + str(self.agent.number)
+```
+
+Either edit the file or use `sed`
+```bash
+sed -i 's/A0-Template/A0-MyAgent/g' extensions/agent_init/_05_agent_name.py
+```
+
+
 
 ## Introduction and Narrative Vision
 
