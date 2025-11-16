@@ -66,7 +66,9 @@ git clone https://github.com/the-boot-code/tbc-library.git
 
 The library will be cloned into a folder named `tbc-library` in your current directory.
 
-copy the directory tbc-library/containers/a0-template to your new agent directory named a0-myagent:
+**Note**: Ensure the source container (e.g., `a0-template`) exists: `ls tbc-library/containers/a0-template`. If not, use an existing one like `a0-demo` for cloning.
+
+Copy the directory tbc-library/containers/a0-template to your new agent directory named a0-myagent:
 ```bash
 cp -r tbc-library/containers/a0-template tbc-library/containers/a0-myagent
 ```
@@ -76,9 +78,9 @@ Navigate to the directory of the agent container:
 cd tbc-library/containers/a0-myagent
 ```
 
-Copy the `.env.example` file to `.env` and update the environment variables as needed.
+Copy the `.env.example` file to `.env` and update the environment variables as needed. If cloning an existing agent, the copied directory may already have a `.env` file—preserve it and edit as needed. Otherwise, create from `.env.example`.
 ```bash
-cp .env.example .env
+cp .env.example .env  # Only if .env doesn't exist
 ```
 
 Now you can customize the agent container modifying `.env` file.
@@ -93,6 +95,12 @@ KNOWLEDGE_DIR=tbc
 
 The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
 
+**For security layering**: Before running Docker, uncomment the volume line in `docker-compose.yml` to mount `.env` on startup:
+```yaml
+- ${AGENT_LAYER}/.env:/a0/.env:rw
+```
+(This avoids needing a restart later.)
+
 Docker compose once you are ready
 ```bash
 docker compose up -d
@@ -100,7 +108,7 @@ docker compose up -d
 
 - This pulls the Agent Zero image and creates the bind mounts
 
-You should now see the Agent Zero directoty `/a0` created in your container
+You should now see the Agent Zero directory `/a0` created in your container
 ```
 tbc-library/containers/a0-myagent/a0
 ```
@@ -119,9 +127,9 @@ or
 cd /path/to/your/directory/tbc-library/layers
 ```
 
-We are going to populate your agent directory from the `a0-template`
+We are going to populate your agent directory from the `a0-template`. Use `rsync` to safely copy and preserve any existing custom files:
 ```bash
-cp -r a0-template/agents/a0-template/* a0-myagent/agents/a0-myagent
+rsync -a --ignore-existing a0-template/ a0-myagent/
 ```
 Navigate to the agent profile directory
 ```bash
@@ -135,6 +143,8 @@ prompts/
 tools/
 _context.md
 ```
+
+**Tip**: For faster setup, use the script to automate customization: `./create_agent.sh a0-template a0-myagent Template MyAgent`.
 
 Agent Zero recognizes the agent profile file `_context.md` we must update the agent name from `a0-template` to `a0-myagent`
 ```
@@ -175,6 +185,8 @@ docker compose restart
 ```
 
 After following these steps, check the `.env` file for port settings and customize further if needed. Your agent should be accessible at the configured ports.
+
+**Troubleshooting**: If ports are in use, change `PORT_BASE` in `.env`. Ensure Docker is running and you have permissions.
 
 **Optional: Layer the /a0/.env file for security**
 
@@ -366,15 +378,15 @@ In this approach, all prompt files are mounted read-only from the common layer, 
 
 If you want `/a0/.env` to be "layered" and abstracted from the `a0` runtime of the Agent Zero container...
 
-Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. This file **MUST** exist at `/layers/[container_name]/.env` prior to running docker compose otherwise an empty directory will instead be created by the same name causing a failure as well as a subsequent conflict.
+Un-Comment the following to mount the Agent Zero `/a0/.env` file to container. For best results, do this **before** running `docker compose up -d` so the layered `.env` is mounted from the start:
 
 ```
-      # - ${AGENT_LAYER}/.env:/a0/.env:rw
+      - ${AGENT_LAYER}/.env:/a0/.env:rw
 ```
 
-- Understand this `.env` file is the one that is mapped to the container at `/a0/.env` - the one that contains sensitive information used by Agent Zero for your API keys and authentication.  Careful not to confuse this with the `.env` file in the directory of `docker-compose.yml` which is different.
-- This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise docker compose wil create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
-- Alternatively, the first run of compose may be done while commented out which creates the `/a0/.env` file which can then be 1. moved to the `/layers/[container_name]/.env` layer location 2. uncomment the mapping line in `docker-compose.yml` 3. docker compose restart
+- Understand this `.env` file is the one that is mapped to the container at `/a0/.env` - the one that contains sensitive information used by Agent Zero for your API keys and authentication. Careful not to confuse this with the `.env` file in the directory of `docker-compose.yml` which is different.
+- This file **MUST** exist at `/layers/[container_name]/.env` prior to running compose otherwise Docker Compose will create an empty directory by the same name thus causing a failure as well as a subsequent conflict.
+- **Best Practice**: Uncomment the volume line before `docker compose up -d` to mount it immediately, avoiding the need for a restart. If the layered `.env` doesn't exist yet, run `docker compose up -d` with the line commented, let the container generate `/a0/.env`, then copy it to `/layers/[container_name]/.env`, uncomment the line, and restart.
 
 The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
 
