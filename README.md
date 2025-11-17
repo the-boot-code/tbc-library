@@ -839,7 +839,7 @@ When you run `./create_agent.sh a0-template a0-myagent Template MyAgent`:
 
 - A new agent profile directory `layers/a0-myagent/agents/a0-myagent` (mounted into the container at `/layers/a0-myagent/agents/a0-myagent`) is created, preserving the same symlink structure.
 - Centralized tools and prompts continue to live under `layers/common/agents/_symlink` (mounted at `/layers/common/agents/_symlink`), so improvements there automatically apply to `a0-myagent` (and other agents) without copying or manual synchronization.
-- You typically only need to adjust the new agent's `_context.md`, greeting/identity prompts, and any local overrides, keeping per-agent maintenance small while benefiting from shared evolution of the common library.
+- For a new agent such as `a0-myagent`, you typically only need to adjust its copies of `_context.md`, the greeting prompt (`prompts/fw.initial_message.md`), the main identity prompt (for example, `prompts/a0-myagent.md` derived from `a0-template.md`), the agent-name extension (`extensions/agent_init/_05_agent_name.py`), and any local overrides, keeping per-agent maintenance small while benefiting from shared evolution of the common library.
 
 #### /volumes/
 
