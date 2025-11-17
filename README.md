@@ -139,7 +139,7 @@ After the container is running, you still configure Agent Zero itself primarily 
 
 For a complete walkthrough of these settings, refer to the upstream installation guide shipped with Agent Zero:
 
-- On the host in this deployment: `containers/a0-template/a0/docs/installation.md`.
+- On the host in this deployment: `containers/a0-myagent/a0/docs/installation.md`.
 - From inside a running container: `/a0/docs/installation.md` (via the `${AGENT_CONTAINER}:/a0` bind mount).
 
 This README focuses on how `tbc-library` layers on top of Agent Zero; the detailed semantics of each setting are governed by the upstream Agent Zero project and its documentation.
