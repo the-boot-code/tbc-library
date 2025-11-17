@@ -463,8 +463,12 @@ These modifications demonstrate how the framework's flexibility turns abstract c
 
 That said, the layered approach is designed for safe experimentation: test in isolated environments, share discoveries, and explore variations to unlock new capabilities over time.
 
-- [files.py](layers/common/python/helpers/files.py) - extends the Agent Zero helper so that `VariablesPlugin.get_variables`, `load_plugin_variables`, `parse_file`, and `read_prompt_file` all accept and forward `**kwargs`. This allows prompt plugins to receive rich runtime context (for example, `agent=self.agent`, `loop_data`, or other parameters) and compute variables for templates, while includes still see only the direct kwargs for each file (**required**).
-- [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
+- [files.py](layers/common/python/helpers/files.py) (**required**) – kwargs-enabled prompt helper:
+  - `VariablesPlugin.get_variables(file, backup_dirs=None, **kwargs)` accepts runtime context.
+  - `load_plugin_variables(file, backup_dirs=None, **kwargs)` forwards `**kwargs` into plugin implementations.
+  - `parse_file(..., **kwargs)` passes `**kwargs` through to both `load_plugin_variables` and `process_includes`.
+  - `read_prompt_file(..., **kwargs)` does the same for prompt files, so plugins can compute variables from rich context (for example, `agent=self.agent`, `loop_data`) while includes still only see the direct kwargs for each file.
+- [kokoro.py](layers/common/python/helpers/kokoro.py) (**optional**) – testing modifications to reduce resource usage.
 
 A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a core **helper** to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
 
