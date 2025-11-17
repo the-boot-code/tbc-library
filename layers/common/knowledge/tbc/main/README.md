@@ -1041,7 +1041,7 @@ This is an ongoing live development project.
 
 - tbc-library does not yet have a version assigned
 - a0-template/.env.example currently is set to IMAGE_NAME=agent0ai/agent-zero:latest
-- Development is in progress integrating the anticipating Agent Zero v097 upcoming Projects functionality with tbc-library
+- Development is in progress integrating the anticipated Agent Zero v097 upcoming Projects functionality with tbc-library
 
 ### Attribution
 
