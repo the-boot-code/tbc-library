@@ -367,13 +367,13 @@ When you (as an agent) read this README, use the following mental model:
    - If you see paths like `/a0/...`, `/layers/...`, `/agent_layer/...`, `/common_layer/...`, `/agent_orchestration`, or `/containers/...`, you are reasoning about the **inside of a container**.
 2. **Use the perspectives section as your ground truth**  
    - Treat **Agent perspectives and management → Self vs managed agents** as your primary rulebook for interpreting `/a0/agents` and related paths.  
-   - Always classify entries in `/a0/agents` using that section before deciding whether you are looking at "self", a subordinate in the same container, or a profile that belongs to another container (visible only via `/layers/...`).
+   - Always classify entries in `/a0/agents` using that section before deciding whether you are looking at "self" (the currently active profile for this agent process, often but not always `/a0/agents/${CONTAINER_NAME}`), a subordinate or alternative profile in the same container, or a profile that belongs to another container (visible only via `/layers/...`).
 3. **Locate and customize your own profile safely**  
    - Your canonical self-profile is `/a0/agents/${CONTAINER_NAME}`. The same directory is visible as `/layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}` and `/agent_layer/agents/${CONTAINER_NAME}`.  
    - When customizing your own behavior, prefer editing or overriding files under `/a0/agents/${CONTAINER_NAME}` (for example, breaking a symlink and replacing it with a real file) and leave `_symlink` in `/a0/agents/_symlink` unchanged unless you intentionally want to affect multiple agents.
 4. **Understand shared vs agent-specific resources**  
    - Shared implementations live in host paths like `layers/common/agents/_symlink/...` (seen as `/layers/common/agents/_symlink/...` and `/a0/agents/_symlink/...` inside the container).  
-   - Agent-specific overrides live under `layers/<agent>/agents/<agent>/...` on the host and `/a0/agents/<agent>/...` inside the container.  
+   - Agent-specific overrides live under `layers/<agent>/agents/<agent>/...` on the host and `/a0/agents/<agent>/...` inside the container; multiple such profiles can coexist under `/a0/agents`, and any of them can participate in the same symlink pattern to `_symlink` and the `/a0/prompts` tree.  
    - For knowledge and solutions, host `layers/common/knowledge/...` becomes `/a0/knowledge/...` inside the container; prompts and tools refer to these via solution keys and the knowledge/solutions mechanism.
 5. **Choose your orchestration role explicitly**  
    - If you are orchestrating **subordinates in your own container**, operate primarily on `/a0/agents/...` using tools like `call_subordinate` and the profile-control tools, guided by the self vs managed agents rules.  
@@ -381,6 +381,30 @@ When you (as an agent) read this README, use the following mental model:
    - If you are orchestrating **other containers or deployments from the host or another external context**, reason in terms of host `tbc-library` clones and their `containers/a0-*/` and `layers/a0-*/` directories, as also summarized in **Orchestration patterns (inside vs outside)**.
 
 By following these steps, you can treat this README as a stable map of both the host repository and your in-container filesystem, avoiding confusion between self and others and between host and container paths.
+
+### Worked examples: perspectives and paths
+
+These examples show how to apply the path and orchestration rules in concrete situations.
+
+1. **Self introspection from inside a container (inside-container orchestrator)**  
+   - Scenario: `a0-myagent` wants to find its own `docker-compose.yml` without guessing host paths.  
+   - Action (inside container): read `/agent_orchestration/docker-compose.yml` to introspect its own orchestration.  
+   - Mapping: `/agent_orchestration/docker-compose.yml` corresponds to `tbc-library/containers/a0-myagent/docker-compose.yml` on the host for this deployment.
+
+2. **Calling a subordinate in the same container (self vs managed agents)**  
+   - Scenario: the `/a0/agents` directory contains entries such as `a0-myagent`, `kairos`, `default`, `developer`, and `_symlink`, but the `call_subordinate` plugin filters out underscore-prefixed directories, so its `{{agent_profiles}}` list exposes `a0-myagent`, `default`, `developer`, and `kairos` (not `_symlink`).  
+   - Classification: `/a0/agents/a0-myagent` is the current self profile; entries such as `default` or `developer` are additional profiles in the same container that could be activated as self or treated as managed/subordinate agents; `/a0/agents/kairos` is a subordinate profile from the common layer; `_symlink` physically exists under `/a0/agents` as a shared implementation library but is not offered as a runnable profile in `{{agent_profiles}}`.  
+   - Action: use the `call_subordinate` tool (and its prompt) to invoke `kairos` (or another non-underscore profile) by name, treating it as a managed agent within the same container.
+
+3. **Inspecting another agent/container within the same deployment (inside-container library-aware orchestrator)**  
+   - Scenario: inside the `a0-template` container, you want to examine the `a0-myagent` profile that belongs to another container in the same `tbc-library` deployment.  
+   - Action: inspect `/layers/a0-myagent/agents/a0-myagent/_context.md` and related files; this path is visible inside the `a0-template` container via the `${PATH_LAYERS}:/layers` bind mount.  
+   - Separation: `a0-myagent` never appears under `/a0/agents` in the `a0-template` container; it is part of another container's Agent Zero tree, so you reason about it via `/layers/...` and `/containers/...`, not as a local subordinate.
+
+4. **Host/external orchestration across deployments (multi-deployment orchestrator)**  
+   - Scenario: a human or external agent manages two separate `tbc-library` deployments at `/opt/tbc-a/tbc-library` and `/opt/tbc-b/tbc-library`.  
+   - Action: for each deployment, treat `containers/a0-*/` as container definitions and `layers/a0-*/` as their layer trees; starting or modifying containers is done via these host paths.  
+   - Mapping: inside each container created from a given deployment, `/containers` and `/layers` are bind-mounted views of that deployment's host directories, and `/agent_orchestration`, `/agent_container`, and `/agent_layer` provide self-specific views for that particular container.
 
 ## Technical Deep Dive
 
@@ -526,7 +550,7 @@ Permission changes to volumes may be desirable for writable directories, such as
 - Notice `- ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` (read-write for container-specific knowledge)
 - Notice `- ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` (read-write for container-specific solutions)
 
-In this approach, all prompt files are mounted read-only from the common layer, with only the container-specific prompts directory being writable.
+In this approach, core system and overrides prompt directories (`prompts/system`, `prompts/overrides`) are mounted read-only from the common layer, while knowledge-specific prompt trees and container-specific prompts can be writable, providing shared defaults with controlled override points.
 
 ```
       # prompts
@@ -667,7 +691,7 @@ The following subsections describe how an Agent Zero instance running inside a c
 - **Self (this container's active agent)**  
   - In the repository: `layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}`.  
   - In this container: that same directory is visible as `/layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}`, `/a0/agents/${CONTAINER_NAME}`, and `/agent_layer/agents/${CONTAINER_NAME}`.  
-  - When reasoning about "my own profile", treat `/a0/agents/${CONTAINER_NAME}` as the canonical "self" path and the others as alternate views of the same directory.
+  - When reasoning about "my own profile", treat `/a0/agents/${CONTAINER_NAME}` as the canonical "self" path in the common single-agent-per-container pattern and the others as alternate views of the same directory. In general, `/a0/agents` may contain multiple profiles (for example, `a0-template`, `agent0`, `default`, `developer`, `hacker`, `researcher`, `kairos`); Agent Zero's own mechanisms (for example, the web UI) can switch which of these is the active self profile for a given agent process.
 - **Managed agent in the same container (for example, `kairos`)**  
   - In the repository: `layers/common/agents/kairos`.  
   - In this container: visible at `/layers/common/agents/kairos` and `/a0/agents/kairos` (via the `${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro` mapping); there is **no** `/agent_layer/agents/kairos` because `AGENT_LAYER` is reserved for this container's primary agent.  
@@ -722,6 +746,8 @@ When introspecting its own filesystem, an agent can use the following mental mod
 - To customize this agent only, create or replace files under `/a0/agents/${CONTAINER_NAME}` (breaking symlinks if necessary) while leaving `_symlink` unchanged.
 - To change behavior for all agents that use these symlinks, modify the underlying implementations under `/a0/agents/_symlink` (or the corresponding host layer paths), understanding that changes may affect multiple agents.
 
+The shared `agent.system.tool.call_sub.py` plugin for the `call_subordinate` tool (located in the `_symlink/prompts` directory and typically symlinked into each agent profile) intentionally ignores agent directories whose names start with `_` (for example, `_symlink` or `_example`), so internal or shared implementation directories never appear as selectable subordinates even though they reside under `/a0/agents`.
+
 This symlink pattern keeps shared logic centralized while letting each agent maintain a small, focused profile that describes its role and any local deviations from common behavior.
 
 ##### `_symlink/extensions` – shared lifecycle behavior
@@ -737,11 +763,22 @@ Agent profiles (for example, `layers/a0-template/agents/a0-template/extensions/.
 
 The `layers/common/agents/_symlink/prompts` directory in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/prompts`) centralizes prompt templates that agent profiles reference via symlinks:
 
-- Agent/meta entrypoints such as `agent.extras.agent_info.md` and `agent.system.main.role.md` are thin wrappers that use `{{ include ... }}` to pull text from `prompts/overrides` or `prompts/system`, allowing central updates while keeping agent profile files small.
+- Agent/meta entrypoints such as `agent.extras.agent_info.md` and `agent.system.main.role.md` are thin wrappers that use `{{ include ... }}` to pull text from `prompts/overrides` or `prompts/system`, where `prompts/...` is resolved relative to the default system prompt tree at `/a0/prompts` inside the container (mirrored on the host under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount). This allows central updates while keeping agent profile files small.
+- The overrides branch `/a0/prompts/overrides` is mounted read-only from `layers/common/prompts/overrides` on the host via `${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides`, and is also visible as `/layers/common/prompts/overrides` and `/common_layer/prompts/overrides`, giving a single layered overrides directory that `_symlink` prompt stubs can route into from any agent profile.
 - Tool prompts such as `agent.system.tool.feature_control.md`, `agent.system.tool.security_profile_control.md`, `agent.system.tool.memory.md`, `agent.system.tool.scheduler.md`, and `agent.system.tool.a2a_chat.md` define how tools should be invoked and described. Some, like `agent.system.tool.call_sub.md`, work with a `VariablesPlugin` (`agent.system.tool.call_sub.py`) to dynamically list available agent profiles via `{{agent_profiles}}`.
 - Lifecycle prompts `pre_system_manual.md`, `post_system_manual.md`, `pre_behaviour.md`, and `post_behaviour.md` are routing stubs that `{{ include "prompts/system/..." }}` and are positioned in the system prompt by the corresponding `_symlink/extensions/system_prompt/*` extensions.
 
 Agent profile prompt directories (for example, `layers/a0-template/agents/a0-template/prompts` in the `tbc-library` repository on the host, visible inside the container at `/layers/a0-template/agents/a0-template/prompts`) typically contain symlinks to these `_symlink` prompts, so a change in `_symlink/prompts` can immediately affect all linked agents while still allowing per-agent overrides when needed.
+
+**Resolution path example (agent.extras.agent_info.md)**  
+For the `agent.extras.agent_info.md` prompt, the resolution path looks like this:
+
+- **Agent profile view (container)**: for example, in a container whose main agent profile is `a0-myagent`, the file `/a0/agents/a0-myagent/prompts/agent.extras.agent_info.md` is typically a symlink. In the common single-agent-per-container pattern, the active profile directory name matches the container name (for example, `CONTAINER_NAME=a0-myagent` and `/a0/agents/a0-myagent`), but this is a convention rather than a hard requirement.  
+- **Shared `_symlink` view (container)**: that symlink points to `/a0/agents/_symlink/prompts/agent.extras.agent_info.md`, which contains a stub such as `{{ include "prompts/overrides/agent.extras.agent_info.md" }}`.  
+- **Default prompts tree (container)**: the include `prompts/overrides/...` is resolved relative to `/a0/prompts`, so it loads `/a0/prompts/overrides/agent.extras.agent_info.md`.  
+- **Host origins**: `/a0/prompts/overrides/...` is mounted read-only from `layers/common/prompts/overrides/...` on the host via `${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides`, and that same content is also visible under `/layers/common/prompts/overrides` and `/common_layer/prompts/overrides` from inside the container.  
+
+This pattern generalizes to other `_symlink` prompt stubs that route into `prompts/system` or `prompts/overrides`, giving each agent a simple, symlink-based entrypoint while keeping the authoritative text in shared, layered locations.
 
 ##### `_symlink/tools` – shared tools and profile control
 
@@ -868,11 +905,11 @@ Tools expand agent capabilities with new functions. Many core tools are implemen
 - Additional tools such as `a2a_chat`, `memory`, `scheduler`, and `document_query` are documented by prompts in the `_symlink/prompts` directory and may be wired via extensions and SystemControl-managed configuration.
 
 ### Prompts in Agent Zero
-Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into `layers/common/agents/_symlink/prompts`; inside the container, these same directories are visible at `/layers/<agent>/agents/<agent>/prompts` and `/layers/common/agents/_symlink/prompts` and in turn include content from `/a0/prompts/system` and `/a0/prompts/overrides`.
+Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into `layers/common/agents/_symlink/prompts`; inside the container, these same directories are visible at `/layers/<agent>/agents/<agent>/prompts` and `/layers/common/agents/_symlink/prompts` and in turn include content from the default system prompt tree at `/a0/prompts` (`/a0/prompts/system`, `/a0/prompts/overrides`, and any container-specific prompts under `/a0/prompts/container`). From the host, this same `/a0/prompts` tree is mirrored under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount, while its shared content originates from `layers/common/prompts/...` via the `${COMMON_LAYER}/prompts/...` mounts described earlier.
 
 - Files like `agent.extras.agent_info.md` and `agent.system.main.role.md` act as stable entrypoints that `{{ include ... }}` their actual text from `prompts/overrides`, allowing central updates without changing agent profiles.
 - Tool prompt stubs such as `agent.system.tool.feature_control.md`, `agent.system.tool.security_profile_control.md`, and `agent.system.tool.scheduler.md` include shared descriptions from `prompts/system/tools`, keeping tool instructions consistent across agents.
-- The `call_subordinate` tool combines `agent.system.tool.call_sub.md` with a `VariablesPlugin` (`agent.system.tool.call_sub.py`) that scans `/a0/agents` for available agent profiles and injects them as `{{agent_profiles}}`, so the prompt always reflects the current set of subordinate options. Use the mental model in **Agent perspectives and management → Self vs managed agents: example scenarios** to interpret each entry in `/a0/agents` as either "self" or a managed/subordinate agent.
+- The `call_subordinate` tool combines `agent.system.tool.call_sub.md` with a `VariablesPlugin` (`agent.system.tool.call_sub.py`) that uses `files.get_subdirectories("agents", exclude=["_*"])` to scan `/a0/agents` and inject the resulting profiles as `{{agent_profiles}}`, so the prompt always reflects the current set of subordinate options. Any agent directory whose name starts with `_` (for example, `_symlink` or `_example`) is treated as internal and excluded from this list, even though it physically resides under `/a0/agents`. Use the mental model in **Agent perspectives and management → Self vs managed agents: example scenarios** to interpret each remaining entry in `/a0/agents` as either "self" or a managed/subordinate agent.
 - The TBC `agent_identity` prompt (`prompts/tbc/agent_identity/agent_identity.md`) works with `agent_identity.py` (`AgentIdentity(VariablesPlugin)`), which looks first in `agents/${CONTAINER_NAME}/prompts/<profile>.md` and then in `prompts/tbc/agent_identity/identities/<profile>.md`, reporting where the identity was found via `{{agent_identity_found_where}}`. This lets agents combine profile-specific and shared identities while keeping the actual identity text in separate, overrideable files.
  - The workflow profile prompt (`prompts/system/profiles/workflow_profile/workflow_profile.md`) works with its plugin (`workflow_profile.py`) and external JSON configuration (`workflow_profile.json`). The plugin uses `SystemControl` to read the active workflow profile from `system_control.json` (for example, `guided`), loads the profile definition and any enabled features from `prompts/system/profiles/workflow_profile/workflow_profile.json`, and renders `{{status}}` and `{{profile_content}}` accordingly. This modularizes workflow behavior into a control file, a JSON definition, and a prompt template while keeping everything driven by the same kwargs-enabled prompt pipeline.
  - The reasoning profiles prompt (`prompts/system/profiles/reasoning_profile/reasoning_profile.md`) composes three independent reasoning dimensions (internal, interleaved, external). Each dimension has its own prompt and plugin pair (for example, `internal_reasoning_profile.md` + `internal_reasoning_profile.py`) that uses `SystemControl`'s nested reasoning profile types (`reasoning_internal`, `reasoning_interleaved`, `reasoning_external`) and the external JSON definition `reasoning_profile.json` to render the active profile and its content. This lets the agent treat its reasoning strategy as a set of coordinated but independently configurable profiles.
