@@ -15,7 +15,7 @@ The Boot Code Storybook blends narrative storytelling with technical innovation.
 
 ## Quick Start (For Developers)
 
-If you're here to deploy Agent Zero quickly:
+If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library–layered** Agent Zero instance: you get the standard engine plus self-revealing bind mounts and dynamic system control/profiles (see **The Library** and **Extensibility Features of Agent Zero → Dynamic system control and profiles**).
 
 1. Clone the repo: `git clone https://github.com/the-boot-code/tbc-library.git && cd tbc-library`
 2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent 500` (this example uses `PORT_BASE=500`).
@@ -63,6 +63,12 @@ The technical development of The Boot Code Storybook is a collection of technica
 #### The Library
 
 The GitHub repository for this library project, `tbc-library`, is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, development is able to separate and persist the work safely through Agent Zero upgrades.
+
+At a high level, this library layers additional capabilities on top of the upstream Agent Zero engine without modifying its core:
+
+- **Layered architecture and self-revealing orchestration** – host `containers/` and `layers/` are bind-mounted into containers as `/containers`, `/layers`, `/agent_orchestration`, `/agent_layer`, and `/common_layer`, allowing agents to introspect and modify their own structure safely.
+- **Dynamic system control and profiles** – the `system_control.py` helper, profile-control tools (security, philosophy, liminal thinking, workflow, reasoning), and their prompts turn security posture, workflows, and reasoning strategies into inspectable, runtime-switchable profiles.
+- **Shared prompts and knowledge trees** – common prompt and knowledge directories (for example, `layers/common/prompts/...` and `layers/common/knowledge/...`) are layered into `/a0/prompts` and `/a0/knowledge`, enabling centralized updates with per-agent overrides.
 
 #### Narrative Driven Development
 
@@ -116,7 +122,7 @@ Start with this workflow and iterate as you become more familiar with the struct
 
 ### Configure Agent Zero
 
-After the container is running, you still configure Agent Zero itself primarily through its Web UI:
+After the container is running, you still configure Agent Zero itself primarily through its Web UI. For changing behaviour, reasoning, and security modes at runtime, see **Dynamic system control and profiles** in the Extensibility section below.
 
 1. Open the Web UI in your browser and click the **Settings** (gear) button in the sidebar.
 2. Under **Agent Settings → Agent Config** (pre-populated when you clone from the `a0-template` container), optionally verify or adjust:
@@ -886,6 +892,8 @@ When the agent needs detailed guidance, Agent Zero's knowledge/solutions layer c
 
 ### Extensibility Features of Agent Zero
 
+In the `tbc-library` deployment, extensibility is expressed most strongly through **dynamic system control and profiles** (for behaviour, reasoning, and security) and through shared prompts, extensions, and tools. If you want to understand how this library changes *how Agent Zero behaves* at runtime, start with **Dynamic system control and profiles** below; if you want to understand *where that behaviour lives on disk*, see the prompts/extensions/tools subsections.
+
 #### Extensions
 Extensions enable custom behaviors layered on top of the core Agent Zero framework. In the `tbc-library` repository, most shared extensions live under `layers/common/agents/_symlink/extensions` (host path), which are mounted into the container as `/layers/common/agents/_symlink/extensions` and exposed to Agent Zero as `/a0/agents/_symlink/extensions`; agent profile directories then consume them via symlinks.
 
@@ -930,6 +938,61 @@ Tools expand agent capabilities with new functions. Many core tools are implemen
 - **Profile and feature control tools** (`feature_control`, `security_profile_control`, `philosophy_profile_control`, `liminal_thinking_profile_control`, `reasoning_profile_control`, `workflow_profile_control`) use `system_control.py` to inspect and adjust active profiles and feature flags at runtime, subject to security constraints.
 - **Base tool infrastructure** (`base_profile_control.py`) centralizes common dispatch and error handling for profile-control style tools.
 - Additional tools such as `a2a_chat`, `memory`, `scheduler`, and `document_query` are documented by prompts in the `_symlink/prompts` directory and may be wired via extensions and SystemControl-managed configuration.
+
+#### Dynamic system control and profiles
+
+Beyond individual tools and helpers, Agent Zero exposes a coordinated **System Control** subsystem that lets the agent dynamically adjust how it behaves, reasons, and applies operational principles at runtime.
+
+- At the core is `system_control.py`, which acts as a facade over a JSON configuration file (by default `/a0/tmp/system_control.json`). It tracks the active profile for each profile type, exposes available profiles and feature flags, and provides a stable API that profile-control tools call to inspect and update state.
+- This design allows the agent to adapt behaviour based on context (for example, switching between more cautious vs more exploratory modes) without changing core code or restarting the container.
+
+**Why dynamic profiles?**
+
+Dynamic profiles give Agent Zero a way to separate *what* it knows and *how* it operates:
+
+- **Adaptive behaviour** – switch interaction patterns (for example, more guided and verbose explanations vs a concise/operator style) via workflow profiles.
+- **Contextual reasoning** – adjust cognitive strategies for different problem types by selecting reasoning profiles that focus internal, interleaved, or external chains of thought.
+- **Security and ethics** – enforce security posture and operational principles through security and philosophy profiles, controlling which tools are available and how they may be used.
+- **Extensibility** – add new profile types or features over time while keeping the control surface centralized in `system_control.py`.
+
+**Profile types managed by System Control**
+
+In the `tbc-library` deployment, System Control typically manages these profile categories (mirroring the types registered in `system_control.py`):
+
+- **Security profile** (`security`) – governs security-related behaviour, access controls, and feature availability.
+- **Philosophy profile** (`philosophy`) – captures core operational principles, values, and decision-making frameworks.
+- **Liminal thinking profile** (`liminal_thinking`) – manages cognitive patterns for navigating ambiguity, transitions, and uncertain situations.
+- **Workflow profile** (`workflow`) – configures interaction style and workflow behaviour (for example, guided vs minimal, confirmation-heavy vs streamlined; see `workflow_profile_control`).
+- **Internal reasoning profile** (`reasoning_internal`) – controls private, non-user-facing reasoning traces used for complex problem-solving.
+- **Interleaved reasoning profile** (`reasoning_interleaved`) – manages reasoning that occurs between tool calls, coordinating longer chains of action and reflection.
+- **External reasoning profile** (`reasoning_external`) – controls user-facing reasoning exposition (for example, explicit thoughts or structured explanations), when enabled by security and workflow policies.
+
+**Profile and feature-control tools**
+
+The following tools are thin, user- and agent-facing wrappers around `system_control.py`:
+
+- `security_profile_control` – view or change the active security profile.
+- `philosophy_profile_control` – manage high-level operational principles.
+- `liminal_thinking_profile_control` – configure liminal thinking behaviour.
+- `workflow_profile_control` – set workflow style and related behavioural switches.
+- `reasoning_profile_control` – coordinate internal, interleaved, and external reasoning strategies as a combined reasoning profile.
+- `feature_control` – enable or disable specific optional features and system capabilities.
+
+Each of these tools calls into `system_control.py` to read or update the current configuration, which is persisted in `system_control.json`. Prompts such as `workflow_profile.md` and `reasoning_profile.md` then render this state into readable text, so both humans and agents can see which profiles are active and what they imply.
+
+**Example: dynamic state**
+
+At any given time, an Agent Zero instance might be operating with a configuration like:
+
+- Security profile: `open` (with any admin override flags inactive).
+- Philosophy profile: `default`.
+- Liminal thinking profile: `default`.
+- Workflow profile: `guided_verbose` (with an auto-confirmation feature enabled).
+- Internal reasoning profile: `internal_cot_1`.
+- Interleaved reasoning profile: `interleaved_cot_1`.
+- External reasoning profile: `external_cot_1`.
+
+This kind of configuration illustrates how the System Control subsystem turns abstract design goals (security posture, philosophy, reasoning strategy, workflow) into concrete, inspectable profiles that can be adjusted over time without changing the underlying engine or layered file structure.
 
 ### Prompts in Agent Zero
 Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into `layers/common/agents/_symlink/prompts`; inside the container, these same directories are visible at `/layers/<agent>/agents/<agent>/prompts` and `/layers/common/agents/_symlink/prompts` and in turn include content from the default system prompt tree at `/a0/prompts` (`/a0/prompts/system`, `/a0/prompts/overrides`, and any container-specific prompts under `/a0/prompts/container`). From the host, this same `/a0/prompts` tree is mirrored under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount, while its shared content originates from `layers/common/prompts/...` via the `${COMMON_LAYER}/prompts/...` mounts described earlier.
