@@ -470,9 +470,12 @@ That said, the layered approach is designed for safe experimentation: test in is
   - `read_prompt_file(..., **kwargs)` does the same for prompt files, so plugins can compute variables from rich context (for example, `agent=self.agent`, `loop_data`) while includes still only see the direct kwargs for each file.
 - [kokoro.py](layers/common/python/helpers/kokoro.py) (**optional**) – testing modifications to reduce resource usage.
 
-A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a core **helper** to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
+- [system_control.py](layers/common/python/helpers/system_control.py) (**core System Control helper**):
+  - Central facade over the System Control config (`system_control.json`, default `/a0/tmp/system_control.json`) and the admin override lock (default `/a0/tmp/admin_override.lock`), with paths overrideable via `SYSTEM_CONTROL_FILE` and `SYSTEM_CONTROL_OVERRIDE`.
+  - Registers profile types (security, philosophy, liminal_thinking, workflow, reasoning_internal/interleaved/external) and exposes dynamic methods such as `get_active_*_profile`, `set_active_*_profile`, `get_*_state`, and `*_profile_control` via `__getattr__` for backward-compatible tool integration.
+  - Manages feature flags and control switches through `system_control.json` (including per-profile features and global `features`, `controls`, and `feature_options` sections), providing a single place for tools and prompts to query `is_feature_enabled`, `get_feature_config`, and `get_security_state` when building dynamic profiles and adaptive system prompts.
 
-### Docker Compose Orchestration
+ ### Docker Compose Orchestration
 
 This section details how the library uses highly parameterized Docker Compose for deploying Agent Zero, enabling easy scaling, resource management, and volume mappings without modifying core files. The bind mounts here enable the self-revealing orchestration described in the previous section, allowing agents direct access to their layers.
 
@@ -930,11 +933,13 @@ Helpers provide utility functions for advanced control.
 
 `system_control.py` manages dynamic profile switching and feature flags, allowing agents to adapt modes (for example, workflow, philosophy, reasoning style, security posture) based on context.
 
-It acts as a central facade over a JSON configuration file (by default `/a0/tmp/system_control.json`, overrideable via env vars). Using a registry of profile types (workflow, philosophy, liminal_thinking, security, reasoning_internal/interleaved/external) plus optional external profile definitions (for example, JSON files under `prompts/system/profiles/...`), it:
+It acts as a central facade over the System Control config and override state:
 
-- Tracks the active profile per type and lists available profiles via `ProfileManager` and `ProfileConfig` metadata.
-- Manages feature flags through `FeatureManager`, enabling/disabling named features and controls that tools and prompts can check via `is_feature_enabled`, `get_feature_config`, and `get_security_state`.
-- Exposes dynamic, backward-compatible methods such as `get_active_workflow_profile`, `set_active_philosophy_profile`, or `workflow_profile_control()` via `__getattr__`, which the profile-control tools (`*_profile_control.py`) call to inspect and modify runtime behaviour.
+- Uses a JSON configuration file (`system_control.json`, default path `/a0/tmp/system_control.json`) and an admin override lock file (default `/a0/tmp/admin_override.lock`), both overrideable via the environment variables `SYSTEM_CONTROL_FILE` and `SYSTEM_CONTROL_OVERRIDE`.
+- Maintains a registry of profile types (workflow, philosophy, liminal_thinking, security, reasoning_internal/interleaved/external) plus optional external profile definitions (for example, JSON files under `prompts/system/profiles/...` referenced via `external_path` in `system_control.json`), and:
+  - Tracks the active profile per type and lists available profiles via `ProfileManager` and `ProfileConfig` metadata.
+  - Resolves feature and control state by checking global `features`, `controls`, and `feature_options` sections and then any profile-specific entries under the active security profile (for example, `security_profiles[active].features`), reporting the result through `is_feature_enabled`, `get_feature_config`, `get_available_features`, and `get_security_state`. When the admin override lock is present, profile-level security features are treated as enabled regardless of their stored value.
+- Exposes dynamic, backward-compatible methods such as `get_active_*_profile`, `set_active_*_profile`, `get_*_state`, `get_available_*_profiles`, and `*_profile_control` via `__getattr__`, so profile-control tools (`*_profile_control.py`) and other callers can inspect and modify runtime behaviour while using the same System Control surface to gate whether a given control is enabled.
 
 #### Tools
 Tools expand agent capabilities with new functions. Many core tools are implemented once under `layers/common/agents/_symlink/tools` in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/tools`) and exposed to each agent profile via symlinks in `layers/<agent>/agents/<agent>/tools` on the host (mounted at `/layers/<agent>/agents/<agent>/tools` inside the container).
