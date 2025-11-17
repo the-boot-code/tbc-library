@@ -468,7 +468,6 @@ That said, the layered approach is designed for safe experimentation: test in is
   - `load_plugin_variables(file, backup_dirs=None, **kwargs)` forwards `**kwargs` into plugin implementations.
   - `parse_file(..., **kwargs)` passes `**kwargs` through to both `load_plugin_variables` and `process_includes`.
   - `read_prompt_file(..., **kwargs)` does the same for prompt files, so plugins can compute variables from rich context (for example, `agent=self.agent`, `loop_data`) while includes still only see the direct kwargs for each file.
-- [kokoro.py](layers/common/python/helpers/kokoro.py) (**optional**) – testing modifications to reduce resource usage.
 
 - [system_control.py](layers/common/python/helpers/system_control.py) (**core System Control helper**):
   - Central facade over the System Control config (`system_control.json`, default `/a0/tmp/system_control.json`) and the admin override lock (default `/a0/tmp/admin_override.lock`), with paths overrideable via `SYSTEM_CONTROL_FILE` and `SYSTEM_CONTROL_OVERRIDE`.
