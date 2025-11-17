@@ -59,7 +59,7 @@ The technical development of The Boot Code Storybook is a collection of technica
 
 #### The Library
 
-The GitHub repository for this library project is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
+The GitHub repository for this library project, `tbc-library`, is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
 
 #### Narrative Driven Development
 
@@ -105,7 +105,7 @@ Here's a practical workflow to get oriented after reviewing Quick Start:
 
 1. **Deploy an Agent Instance**: Use the Quick Start or Installation steps to bring up a container for a base agent (for example, `a0-template` cloned to `a0-myagent`).
 
-2. **Explore the Layered Structure**: Navigate key directories like `/containers` for compose files and runtime configuration, and `/layers` for shared and agent-specific customizations.
+2. **Explore the Layered Structure**: On the host, navigate key directories like `containers/` for compose files and runtime configuration, and `layers/` for shared and agent-specific customizations (these are mounted into the container as `/containers` and `/layers`).
 
 3. **Customize Behavior and Settings**: Modify `.env` files for ports and settings, add prompt files for agent behaviors, or extend functionality via scripts and extensions in the agent's layer directory.
 
@@ -126,7 +126,7 @@ A script `create_agent.sh` is provided in the root of `tbc-library` to automate 
 
 **Important Notes:**
 - The script will fail if a container directory for the new agent already exists, to prevent accidental data loss. Remove it manually (e.g., `rm -rf containers/a0-myagent`) if you want to recreate.
-- Existing layers data (e.g., API keys in `/layers/[dest_container]/.env`) is preserved and not overwritten.
+- Existing layers data (for example, API keys in `layers/[dest_container]/.env` in the `tbc-library` repository—visible inside the container as `/layers/[dest_container]/.env`) is preserved and not overwritten.
 - The source container can be any existing agent (e.g., `a0-template` or `a0-demo`), allowing you to clone and customize agents.
 
 **Usage:**
@@ -155,9 +155,9 @@ This script:
 - Copies the source container directory to the destination.
 - Updates configurations with the new container name, and optionally port base and/or knowledge directory (leaves unchanged from the source if not specified).
 - Starts Docker containers in detached mode.
-- Copies the entire layers directory (if not existing) to include all source agent files (e.g., tmp/, conf/), then updates agent profiles with customizations.
+- Copies the entire `layers/` directory in the `tbc-library` repository on the host (if not existing) to include all source agent files (e.g., tmp/, conf/), then updates agent profiles with customizations.
 - Handles replacements for lowercase container names and proper display names (e.g., 'a0-template' → 'a0-myagent', 'Template' → 'MyAgent').
-- Safely layers the `/a0/.env` file to `/layers/[dest_container]/.env` for security, preserving existing content if present, and uncommenting the volume.
+- Safely layers the container's `/a0/.env` file into `layers/[dest_container]/.env` in this repository (which the container also sees as `/layers/[dest_container]/.env`), preserving existing content if present, and uncommenting the volume.
 
 
 ### Installation (Step by Step)
@@ -198,7 +198,7 @@ KNOWLEDGE_DIR=tbc
 
 The `docker-compose.yml` file is highly parameterized for rapid deployment, though adjustments may be desired such as volume bind mount permissions.
 
-**For security layering**: If you plan to layer `/a0/.env` from `/layers`, see **Optional: Layer the /a0/.env file for security** below and apply it before your first `docker compose up -d`.
+**For security layering**: If you plan to layer `/a0/.env` from the host `layers/[container_name]/.env` file (mounted into the container via `/layers`), see **Optional: Layer the /a0/.env file for security** below and apply it before your first `docker compose up -d`.
 
 #### 4. Launch the Container
 Docker compose once you are ready
@@ -213,13 +213,13 @@ You should now see the Agent Zero directory `/a0` created in your container
 tbc-library/containers/a0-myagent/a0
 ```
 
-You should also see the agent directory created in the `/layers` of your **tbc-library**
+You should also see the agent directory created in the `layers/` directory of your **tbc-library** repository on the host (this directory will be mounted into the container at `/layers`).
 ```
 tbc-library/layers/a0-myagent
 ```
 
 #### 5. Customize the Agent Profile
-Navigate to the `/layers` directory
+Navigate to the `layers/` directory in the `tbc-library` repository on the host
 ```bash
 cd ../../layers
 ```
@@ -299,7 +299,7 @@ These steps are illustrative; the script automates for speed, but manual tweaks 
 
 **Optional: Layer the /a0/.env file for security**
 
-To keep sensitive API keys and auth details abstracted in the layers directory (recommended for security):
+To keep sensitive API keys and auth details abstracted in the host `layers/[container_name]/` directory (i.e., the `layers/` directory in the `tbc-library` repository, mounted into the container as `/layers`)—recommended for security:
 
 1. Wait a few seconds for the container to fully start and generate `/a0/.env`.
 2. From the `containers/a0-myagent` directory, copy the file from the container:
@@ -315,7 +315,7 @@ To keep sensitive API keys and auth details abstracted in the layers directory (
    docker compose restart
    ```
 
-This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env`, abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict, so follow the order carefully.
+This ensures `/a0/.env` is mapped from `/layers/a0-myagent/.env` inside the container (which itself comes from `layers/a0-myagent/.env` in the `tbc-library` repository), abstracting it from the runtime. If the file doesn't exist before uncommenting, Docker may create a directory conflict, so follow the order carefully.
 
 ### Self-Revealing Orchestration: Direct Agent Access via Bind Mounts
 
@@ -345,7 +345,42 @@ The composition mappings provide the agent with 100% certain direct access to it
 
 Note: While some mounts are read-only (ro) for system protection and certain introspection, others are read-write (rw), empowering agents to modify their own files (e.g., docker-compose.yml via `/containers/[agent_name]/docker-compose.yml` for full autonomy). This balance enables safe self-awareness while allowing generative evolution.
 
-These mappings empower the agent to reveal and control its own existence, blurring the line between container and host, and supporting advanced self-evolving behaviors. With this self-knowledge, the agent not only understands its own configuration but is also empowered to modify, maintain, or even create other agents, fostering a truly autonomous and generative ecosystem.
+These mappings empower the agent to reveal and control its own existence, blurring the line between container and host, and supporting advanced self-evolving behaviors. With this self-knowledge, the agent not only understands its own configuration but is also empowered to modify, maintain, or even create other agents, fostering a truly autonomous and generative ecosystem (see **Agent perspectives and management** for how to distinguish "self" vs other agents across these paths).
+
+#### Orchestration patterns (inside vs outside)
+
+- **Inside-container orchestrator**  
+  An Agent Zero instance running inside a container uses `/a0/agents` plus the rules in **Agent perspectives and management → Self vs managed agents** to treat `/a0/agents/${CONTAINER_NAME}` as "self" and other entries (for example, `kairos`) as managed/subordinate agents. Tools such as `call_subordinate` and the profile-control tools then operate on these local profiles while respecting shared `_symlink` implementations.
+- **Inside-container library-aware orchestrator**  
+  The same in-container agent can reason about other agents and containers within the *same* `tbc-library` deployment by using `/containers` and `/layers` (bind-mounted from that deployment's `containers/` and `layers/` directories on the host) together with `/agent_orchestration` and `/agent_layer` (self-specific views of its own container directory and layer). This provides a clear separation between "my own container" (`/agent_orchestration`, `/agent_container`, `/agent_layer`) and "other containers/agents in this deployment" (visible under `/containers` and `/layers`), while still applying the self vs managed agents rules for anything under `/a0/agents`.
+- **Host/external orchestrator (multi-deployment)**  
+  A human or external agent running on the host uses the `tbc-library` repository layout to manage multiple containers and even multiple `tbc-library` deployments: each deployment corresponds to a clone of `tbc-library`, with individual agents at `containers/a0-*/` and their layers at `layers/a0-*/`. From this perspective, `/containers` and `/layers` inside each container are simply bind-mounted views of that deployment's host directories, and `/agent_orchestration`, `/agent_container`, and `/agent_layer` are per-container convenience mounts, allowing orchestration across many agents and containers without confusing their internal `/a0/agents` trees.
+
+Other permutations (for example, an in-container manager coordinating both its own subordinates and other containers via `/layers/...` and `/containers/...`) can be constructed by combining these two patterns while always applying the path and perspective rules above.
+
+### How to reason as an agent reading this README
+
+When you (as an agent) read this README, use the following mental model:
+
+1. **Determine your vantage point**  
+   - If you see yourself operating at `tbc-library/...`, `containers/...`, or `layers/...` without a leading `/`, you are reasoning about the **host repository**.  
+   - If you see paths like `/a0/...`, `/layers/...`, `/agent_layer/...`, `/common_layer/...`, `/agent_orchestration`, or `/containers/...`, you are reasoning about the **inside of a container**.
+2. **Use the perspectives section as your ground truth**  
+   - Treat **Agent perspectives and management → Self vs managed agents** as your primary rulebook for interpreting `/a0/agents` and related paths.  
+   - Always classify entries in `/a0/agents` using that section before deciding whether you are looking at "self", a subordinate in the same container, or a profile that belongs to another container (visible only via `/layers/...`).
+3. **Locate and customize your own profile safely**  
+   - Your canonical self-profile is `/a0/agents/${CONTAINER_NAME}`. The same directory is visible as `/layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}` and `/agent_layer/agents/${CONTAINER_NAME}`.  
+   - When customizing your own behavior, prefer editing or overriding files under `/a0/agents/${CONTAINER_NAME}` (for example, breaking a symlink and replacing it with a real file) and leave `_symlink` in `/a0/agents/_symlink` unchanged unless you intentionally want to affect multiple agents.
+4. **Understand shared vs agent-specific resources**  
+   - Shared implementations live in host paths like `layers/common/agents/_symlink/...` (seen as `/layers/common/agents/_symlink/...` and `/a0/agents/_symlink/...` inside the container).  
+   - Agent-specific overrides live under `layers/<agent>/agents/<agent>/...` on the host and `/a0/agents/<agent>/...` inside the container.  
+   - For knowledge and solutions, host `layers/common/knowledge/...` becomes `/a0/knowledge/...` inside the container; prompts and tools refer to these via solution keys and the knowledge/solutions mechanism.
+5. **Choose your orchestration role explicitly**  
+   - If you are orchestrating **subordinates in your own container**, operate primarily on `/a0/agents/...` using tools like `call_subordinate` and the profile-control tools, guided by the self vs managed agents rules.  
+   - If you are orchestrating **other agents or containers within the same `tbc-library` deployment from inside your container**, use `/containers` and `/layers` for a deployment-level view, and `/agent_orchestration`, `/agent_container`, and `/agent_layer` for your own self-specific view, as described in **Orchestration patterns (inside vs outside)**.  
+   - If you are orchestrating **other containers or deployments from the host or another external context**, reason in terms of host `tbc-library` clones and their `containers/a0-*/` and `layers/a0-*/` directories, as also summarized in **Orchestration patterns (inside vs outside)**.
+
+By following these steps, you can treat this README as a stable map of both the host repository and your in-container filesystem, avoiding confusion between self and others and between host and container paths.
 
 ## Technical Deep Dive
 
@@ -371,7 +406,7 @@ These modifications demonstrate how the framework's flexibility turns abstract c
 
 That said, the layered approach is designed for safe experimentation: test in isolated environments, share discoveries, and explore variations to unlock new capabilities over time.
 
-- [files.py](layers/common/python/helpers/files.py) - the addition of `**kwargs` in a few places such that the `VariablesPlugin` class is able to support dynamic prompts (**required**)
+- [files.py](layers/common/python/helpers/files.py) - extends the Agent Zero helper so that `VariablesPlugin.get_variables`, `load_plugin_variables`, `parse_file`, and `read_prompt_file` all accept and forward `**kwargs`. This allows prompt plugins to receive rich runtime context (for example, `agent=self.agent`, `loop_data`, or other parameters) and compute variables for templates, while includes still see only the direct kwargs for each file (**required**).
 - [kokoro.py](layers/common/python/helpers/kokoro.py) - testing modifications to reduce resource usage (**optional**)
 
 A third file, [system_control.py](layers/common/python/helpers/system_control.py), is added in `/a0/python/helpers` to provide a core **helper** to manage system profiles and features as well as provide for **dynamic** and **adaptive** system prompts.
@@ -395,7 +430,7 @@ Docker Compose Architecture
 └─────────────────┘
 ```
 
-This setup uses bind mounts for layered abstraction, with the Agent Zero container running the main logic and nginx handling web traffic.
+This setup uses bind mounts for layered abstraction, with the Agent Zero container running the main logic and nginx handling web traffic. In this diagram, `/containers/` and `/layers/` on the left represent directories on the host (in the `tbc-library` repository), while `/layers/ (rw)` and `/common_layer/ (ro)` on the right are the corresponding paths inside the container.
 
 #### .env (rename from .env.example)
 
@@ -512,7 +547,7 @@ If you want `/a0/.env` to be "layered" and abstracted from the `a0` runtime of t
       - ${AGENT_LAYER}/.env:/a0/.env:rw
 ```
 
-This mapping ensures the container reads sensitive configuration (API keys and authentication data) from `/layers/[container_name]/.env` rather than an internal file. For step-by-step instructions on creating and layering this file safely, see Installation → **Optional: Layer the /a0/.env file for security**.
+This mapping ensures the container reads sensitive configuration (API keys and authentication data) from the host file `layers/[container_name]/.env` (visible inside the container as `/layers/[container_name]/.env`) rather than from an internal `/a0/.env` file. For step-by-step instructions on creating and layering this file safely, see Installation → **Optional: Layer the /a0/.env file for security**.
 
 The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
 
@@ -566,6 +601,8 @@ Boot Code Storybook Layers
     └── shared/
 ```
 
+In this schematic, `/containers/`, `/layers/`, and `/volumes/` denote top-level directories in the `tbc-library` repository on the host; inside the container they are exposed via bind mounts as `/containers`, `/layers`, and `/volumes` respectively.
+
 This layered approach allows for fine-grained control, where common elements are shared read-only, and agent-specific ones are writable.
 
 #### /containers/
@@ -613,9 +650,121 @@ common/               # Shared across agents
         └── system_control.py
 ```
 
-Detailed breakdown:
+ Detailed breakdown:
 
-- Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
+ - Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
+
+### Agent perspectives and management
+
+The following subsections describe how an Agent Zero instance running inside a container should reason about itself, other agents, and the layered filesystem. Unless explicitly stated otherwise:
+
+- References to `layers/...` or "this repository" refer to the `tbc-library` repository on the host.
+- References to `/a0/...`, `/layers/...`, `/agent_layer/...`, `/common_layer/...`, `/agent_orchestration`, and `/containers/...` refer to paths **inside** the container created by Docker bind mounts.
+- The default upstream Agent Zero engine is unaware of the `tbc-library` repository; the mappings described here exist only when Agent Zero is running under the `tbc-library` Docker Compose orchestration described in this README.
+
+#### Self vs managed agents: example scenarios
+
+- **Self (this container's active agent)**  
+  - In the repository: `layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}`.  
+  - In this container: that same directory is visible as `/layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}`, `/a0/agents/${CONTAINER_NAME}`, and `/agent_layer/agents/${CONTAINER_NAME}`.  
+  - When reasoning about "my own profile", treat `/a0/agents/${CONTAINER_NAME}` as the canonical "self" path and the others as alternate views of the same directory.
+- **Managed agent in the same container (for example, `kairos`)**  
+  - In the repository: `layers/common/agents/kairos`.  
+  - In this container: visible at `/layers/common/agents/kairos` and `/a0/agents/kairos` (via the `${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro` mapping); there is **no** `/agent_layer/agents/kairos` because `AGENT_LAYER` is reserved for this container's primary agent.  
+  - Reason about `kairos` as "another agent I can call or delegate to", not as a replacement for the active agent profile at `/a0/agents/${CONTAINER_NAME}`.
+- **Agents in other containers (for example, `a0-myagent` when viewed from `a0-template`)**  
+  - In the repository: `layers/a0-myagent/agents/a0-myagent`.  
+  - In *this* container: visible at `/layers/a0-myagent/agents/a0-myagent` via the `${PATH_LAYERS}:/layers` mount, but **not** under `/a0/agents/...` or `/agent_layer/...` for this container.  
+  - To manage or modify those agents you generally work with their layer and container directories via `/layers/...` and `/containers/...`, or interact with them through orchestration tools, rather than treating them as part of this container's own `/a0/agents` tree.
+
+#### Symlinked Agents and the `_symlink` Profile
+
+The `/layers/common/agents/_symlink` directory inside the container (a bind mount of the repository's `layers/common/agents/_symlink` directory) is a shared implementation library for agents, not a runnable profile. Its `_context.md` explicitly marks it as a **symbolic link source directory** that should be ignored as a stand‑alone agent. Real agents (for example, `a0-template`) have their own profile directory under `/layers/<agent-name>/agents/<agent-name>` inside the container and typically symlink most tools and prompts back into `_symlink`. That **same directory** is also exposed at `/a0/agents/<agent-name>` (Agent Zero's default expectation for the active agent's own profile) and at `/agent_layer/agents/<agent-name>` via the `AGENT_LAYER` bind mount, so all three container paths refer to the same underlying profile directory for a given agent.
+
+At a high level (as seen from inside the container):
+
+- `/layers/common/agents/_symlink` holds the canonical implementations of shared **tools**, **prompts**, and **extensions**.
+- `/layers/a0-template/agents/a0-template` defines the `a0-template` agent identity (`_context.md`, initial messages, agent‑specific init code) and uses symlinks to reference shared implementations from `_symlink`.
+- When you clone `a0-template` with `create_agent.sh`, the new agent inherits the same symlinked behaviors while customizing only its identity and any overrides.
+
+##### Host paths → container paths
+
+The `.env` and `docker-compose.yml` files define how host layer paths are exposed inside the container:
+
+- `AGENT_LAYER=${PATH_LAYERS}/${CONTAINER_NAME}`
+- `COMMON_LAYER=${PATH_LAYERS}/common`
+
+These are then mounted by Docker:
+
+- `${AGENT_LAYER}/agents/${CONTAINER_NAME}:/a0/agents/${CONTAINER_NAME}`
+- `${COMMON_LAYER}/agents/_symlink:/a0/agents/_symlink:ro`
+
+For `CONTAINER_NAME=a0-template` this means, from inside the container:
+
+- Host repository path: `layers/a0-template/agents/a0-template/_context.md` → Container: `/layers/a0-template/agents/a0-template/_context.md`, `/a0/agents/a0-template/_context.md`, and `/agent_layer/agents/a0-template/_context.md` (three views of the same main agent profile directory).
+- Host repository path: `layers/common/agents/_symlink/tools/base_profile_control.py` → Container: `/a0/agents/_symlink/tools/base_profile_control.py` (shared tool implementation, read‑only by default).
+- Host repository path: `layers/a0-template/agents/a0-template/tools/base_profile_control.py` is typically a symlink pointing into the `_symlink` tool, so both host and container see a single underlying implementation.
+
+Other mapped layer paths follow the same pattern:
+
+- `${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw`
+- `${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw`
+- `${AGENT_LAYER}/prompts/container:/a0/prompts/container`
+
+From the agent's perspective, `/a0/agents`, `/a0/knowledge`, and `/a0/prompts` are its live environment. The `/agent_layer`, `/common_layer`, and `/agent_orchestration` mounts expose the same structures explicitly for introspection and self‑modification when allowed.
+
+##### How agents should reason about `_symlink`
+
+When introspecting its own filesystem, an agent can use the following mental model:
+
+- Treat `/a0/agents/${CONTAINER_NAME}` as the **active profile**: identity (`_context.md`), welcome message, and any agent‑specific overrides.
+- Treat `/a0/agents/_symlink` as a **shared library** of reusable behaviors. It is not a profile to be activated directly.
+- To customize this agent only, create or replace files under `/a0/agents/${CONTAINER_NAME}` (breaking symlinks if necessary) while leaving `_symlink` unchanged.
+- To change behavior for all agents that use these symlinks, modify the underlying implementations under `/a0/agents/_symlink` (or the corresponding host layer paths), understanding that changes may affect multiple agents.
+
+This symlink pattern keeps shared logic centralized while letting each agent maintain a small, focused profile that describes its role and any local deviations from common behavior.
+
+##### `_symlink/extensions` – shared lifecycle behavior
+
+The `layers/common/agents/_symlink/extensions` directory in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/extensions`) contains shared extensions that plug into Agent Zero's lifecycle for all agents that symlink them:
+
+- `system_prompt/` holds staging extensions such as `_11_insert_system_pre_system_manual.py`, `_12_append_system_post_system_manual.py`, `_19_insert_system_post_behaviour.py`, `_21_insert_system_pre_behaviour.py`, `_95_insert_system_model_godmode.py`, and `_99_append_tbc_system_ready.py`. These wrap the base engine system prompt builders with additional pre/post-manual and pre/post-behaviour segments, optional `model_godmode` initialization, and a final `system_ready` footer.
+- `message_loop_prompts_after/_70_include_agent_info.py` runs late in the message loop to populate `loop_data.extras_temporary["agent_info"]` by reading `agent.extras.agent_info.md` with kwargs (for example, `agent=self.agent`).
+
+Agent profiles (for example, `layers/a0-template/agents/a0-template/extensions/...` in the `tbc-library` repository on the host, visible inside the container at `/layers/a0-template/agents/a0-template/extensions/...`) typically symlink these files, so all agents share the same staged system prompt pipeline and agent-info behavior unless explicitly overridden.
+
+##### `_symlink/prompts` – shared prompt entrypoints and routing
+
+The `layers/common/agents/_symlink/prompts` directory in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/prompts`) centralizes prompt templates that agent profiles reference via symlinks:
+
+- Agent/meta entrypoints such as `agent.extras.agent_info.md` and `agent.system.main.role.md` are thin wrappers that use `{{ include ... }}` to pull text from `prompts/overrides` or `prompts/system`, allowing central updates while keeping agent profile files small.
+- Tool prompts such as `agent.system.tool.feature_control.md`, `agent.system.tool.security_profile_control.md`, `agent.system.tool.memory.md`, `agent.system.tool.scheduler.md`, and `agent.system.tool.a2a_chat.md` define how tools should be invoked and described. Some, like `agent.system.tool.call_sub.md`, work with a `VariablesPlugin` (`agent.system.tool.call_sub.py`) to dynamically list available agent profiles via `{{agent_profiles}}`.
+- Lifecycle prompts `pre_system_manual.md`, `post_system_manual.md`, `pre_behaviour.md`, and `post_behaviour.md` are routing stubs that `{{ include "prompts/system/..." }}` and are positioned in the system prompt by the corresponding `_symlink/extensions/system_prompt/*` extensions.
+
+Agent profile prompt directories (for example, `layers/a0-template/agents/a0-template/prompts` in the `tbc-library` repository on the host, visible inside the container at `/layers/a0-template/agents/a0-template/prompts`) typically contain symlinks to these `_symlink` prompts, so a change in `_symlink/prompts` can immediately affect all linked agents while still allowing per-agent overrides when needed.
+
+##### `_symlink/tools` – shared tools and profile control
+
+The `layers/common/agents/_symlink/tools` directory in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/tools`) provides canonical tool implementations used by many agents:
+
+- Profile and feature control tools such as `feature_control.py`, `security_profile_control.py`, `philosophy_profile_control.py`, `liminal_thinking_profile_control.py`, `reasoning_profile_control.py`, and `workflow_profile_control.py` all rely on `system_control.py` to inspect and update security, reasoning, philosophy, workflow, and feature profiles at runtime.
+- `base_profile_control.py` offers a shared base class that centralizes dispatch, action validation, and error handling for profile-control tools.
+- Shell helpers (for example, `*_profile_control.sh` and `base_profile_control.sh`) exist purely to create or refresh symlinks from agent profile tool directories into these shared Python implementations.
+
+Agent profile tool directories (for example, `layers/a0-template/agents/a0-template/tools` in the `tbc-library` repository on the host, visible inside the container at `/layers/a0-template/agents/a0-template/tools`) usually contain symlinks to these `_symlink/tools` files, so multiple agents share one implementation of profile/feature control and other common tools. When you need agent-specific behavior, you can replace a symlink with a real file in the profile directory.
+
+##### Why new agents benefit from the `a0-template` profile
+
+The `layers/a0-template/agents/a0-template` directory in the `tbc-library` repository on the host (mounted into the container at `/layers/a0-template/agents/a0-template`) demonstrates how this works in practice:
+
+- `_context.md` and a small set of prompts (for example, `a0-template.md` and `fw.initial_message.md`) define the identity and initial behavior of the main agent.
+- Most tools and many prompts in `/layers/a0-template/agents/a0-template` are symlinks pointing to `/layers/common/agents/_symlink`, so their actual implementations are maintained centrally.
+
+When you run `./create_agent.sh a0-template a0-myagent Template MyAgent`:
+
+- A new agent profile directory `layers/a0-myagent/agents/a0-myagent` (mounted into the container at `/layers/a0-myagent/agents/a0-myagent`) is created, preserving the same symlink structure.
+- Centralized tools and prompts continue to live under `layers/common/agents/_symlink` (mounted at `/layers/common/agents/_symlink`), so improvements there automatically apply to `a0-myagent` (and other agents) without copying or manual synchronization.
+- You typically only need to adjust the new agent's `_context.md`, greeting/identity prompts, and any local overrides, keeping per-agent maintenance small while benefiting from shared evolution of the common library.
 
 #### /volumes/
 
@@ -630,27 +779,105 @@ shared/
 
 - Optional external volumes for additional data or configurations.
 
+##### External prompt resources via `/common`
+
+The `/common` mount exposes host-level resources from `volumes/common` into the container. This enables prompts to pull in external content that lives outside the `/a0` and `/layers` trees while still participating in the same kwargs-aware prompt and plugin system.
+
+- In `docker-compose.yml`, `${PATH_COMMON}` is mounted as `/common` inside the container. For example, host path `volumes/common/prompts/merged/merged_post_system_manual.md` is accessible as `/common/prompts/merged/merged_post_system_manual.md`.
+- The prompt `prompts/system/external/merged/merged_post_system_manual.md` is a thin wrapper containing `{{resource_content}}` and is paired with `merged_post_system_manual.py`, a `VariablesPlugin` that calls:
+  - `files.read_prompt_file("merged_post_system_manual.md", _directories=["/common/prompts/merged"], **kwargs)`
+  - and returns `{"resource_content": <loaded content>}`.
+- The system-level prompt `prompts/system/post_behaviour.md` includes this wrapper, so the merged external resource is injected into the system prompt at the desired stage.
+- A similar pattern is used for TBC resources such as `tbc.protocols`, `tbc.overview`, and `tbc.lineage`: wrappers in `prompts/tbc/external_resources/...` (each containing `{{resource_content}}`) are paired with `VariablesPlugin` implementations that load the corresponding files from `/common/prompts/tbc/...` (for example, `/common/prompts/tbc/tbc.protocols/tbc.protocols.md`) using `files.read_prompt_file(..., **kwargs)`.
+
+Because `read_prompt_file` and `VariablesPlugin.get_variables` are kwargs-enabled in the layered `files.py`, any external prompt loaded from `/common` can still see runtime context such as `agent`, `loop_data`, and profile information, making `/common` a powerful external prompt/knowledge layer managed on the host.
+
 ### Knowledge Features of Agent Zero
 
 #### Knowledge
-_(Pending content.)_
+Knowledge in the `tbc-library` repository is treated as a first-class, layered resource rather than something that must always be inlined into the system prompt. In addition to prompts and external `/common` resources, there are dedicated knowledge trees under `layers/common/knowledge/...` in this repository (for example, `layers/common/knowledge/tbc/...` on the host), which are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed.
+
+These knowledge files are not executed directly. Instead, Agent Zero's knowledge/solutions mechanism can index them (for example, into a vector store or similar memory) and surface relevant entries to the agent based on queries, tool names, or explicit references from prompts. This keeps the system prompt focused while still giving the agent access to rich background information.
 
 #### Solutions
-_(Pending content.)_
+Solutions are structured knowledge entries that document how to use specific tools or patterns. They live alongside other knowledge under paths in the `tbc-library` repository such as (from the host's perspective):
+
+- `layers/common/knowledge/tbc/solutions/tools/workflow_profile_control.md`
+- `layers/common/knowledge/tbc/solutions/tools/liminal_thinking_profile_control.md`
+ - `layers/common/knowledge/tbc/solutions/tools/philosophy_profile_control.md`
+ - `layers/common/knowledge/tbc/solutions/tools/reasoning_profile_control.md`
+
+From inside the container, these same solution files are visible under `/a0/knowledge/tbc/solutions/...` via the `/a0/knowledge` bind mounts described earlier.
+
+Each solution follows a consistent `Problem` / `Solution` layout with:
+
+- A short statement of the problem (for example, "How to use the workflow_profile_control tool").
+- A solution section that includes quick-reference phrases, available actions (`get_status`, `set_profile`, `enable_feature`, etc.), JSON call patterns for the tool (showing `tool_name` and `tool_args`), and important notes (such as "check system prompt first" and "changes take effect on next message loop").
+
+Profile prompts do not inline these instructions; instead they reference solutions by key, for example:
+
+- `refer to solution: \`workflow_profile_control\` for full documentation and tool usage examples; use it to view available profiles or change your configuration.`
+
+When the agent needs detailed guidance, Agent Zero's knowledge/solutions layer can resolve this key to the corresponding solution document and retrieve the full instructions, avoiding unnecessary token usage in the system prompt while preserving rich, tool-specific documentation.
 
 ### Extensibility Features of Agent Zero
 
 #### Extensions
-Extensions enable custom behaviors layered on top of the core framework. For example, `message_loop_prompts_after` can add post-interaction summaries, enhancing agent responsiveness.
+Extensions enable custom behaviors layered on top of the core Agent Zero framework. In the `tbc-library` repository, most shared extensions live under `layers/common/agents/_symlink/extensions` (host path), which are mounted into the container as `/layers/common/agents/_symlink/extensions` and exposed to Agent Zero as `/a0/agents/_symlink/extensions`; agent profile directories then consume them via symlinks.
+
+- `system_prompt/*` extensions build the system prompt in stages by reading profile-level files such as `pre_system_manual.md`, `post_system_manual.md`, `pre_behaviour.md`, `post_behaviour.md`, and `system_ready.md` from `/a0/agents/${CONTAINER_NAME}/prompts/` and `/a0/prompts/system/`.
+- `message_loop_prompts_after/_70_include_agent_info.py` injects dynamic agent configuration and SystemControl state into `loop_data.extras_temporary["agent_info"]` using the `agent.extras.agent_info.md` prompt.
+
+From the agent's perspective, these extensions are the mechanism that turns prompt files in its profile and shared layers into a structured, multi-stage system prompt for each message loop.
+
+##### System prompt staging pipeline
+
+When the `system_prompt` extension point runs, Agent Zero first applies the base engine extensions located under `/a0/python/extensions/system_prompt/`, then any layered extensions from `/a0/agents/${CONTAINER_NAME}/extensions/system_prompt/` (typically symlinks into `_symlink`). In the `tbc-library` deployment described in this README, the overall staging looks like this:
+
+- Core engine extensions:
+  - `_10_system_prompt.py` assembles the main system prompt and tools (`agent.system.main.md`, `agent.system.tools.md`, optional `agent.system.tools_vision.md`, MCP tools, and `agent.system.secrets.md`, using kwargs such as `secrets` and `vars`).
+  - `_20_behaviour_prompt.py` injects behaviour rules by reading a memory-backed `behaviour.md` file if present, or a default, and passing it as `rules` into `agent.system.behaviour.md`.
+- Layered `_symlink` extensions:
+  - `_11_insert_system_pre_system_manual.py` reads `/a0/agents/${CONTAINER_NAME}/prompts/pre_system_manual.md` and inserts it at the front of `system_prompt`.
+  - `_12_append_system_post_system_manual.py` reads `/a0/agents/${CONTAINER_NAME}/prompts/post_system_manual.md` and appends it after the main system/manual content.
+  - `_21_insert_system_pre_behaviour.py` reads `/a0/agents/${CONTAINER_NAME}/prompts/pre_behaviour.md` and inserts it before behaviour segments.
+  - `_19_insert_system_post_behaviour.py` reads `/a0/agents/${CONTAINER_NAME}/prompts/post_behaviour.md` and inserts it around or after behaviour segments, depending on ordering.
+  - `_95_insert_system_model_godmode.py` delegates to a feature-specific extension `ModelGodMode` in `/a0/prompts/system/features/model_godmode/model_godmode.py`, passing through `system_prompt`, `loop_data`, and `**kwargs` for model-specific initialization.
+  - `_99_append_tbc_system_ready.py` reads `/a0/prompts/system/system_ready.md` (or falls back to a simple "System Ready" message) and appends it as a final footer.
+
+All prompt reads in this pipeline use `agent.read_prompt(..., **kwargs)` and are backed by the kwargs-enabled `files.py` helper. This means prompt plugins (via `VariablesPlugin`) can see rich runtime context such as `agent`, `loop_data`, and profile information when constructing their content, while includes remain well-scoped to the kwargs passed for each file.
 
 #### Helpers
-Helpers provide utility functions for advanced control. For instance, `system_control.py` manages dynamic profile switching, allowing agents to adapt modes (e.g., from "casual" to "formal") based on context.
+Helpers provide utility functions for advanced control.
+
+##### System control helper (`system_control.py`)
+
+`system_control.py` manages dynamic profile switching and feature flags, allowing agents to adapt modes (for example, workflow, philosophy, reasoning style, security posture) based on context.
+
+It acts as a central facade over a JSON configuration file (by default `/a0/tmp/system_control.json`, overrideable via env vars). Using a registry of profile types (workflow, philosophy, liminal_thinking, security, reasoning_internal/interleaved/external) plus optional external profile definitions (for example, JSON files under `prompts/system/profiles/...`), it:
+
+- Tracks the active profile per type and lists available profiles via `ProfileManager` and `ProfileConfig` metadata.
+- Manages feature flags through `FeatureManager`, enabling/disabling named features and controls that tools and prompts can check via `is_feature_enabled`, `get_feature_config`, and `get_security_state`.
+- Exposes dynamic, backward-compatible methods such as `get_active_workflow_profile`, `set_active_philosophy_profile`, or `workflow_profile_control()` via `__getattr__`, which the profile-control tools (`*_profile_control.py`) call to inspect and modify runtime behaviour.
 
 #### Tools
-Tools expand agent capabilities with new functions. An example is the `a2a_chat` tool for secure agent-to-agent messaging, enabling collaborative workflows without external APIs.
+Tools expand agent capabilities with new functions. Many core tools are implemented once under `layers/common/agents/_symlink/tools` in the `tbc-library` repository on the host (mounted into the container at `/layers/common/agents/_symlink/tools`) and exposed to each agent profile via symlinks in `layers/<agent>/agents/<agent>/tools` on the host (mounted at `/layers/<agent>/agents/<agent>/tools` inside the container).
+
+- **Profile and feature control tools** (`feature_control`, `security_profile_control`, `philosophy_profile_control`, `liminal_thinking_profile_control`, `reasoning_profile_control`, `workflow_profile_control`) use `system_control.py` to inspect and adjust active profiles and feature flags at runtime, subject to security constraints.
+- **Base tool infrastructure** (`base_profile_control.py`) centralizes common dispatch and error handling for profile-control style tools.
+- Additional tools such as `a2a_chat`, `memory`, `scheduler`, and `document_query` are documented by prompts in the `_symlink/prompts` directory and may be wired via extensions and SystemControl-managed configuration.
 
 ### Prompts in Agent Zero
-_(Pending content.)_
+Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into `layers/common/agents/_symlink/prompts`; inside the container, these same directories are visible at `/layers/<agent>/agents/<agent>/prompts` and `/layers/common/agents/_symlink/prompts` and in turn include content from `/a0/prompts/system` and `/a0/prompts/overrides`.
+
+- Files like `agent.extras.agent_info.md` and `agent.system.main.role.md` act as stable entrypoints that `{{ include ... }}` their actual text from `prompts/overrides`, allowing central updates without changing agent profiles.
+- Tool prompt stubs such as `agent.system.tool.feature_control.md`, `agent.system.tool.security_profile_control.md`, and `agent.system.tool.scheduler.md` include shared descriptions from `prompts/system/tools`, keeping tool instructions consistent across agents.
+- The `call_subordinate` tool combines `agent.system.tool.call_sub.md` with a `VariablesPlugin` (`agent.system.tool.call_sub.py`) that scans `/a0/agents` for available agent profiles and injects them as `{{agent_profiles}}`, so the prompt always reflects the current set of subordinate options. Use the mental model in **Agent perspectives and management → Self vs managed agents: example scenarios** to interpret each entry in `/a0/agents` as either "self" or a managed/subordinate agent.
+- The TBC `agent_identity` prompt (`prompts/tbc/agent_identity/agent_identity.md`) works with `agent_identity.py` (`AgentIdentity(VariablesPlugin)`), which looks first in `agents/${CONTAINER_NAME}/prompts/<profile>.md` and then in `prompts/tbc/agent_identity/identities/<profile>.md`, reporting where the identity was found via `{{agent_identity_found_where}}`. This lets agents combine profile-specific and shared identities while keeping the actual identity text in separate, overrideable files.
+ - The workflow profile prompt (`prompts/system/profiles/workflow_profile/workflow_profile.md`) works with its plugin (`workflow_profile.py`) and external JSON configuration (`workflow_profile.json`). The plugin uses `SystemControl` to read the active workflow profile from `system_control.json` (for example, `guided`), loads the profile definition and any enabled features from `prompts/system/profiles/workflow_profile/workflow_profile.json`, and renders `{{status}}` and `{{profile_content}}` accordingly. This modularizes workflow behavior into a control file, a JSON definition, and a prompt template while keeping everything driven by the same kwargs-enabled prompt pipeline.
+ - The reasoning profiles prompt (`prompts/system/profiles/reasoning_profile/reasoning_profile.md`) composes three independent reasoning dimensions (internal, interleaved, external). Each dimension has its own prompt and plugin pair (for example, `internal_reasoning_profile.md` + `internal_reasoning_profile.py`) that uses `SystemControl`'s nested reasoning profile types (`reasoning_internal`, `reasoning_interleaved`, `reasoning_external`) and the external JSON definition `reasoning_profile.json` to render the active profile and its content. This lets the agent treat its reasoning strategy as a set of coordinated but independently configurable profiles.
+
+From inside the container, an agent can treat `/a0/agents/${CONTAINER_NAME}/prompts` as its live prompt directory while understanding that many files are symlinks to shared templates. Local overrides can be created by replacing specific symlinks with real files in the agent's profile.
 
 ### More About Agent Zero
 _(Pending content.)_
@@ -688,7 +915,7 @@ https://github.com/agent0ai/agent-zero
 - **Boot Code**: Persistent narrative and technical data that "activates" the system's creative feedback loop.
 - **Feedback Machine**: The dynamic interplay between storytelling and code execution, enabling organic agent growth.
 - **Finder**: A user who discovers and shares the secrets of The Boot Code Storybook.
-- **Layers**: Abstracted directories (e.g., `/layers/`) for shared configs, avoiding direct core modifications.
+- **Layers**: On the host, the `layers/` directory in the `tbc-library` repository; inside the container, the same content is exposed at `/layers` (with `/agent_layer` and `/common_layer` providing focused views). These abstracted directories hold shared and agent-specific configs and data, avoiding direct modifications to the Agent Zero engine.
 - **Narrative Driven Development**: Building software where stories guide technical features and user experiences.
 - **Self-Revealing Orchestration**: Bind mount system that provides agents with direct, transparent access to their own layers and structure.
 - **Adaptability**: Willingness to revisit assumptions and adjust behavior when obstacles or new information appear.
