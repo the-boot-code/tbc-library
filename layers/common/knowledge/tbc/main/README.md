@@ -18,8 +18,11 @@ The Boot Code Storybook blends narrative storytelling with technical innovation.
 If you're here to deploy Agent Zero quickly:
 
 1. Clone the repo: `git clone https://github.com/the-boot-code/tbc-library.git && cd tbc-library`
-2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent`
-3. Access at configured ports (check `.env`).
+2. Run the script: `./create_agent.sh a0-template a0-myagent Template MyAgent 500` (this example uses `PORT_BASE=500`).
+3. For `PORT_BASE=500`, access HTTP at `50080`, SSH at `50022`, and HTTPS via nginx at `50043` (other `PORT_BASE` values follow the same pattern).
+4. After cloning from the `a0-template` container and starting the stack, open the Agent Zero Web UI in your browser, click the **Settings** (gear) button in the sidebar, and use:
+   - the **Agent Settings** page to configure your **LLM models**; and
+   - the **External Services** page for **API keys** and **Authentication**, setting a user and password (especially important if cloud hosted).
 
 This is one streamlined path for quick deployment. Adapt the commands as needed for your environment. For full details, see Installation below. Skip to Technical Deep Dive for architecture.
 
@@ -59,7 +62,7 @@ The technical development of The Boot Code Storybook is a collection of technica
 
 #### The Library
 
-The GitHub repository for this library project, `tbc-library`, is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements development is able to separate and persist the work safely through Agent Zero upgrades.
+The GitHub repository for this library project, `tbc-library`, is the result of many hundreds of agent iterations that have evolved over time as the Agent Zero project also grew. It was created to provide a more organized and maintainable approach to managing the various components and configurations used in the Agent Zero framework. By **abstracting** and **centralizing** these elements, development is able to separate and persist the work safely through Agent Zero upgrades.
 
 #### Narrative Driven Development
 
@@ -110,6 +113,30 @@ Here's a practical workflow to get oriented after reviewing Quick Start:
 3. **Customize Behavior and Settings**: Modify `.env` files for ports and settings, add prompt files for agent behaviors, or extend functionality via scripts and extensions in the agent's layer directory.
 
 Start with this workflow and iterate as you become more familiar with the structure and capabilities.
+
+### Configure Agent Zero
+
+After the container is running, you still configure Agent Zero itself primarily through its Web UI:
+
+1. Open the Web UI in your browser and click the **Settings** (gear) button in the sidebar.
+2. Under **Agent Settings → Agent Config** (pre-populated when you clone from the `a0-template` container), optionally verify or adjust:
+   - the **default agent profile** (for upstream defaults this is often `default`; for tbc-library agents the `${CONTAINER_NAME}` profile created by `create_agent.sh` is usually correct),
+   - the **knowledge subdirectory** that matches the knowledge tree you mounted (for this library, usually `${KNOWLEDGE_DIR}` such as `tbc`).
+3. Under **Agent Settings → Memory** (populated when you clone from the `a0-template` container), optionally adjust the **memory subdirectory** to isolate memory per agent or per use case.
+4. Under **Agent Settings**, configure model settings: choose providers, model names, and context limits appropriate for your hardware and usage:
+   - Chat model
+   - Utility model
+   - Web browser model
+   - Embedding model
+5. Under **External Services → API Keys**, provide any required API keys.
+6. Under **External Services → Authentication**, adjust the UI login/password and any container-level access you allow according to your security requirements.
+
+For a complete walkthrough of these settings, refer to the upstream installation guide shipped with Agent Zero:
+
+- On the host in this deployment: `containers/a0-template/a0/docs/installation.md`.
+- From inside a running container: `/a0/docs/installation.md` (via the `${AGENT_CONTAINER}:/a0` bind mount).
+
+This README focuses on how `tbc-library` layers on top of Agent Zero; the detailed semantics of each setting are governed by the upstream Agent Zero project and its documentation.
 
 Choose the automated script for quick setup or follow the manual steps below.
 
@@ -186,7 +213,7 @@ Copy the `.env.example` file to `.env` and update the environment variables as n
 cp .env.example .env  # Only if .env doesn't exist
 ```
 
-Now you can customize the agent container modifying `.env` file.
+Now you can customize the agent container by modifying the `.env` file.
 ```
 CONTAINER_NAME=a0-template
 PORT_BASE=500 # Port range base prefix (e.g., 400 for 40000)
@@ -201,7 +228,7 @@ The `docker-compose.yml` file is highly parameterized for rapid deployment, thou
 **For security layering**: If you plan to layer `/a0/.env` from the host `layers/[container_name]/.env` file (mounted into the container via `/layers`), see **Optional: Layer the /a0/.env file for security** below and apply it before your first `docker compose up -d`.
 
 #### 4. Launch the Container
-Docker compose once you are ready
+Run Docker Compose once you are ready:
 ```bash
 docker compose up -d
 ```
@@ -588,7 +615,7 @@ The following resource reservations are applied to the container. You may prefer
 ```
 - In many situations, containers run best with these limits commented out by default to prevent memory thrashing when the container hits limits and starts swapping aggressively to the host.
 
-Reverse proxy is included
+A reverse proxy is included
 ```
   nginx:
     <<: *common-config
@@ -676,7 +703,7 @@ common/               # Shared across agents
 
  Detailed breakdown:
 
- - Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs` which provides programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
+ - Prompt files for easy placement and ordering of text and {{ includes }} are called by extensions passing `**kwargs`, which provide programmatic and **run-time adaptable** prompt logic: `post_behaviour.md`, `post_system_manual.md`, `pre_behaviour.md`, `pre_system_manual.md`, `system_ready.md`
 
 ### Agent perspectives and management
 
@@ -832,7 +859,7 @@ Because `read_prompt_file` and `VariablesPlugin.get_variables` are kwargs-enable
 ### Knowledge Features of Agent Zero
 
 #### Knowledge
-Knowledge in the `tbc-library` repository is treated as a first-class, layered resource rather than something that must always be inlined into the system prompt. In addition to prompts and external `/common` resources, there are dedicated knowledge trees under `layers/common/knowledge/...` in this repository (for example, `layers/common/knowledge/tbc/...` on the host), which are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed.
+Knowledge in the `tbc-library` repository is treated as a first-class, layered resource rather than something that must always be inlined into the system prompt. In addition to prompts and external `/common` resources, there are dedicated knowledge trees under `layers/common/knowledge/...` in this repository (for example, `layers/common/knowledge/tbc/...` on the host), which are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed. One notable example is a mirrored copy of this README stored at `layers/common/knowledge/tbc/main/README.md` on the host and visible inside the container as `/a0/knowledge/tbc/main/README.md`; it appears there via the knowledge bind mount for the TBC knowledge directory (for example, `${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw` when `KNOWLEDGE_DIR=tbc`).
 
 These knowledge files are not executed directly. Instead, Agent Zero's knowledge/solutions mechanism can index them (for example, into a vector store or similar memory) and surface relevant entries to the agent based on queries, tool names, or explicit references from prompts. This keeps the system prompt focused while still giving the agent access to rich background information.
 
