@@ -1037,6 +1037,12 @@ This enables organic growth through experimentation and collaboration.
 
 This is an ongoing live development project.
 
+### Versioning
+
+- tbc-library does not yet have a version assigned
+- a0-template/.env.example currently is set to IMAGE_NAME=agent0ai/agent-zero:latest
+- Development is in progress integrating the anticipating Agent Zero v097 upcoming Projects functionality with tbc-library
+
 ### Attribution
 
 Many thanks to the existence of Agent Zero most notably the creator Jan as well as the community of the open source project.
