@@ -709,7 +709,6 @@ common/               # Shared across agents
 └── python/
     └── helpers/      # Custom helpers
         ├── files.py
-        ├── kokoro_tts.py
         └── system_control.py
 ```
 
