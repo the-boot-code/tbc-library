@@ -116,7 +116,7 @@ Here's a practical workflow to get oriented after reviewing Quick Start:
 
 2. **Explore the Layered Structure**: On the host, navigate key directories like `containers/` for compose files and runtime configuration, and `layers/` for shared and agent-specific customizations (these are mounted into the container as `/containers` and `/layers`).
 
-3. **Customize Behavior and Settings**: Modify `.env` files for ports and settings, add prompt files for agent behaviors, or extend functionality via scripts and extensions in the agent's layer directory.
+3. **Customize Behavior and Settings**: In the host `containers/[agent]/` directory, edit the Docker Compose environment file and compose configuration (for example, `containers/a0-myagent/.env`, `containers/a0-myagent/.env.example`, and `containers/a0-myagent/docker-compose.yml`) to adjust ports and container-level settings, and use prompt files in the agent's layer directory to change behaviours. The in-container `/a0/.env` file is managed separately (see **Optional: Layer the /a0/.env file for security** below).
 
 Start with this workflow and iterate as you become more familiar with the structure and capabilities.
 
