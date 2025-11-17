@@ -452,7 +452,7 @@ This subsection explains the minimal, respectful changes to Agent Zero that enab
 
 ### Agent Zero Modifications
 
-At this point in time, only two (2) files of Agent Zero are being **layered** using Docker bind mounts for specific files. Emergent capabilities are thanks to the extensibility and flexibility of the Agent Zero framework. For example:
+Files of Agent Zero are being **layered** using Docker bind mounts for specific files. Emergent capabilities are thanks to the extensibility and flexibility of the Agent Zero framework. For example:
 
 - **Dynamic Prompts**: By layering `files.py` with `**kwargs` support, extensions can inject runtime variables into prompts, enabling adaptive conversations (e.g., changing agent personality based on user input).
 - **System Control**: The added `system_control.py` helper allows programmatic management of profiles, letting agents switch between "creative" and "analytical" modes dynamically without restarting.
