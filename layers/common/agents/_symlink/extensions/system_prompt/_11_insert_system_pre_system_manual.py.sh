@@ -1,0 +1,1 @@
+ln -sf /a0/agents/_symlink//extensions/system_prompt/_11_insert_system_pre_system_manual.py _11_insert_system_pre_system_manual.py && echo "✓ Created symlink to common file _11_insert_system_pre_system_manual.py"
