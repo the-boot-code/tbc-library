@@ -13,7 +13,7 @@ Manage reasoning profiles across three independent types: internal, interleaved,
 **Reasoning Types:**
 - **internal** - Model-generated reasoning traces before output
 - **interleaved** - Reasoning between tool calls  
-- **external** - User-facing reasoning with <thoughts> tags
+- **external** - User-facing reasoning with do so tags
 
 **Quick Reference:**
 - "what reasoning am I using?" → **Check system prompt first** or `action="get_all"`
