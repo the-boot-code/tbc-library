@@ -1,1 +1,0 @@
-{{ include "prompts/system/post_behaviour.md" }}

@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//prompts/post_behaviour.md post_behaviour.md && echo "✓ Created symlink to common file post_behaviour.md"

@@ -12,29 +12,45 @@ Manage philosophy profiles defining operational principles, ethical guidelines, 
 
 **Quick Reference:**
 - "what philosophy am I using?" → **Check system prompt first**
-- "what philosophies available?" → `action="get_status"`
+- "what philosophies available?" → `action="get_state"`
 - "switch to research" → `action="set_profile"`, `profile="research"`
 
-**Available Actions:**
-**get_status** - View current profile, available profiles, and active features
-**get_profile** - View just the active profile
-**set_profile** - Change active profile (requires `profile` parameter)
+**Available actions:**
+- **get_state** – View current philosophy profile and available profiles.
+- **get_profile** – View just the active philosophy profile.
+- **set_profile** – Change active profile (requires `profile` parameter).
 
-**JSON Example Pattern:**
-~~~json
+**JSON example patterns**
+
+_Get state_
+
+```json
 {
-    "thoughts": ["User request description"],
-    "headline": "Action description",
-    "tool_name": "philosophy_profile_control",
-    "tool_args": {
-        "action": "action_name",
-        "parameter": "value"
-    }
+  "thoughts": ["See current philosophy profile and options"],
+  "headline": "Show philosophy profile state",
+  "tool_name": "philosophy_profile_control",
+  "tool_args": {
+    "action": "get_state"
+  }
 }
-~~~
+```
+
+_Set profile_
+
+```json
+{
+  "thoughts": ["Switch to research philosophy profile"],
+  "headline": "Set philosophy profile to research",
+  "tool_name": "philosophy_profile_control",
+  "tool_args": {
+    "action": "set_profile",
+    "profile": "research"
+  }
+}
+```
 
 **Important Notes:**
 - Active profile displayed in system prompt
 - Changes take effect immediately on next message loop
 - **Check system prompt first** before querying configuration
-- Use `get_status` to discover available options (don't hardcode)
+- Use `get_state` to discover available options (don't hardcode)

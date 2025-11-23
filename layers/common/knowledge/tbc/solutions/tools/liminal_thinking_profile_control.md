@@ -12,40 +12,46 @@ Manage liminal thinking profiles for navigating transitional states, thresholds,
 
 **Quick Reference:**
 - "what profile am I using?" → **Check system prompt first**
-- "what profiles available?" → `action="get_status"`
+- "what profiles available?" → `action="get_state"`
 - "switch to deep" → `action="set_profile"`, `profile="deep"`
-- "enable threshold awareness" → `action="enable_feature"`, `feature="threshold_awareness"`
 
-**Available Actions:**
+**Available actions:**
 
-**get_status** - View current profile, available profiles, and active features
-**get_profile** - View just the active profile
-**set_profile** - Change active profile (requires `profile` parameter)
-**enable_feature** - Enable specific feature (requires `feature` parameter)
-**disable_feature** - Disable specific feature (requires `feature` parameter)
+- **get_state** – View current liminal thinking profile and available profiles.
+- **get_profile** – View just the active liminal thinking profile.
+- **set_profile** – Change active profile (requires `profile` parameter).
 
-**JSON Example Pattern:**
-~~~json
+**JSON example patterns**
+
+_Get state_
+
+```json
 {
-    "thoughts": ["User request description"],
-    "headline": "Action description",
-    "tool_name": "liminal_thinking_profile_control",
-    "tool_args": {
-        "action": "action_name",
-        "parameter": "value"
-    }
+  "thoughts": ["See current liminal thinking profile and options"],
+  "headline": "Show liminal thinking profile state",
+  "tool_name": "liminal_thinking_profile_control",
+  "tool_args": {
+    "action": "get_state"
+  }
 }
-~~~
+```
 
-**list_features** - View all available features with descriptions
+_Set profile_
 
-**Profiles & Features:**
-Use `action="get_status"` to discover available profiles and features. Key profiles: default (clean), balanced (general), deep (complex), transitional (change), emergent (patterns). Features include threshold_awareness, ambiguity_embracement, metamorphic_insight, paradox_navigation, emergence_detection, phase_shift_catalyst, void_space_illumination, bridge_building, fluid_state_cognition.
+```json
+{
+  "thoughts": ["Switch to deep liminal thinking profile"],
+  "headline": "Set liminal profile to deep",
+  "tool_name": "liminal_thinking_profile_control",
+  "tool_args": {
+    "action": "set_profile",
+    "profile": "deep"
+  }
+}
+```
 
 **Important Notes:**
 - Active profile displayed in system prompt
 - Changes take effect immediately on next message loop
 - **Check system prompt first** before querying configuration
-- Use `get_status` to discover available options (don't hardcode)
-- Features can be enabled/disabled independently
-- Deep profile has higher computational cost
+- Use `get_state` to discover available options (don't hardcode)

@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//extensions/system_prompt/_21_insert_system_pre_behaviour.py _21_insert_system_pre_behaviour.py && echo "✓ Created symlink to common file _21_insert_system_pre_behaviour.py"

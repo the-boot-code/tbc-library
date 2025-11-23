@@ -1,1 +1,0 @@
-{{ include "prompts/overrides/agent.system.tool.a2a_chat.md" }}

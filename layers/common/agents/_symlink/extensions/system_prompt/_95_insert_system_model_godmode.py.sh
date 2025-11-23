@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//extensions/system_prompt/_95_insert_system_model_godmode.py _95_insert_system_model_godmode.py && echo "✓ Created symlink to common file _95_insert_system_model_godmode.py"

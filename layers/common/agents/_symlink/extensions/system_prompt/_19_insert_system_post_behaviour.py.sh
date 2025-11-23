@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//extensions/system_prompt/_19_insert_system_post_behaviour.py _19_insert_system_post_behaviour.py && echo "✓ Created symlink to common file _19_insert_system_post_behaviour.py"

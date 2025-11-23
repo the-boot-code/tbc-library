@@ -1,0 +1,1 @@
+/a0/agents/_symlink/prompts/pre_system_manual.md

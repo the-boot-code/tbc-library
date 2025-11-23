@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//extensions/system_prompt/_99_append_tbc_system_ready.py _99_append_tbc_system_ready.py && echo "✓ Created symlink to common file _99_append_tbc_system_ready.py"

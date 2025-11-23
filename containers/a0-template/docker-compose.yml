@@ -29,6 +29,10 @@ services:
       - ${AGENT_CONTAINER}:/agent_container:rw
       - ${AGENT_LAYER}:/agent_layer:rw
       - ${COMMON_LAYER}:/common_layer:ro
+      - ${CONTROL_LAYER}:/control_layer:ro
+
+      # control_layer
+      - ${CONTROL_LAYER}:/a0/control_layer:ro
 
       # Agent Zero
       - ${AGENT_CONTAINER}:/a0
@@ -69,25 +73,30 @@ services:
       # instruments
       - ${COMMON_LAYER}/instruments/${KNOWLEDGE_DIR}:/a0/instruments/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/instruments/default/main/common:/a0/instruments/default/main/common:rw
-      - ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+      # - ${AGENT_LAYER}/instruments/default/main/container:/a0/instruments/default/main/container:rw
+      - ../../create_agent.md:/a0/instruments/default/main/tbc-library/create_agent.md:ro
+      - ../../create_agent.sh:/a0/instruments/default/main/tbc-library/create_agent.sh:ro
 
       # knowledge
       - ${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/knowledge/default/main/common:/a0/knowledge/default/main/common:rw
       - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:rw
-      - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
-      - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+      # - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
+      # - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
+      - ../../README.md:/a0/knowledge/default/main/tbc-library/README.md:ro
 
       # prompts
       - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
       - ${COMMON_LAYER}/prompts/overrides:/a0/prompts/overrides:ro
       - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
+      # - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
+
+      # usr
+      - ${COMMON_LAYER}/usr:/a0/usr:rw
 
       # python
       # - ${COMMON_LAYER}/python/helpers/kokoro_tts.py:/a0/python/helpers/kokoro_tts.py:ro
-      - ${COMMON_LAYER}/python/helpers/files.py:/a0/python/helpers/files.py:ro
-      - ${COMMON_LAYER}/python/helpers/system_control.py:/a0/python/helpers/system_control.py:ro
+      # - ${COMMON_LAYER}/python/helpers/files.py:/a0/python/helpers/files.py:ro
       
       # Configuration files (read-only)
       # - ./pip.conf:/etc/pip.conf:ro

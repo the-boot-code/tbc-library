@@ -1,0 +1,1 @@
+/a0/agents/_symlink/prompts/agent.system.main.role.md

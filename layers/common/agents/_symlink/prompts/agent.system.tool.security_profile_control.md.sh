@@ -1,1 +1,0 @@
-ln -sf /a0/agents/_symlink//prompts/agent.system.tool.security_profile_control.md agent.system.tool.security_profile_control.md && echo "✓ Created symlink to common file agent.system.tool.security_profile_control.md"
