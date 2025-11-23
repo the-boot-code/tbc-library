@@ -1,0 +1,1 @@
+{{ include "control_layer/prompts/post_system_manual.md" }}

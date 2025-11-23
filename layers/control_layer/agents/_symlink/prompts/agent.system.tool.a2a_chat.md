@@ -1,0 +1,1 @@
+{{ include "control_layer/prompts/agent.system.tool.a2a_chat.md" }}

@@ -830,7 +830,7 @@ The `layers/a0-template/agents/a0-template` directory in the `tbc-library` repos
 - `_context.md` and a small set of prompts (for example, `a0-template.md` and `fw.initial_message.md`) define the identity and initial behavior of the main agent.
 - Most tools and many prompts in `/layers/a0-template/agents/a0-template` are symlinks pointing to `/layers/common/agents/_symlink`, so their actual implementations are maintained centrally.
 
-When you run `./create_agent.sh a0-template a0-myagent Template MyAgent`:
+When you run `./create_agent.sh a0-template a0-myagent dest_display="My Agent"`:
 
 - A new agent profile directory `layers/a0-myagent/agents/a0-myagent` (mounted into the container at `/layers/a0-myagent/agents/a0-myagent`) is created, preserving the same symlink structure.
 - Centralized tools and prompts continue to live under `layers/common/agents/_symlink` (mounted at `/layers/common/agents/_symlink`), so improvements there automatically apply to `a0-myagent` (and other agents) without copying or manual synchronization.

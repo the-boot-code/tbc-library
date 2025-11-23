@@ -1,0 +1,10 @@
+{
+  "default": {
+    "description": "Default external reasoning profile with no special features",
+    "features": {}
+  },
+  "external_cot_1": {
+    "description": "External chain-of-thought reasoning profile",
+    "features": {}
+  }
+}

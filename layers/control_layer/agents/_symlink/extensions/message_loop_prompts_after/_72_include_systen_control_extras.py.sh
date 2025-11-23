@@ -1,0 +1,1 @@
+ln -sf /a0/control_layer/agents/_symlink/extensions/message_loop_prompts_after/_72_include_systen_control_extras.py _72_include_systen_control_extras.py && echo "✓ Created symlink to common file _72_include_systen_control_extras.py"

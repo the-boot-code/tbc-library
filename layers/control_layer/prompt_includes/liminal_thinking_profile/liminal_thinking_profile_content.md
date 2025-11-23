@@ -1,0 +1,1 @@
+{{ include "control_layer/profile_modules/liminal_thinking_profile/liminal_thinking_profile.md" }}

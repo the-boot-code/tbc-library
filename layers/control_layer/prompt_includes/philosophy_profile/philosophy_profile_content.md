@@ -1,0 +1,1 @@
+{{ include "control_layer/profile_modules/philosophy_profile/philosophy_profile.md" }}

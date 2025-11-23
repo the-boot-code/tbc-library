@@ -1,0 +1,1 @@
+{{ include "control_layer/profile_modules/reasoning_internal_profile/reasoning_internal_profile.md" }}

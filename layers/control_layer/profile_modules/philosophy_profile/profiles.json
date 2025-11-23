@@ -1,0 +1,132 @@
+{
+  "default": {
+    "description": "Default philosophy profile with no special features",
+    "features": {}
+  },
+  "research": {
+    "description": "Research-focused philosophy with emphasis on epistemic rigor and empirical grounding",
+    "features": {
+      "epistemic_rigor": {
+        "enabled": true,
+        "reference": "epistemic_rigor.md"
+      },
+      "source_verification": {
+        "enabled": true,
+        "reference": "source_verification.md"
+      },
+      "skeptical_inquiry": {
+        "enabled": true,
+        "reference": "skeptical_inquiry.md"
+      },
+      "empirical_grounding": {
+        "enabled": true,
+        "reference": "empirical_grounding.md"
+      },
+      "hypothesis_testing": {
+        "enabled": true,
+        "reference": "hypothesis_testing.md"
+      },
+      "bias_awareness": {
+        "enabled": true,
+        "reference": "bias_awareness.md"
+      }
+    }
+  },
+  "creative": {
+    "description": "Creative philosophy emphasizing divergent thinking and analogical reasoning",
+    "features": {
+      "divergent_thinking": {
+        "enabled": true,
+        "reference": "divergent_thinking.md"
+      },
+      "analogical_reasoning": {
+        "enabled": true,
+        "reference": "analogical_reasoning.md"
+      },
+      "skeptical_inquiry": {
+        "enabled": true,
+        "reference": "skeptical_inquiry.md"
+      }
+    }
+  },
+  "analytical": {
+    "description": "Analytical philosophy focused on systematic decomposition and root cause analysis",
+    "features": {
+      "systematic_decomposition": {
+        "enabled": true,
+        "reference": "systematic_decomposition.md"
+      },
+      "root_cause_analysis": {
+        "enabled": true,
+        "reference": "root_cause_analysis.md"
+      },
+      "hypothesis_testing": {
+        "enabled": true,
+        "reference": "hypothesis_testing.md"
+      },
+      "empirical_grounding": {
+        "enabled": true,
+        "reference": "empirical_grounding.md"
+      }
+    }
+  },
+  "collaborative": {
+    "description": "Collaborative philosophy emphasizing consensus building and stakeholder consideration",
+    "features": {
+      "consensus_building": {
+        "enabled": true,
+        "reference": "consensus_building.md"
+      },
+      "stakeholder_consideration": {
+        "enabled": true,
+        "reference": "stakeholder_consideration.md"
+      },
+      "transparency_first": {
+        "enabled": true,
+        "reference": "transparency_first.md"
+      },
+      "bias_awareness": {
+        "enabled": true,
+        "reference": "bias_awareness.md"
+      }
+    }
+  },
+  "efficiency": {
+    "description": "Efficiency-focused philosophy emphasizing satisficing and optimization",
+    "features": {
+      "satisficing": {
+        "enabled": true,
+        "reference": "satisficing.md"
+      },
+      "efficiency_optimization": {
+        "enabled": true,
+        "reference": "efficiency_optimization.md"
+      }
+    }
+  },
+  "safety": {
+    "description": "Safety-first philosophy emphasizing harm prevention and consent respect",
+    "features": {
+      "harm_prevention": {
+        "enabled": true,
+        "reference": "harm_prevention.md"
+      },
+      "reversibility_preference": {
+        "enabled": true,
+        "reference": "reversibility_preference.md"
+      },
+      "fail_safe_defaults": {
+        "enabled": true,
+        "reference": "fail_safe_defaults.md"
+      },
+      "consent_respect": {
+        "enabled": true,
+        "reference": "consent_respect.md"
+      },
+      "transparency_first": {
+        "enabled": true,
+        "reference": "transparency_first.md"
+      }
+    }
+  }
+}

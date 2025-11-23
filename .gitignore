@@ -44,6 +44,10 @@ agent_history.gif
 !/layers/common/
 !/layers/common/**
 
+# Explicitly include control_layer and all its subdirectories
+!/layers/control_layer/
+!/layers/control_layer/**
+
 # Track only the 4 existing directories in volumes/
 /volumes/**
 !/volumes/common/

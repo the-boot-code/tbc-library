@@ -1,0 +1,10 @@
+{
+  "default": {
+    "description": "Default internal reasoning profile with no special features",
+    "features": {}
+  },
+  "internal_cot_1": {
+    "description": "Internal chain-of-thought reasoning profile",
+    "features": {}
+  }
+}

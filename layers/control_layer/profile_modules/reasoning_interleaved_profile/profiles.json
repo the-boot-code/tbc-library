@@ -1,0 +1,10 @@
+{
+  "default": {
+    "description": "Default interleaved reasoning profile with no special features",
+    "features": {}
+  },
+  "interleaved_cot_1": {
+    "description": "Interleaved chain-of-thought reasoning profile",
+    "features": {}
+  }
+}
