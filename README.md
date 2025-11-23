@@ -203,8 +203,8 @@ cd /a0/instruments/default/main/tbc-library
 
 This script:
 - Copies the source container directory to the destination.
-- Updates configurations with the new container name, and optionally `PORT_BASE` and/or `KNOWLEDGE_DIR` (leaves them unchanged from the source if not specified).
-- Copies the relevant layer data under `layers/` for the destination container (using `rsync --ignore-existing`), then updates the destination agent profile with customizations.
+- Updates configurations with the new container name, and optionally `PORT_BASE` and/or `KNOWLEDGE_DIR` (leaves them unchanged from the source if not specified, so the destination inherits the source's `PORT_BASE`. That is usually fine when you want an exact clone, but if you plan to run both containers at the same time you should choose a new `PORT_BASE`/`port_base` to avoid port collisions).
+- Copies the relevant layer data under `layers/` for the destination container (using `rsync --ignore-existing`), then updates the destination agent profile with customizations. Because this is a full layer copy, files such as `layers/<source>/tmp/settings.json` (seen inside the container as `/a0/tmp/settings.json`) are also cloned as-is, so UI-level fields like `agent_profile`, `agent_knowledge_subdir`, and `agent_memory_subdir` will initially match the source until you adjust them for the new agent if desired.
 - Handles replacements for lowercase container names and display names in key files (for example, `a0-template` → `a0-myagent`, `Agent Zero Template` → `Agent Zero My Agent`).
 - Ensures a layered `/a0/.env` file for the new agent at `layers/[dest_container]/.env` (copying from `layers/[source_container]/.env` if present, or creating an empty one), and uncomments the volume so the container uses this layered file.
 - When provided, upserts `ROOT_PASSWORD`, `AUTH_LOGIN`, and `AUTH_PASSWORD` into the layered `/a0/.env` via the `root_password`, `auth_login`, and `auth_password` options.
@@ -341,7 +341,8 @@ These steps are illustrative; the script automates for speed, but manual tweaks 
 ### Post-Installation Verification
 
 - Ensure the containers are running (for example, `docker ps`).
-- Check the `.env` file for port settings and adjust as needed.
+- Check the `.env` file for port settings and adjust as needed (and confirm that `PORT_BASE` values are unique across agents you plan to run concurrently).
+- Review the cloned settings file for the new agent (for example `layers/a0-myagent/tmp/settings.json` on the host, visible inside the container as `/a0/tmp/settings.json`). Fields such as `agent_profile`, `agent_knowledge_subdir`, and `agent_memory_subdir` will initially reflect the source container; update them if you want the destination to use a different profile, knowledge subdirectory, or memory subdirectory.
 - Access the agent at the configured ports to confirm it is reachable.
 
 ### Common Questions

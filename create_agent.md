@@ -80,7 +80,11 @@ Optional `key=value` arguments (any order):
 - `dest_display` – human-readable name used in prompts and greetings.
 - `dest_profile` – profile id under `layers/<dest>/agents/` (default: `<dest>`).
 - `source_profile` – profile id to copy from the source (default: `<source>`).
-- `port_base` – base for HTTP/SSH/etc ports (matches `.env.example`).
+- `port_base` – base for HTTP/SSH/etc ports (matches `.env.example`). If you omit
+  this argument, the destination keeps whatever `PORT_BASE` value the source
+  container had in its `.env`. That is usually fine when you intentionally want
+  an exact clone, but if you plan to run both containers at the same time you
+  should choose a new `port_base` to avoid port collisions.
 - `knowledge_dir` – value for `KNOWLEDGE_DIR` in the destination `.env`.
 - `no_docker` – if set, skip `docker compose up -d`.
 - `root_password`, `auth_login`, `auth_password` – values written into the
@@ -103,6 +107,12 @@ What the script does (simplified):
 - ensures `layers/<dest>/.env` exists (cloned from source if present),
   with a fresh `A0_PERSISTENT_RUNTIME_ID`.
 - copies `layers/<source>/` → `layers/<dest>/` via `rsync --ignore-existing`.
+  This includes any `tmp/settings.json` file under the source layer (for
+  example `layers/<source>/tmp/settings.json` and its in-container view at
+  `/a0/tmp/settings.json`). Fields such as `agent_profile`,
+  `agent_knowledge_subdir`, and `agent_memory_subdir` are **not** rewritten by
+  the script; they initially reflect the source container until you or a human
+  adjust them for the destination.
 - recreates `layers/<dest>/agents/<dest_profile>` from
   `layers/<source>/agents/<source_profile>` and edits key files
   (`_context.md`, `prompts/fw.initial_message.md`, and
