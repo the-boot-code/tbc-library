@@ -23,7 +23,7 @@ The Boot Code Storybook blends narrative storytelling with technical innovation.
 If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library–layered** Agent Zero instance: you get the standard engine plus self-revealing bind mounts and dynamic system control/profiles (see **The Library** and **Extensibility Features of Agent Zero → Dynamic system control and profiles**).
 
 1. Clone the repo: `git clone https://github.com/the-boot-code/tbc-library.git && cd tbc-library`
-2. Run the script: `./create_agent.sh a0-template a0-myagent dest_display="My Agent" port_base=500 auth_login=myuser auth_password=mypassword` (this example uses `PORT_BASE=500`).
+2. From a **host shell in the `tbc-library` repo root** (outside any Agent Zero container), run the script: `./create_agent.sh a0-template a0-myagent dest_display="My Agent" port_base=500 auth_login=myuser auth_password=mypassword` (this example uses `PORT_BASE=500`).
 3. For `PORT_BASE=500`, access HTTP at `50080`, SSH at `50022`, and HTTPS via nginx at `50043` (other `PORT_BASE` values follow the same pattern).
 4. After cloning from the `a0-template` container and starting the stack, open the Agent Zero Web UI in your browser, click the **Settings** (gear) button in the sidebar, and use:
    - the **Agent Settings** page to configure your **LLM models**; and
@@ -109,6 +109,7 @@ At minimum, you'll need the following to get started (or equivalents for alterna
 
 - **Docker and Docker Compose**: Installed and running (for container orchestration).
 - **Git**: For cloning the repository.
+- **rsync**: For safely copying and merging layer directories when using `create_agent.sh`.
 - **Agent Zero image**: Version **v0.9.7 or newer**, or any image where the upstream `files.py` already supports `**kwargs` for prompt loading (this library assumes that behavior and does not layer its own `files.py`).
 - **Basic Shell Knowledge**: Familiarity with command-line operations like `cd`, `cp`, `sed`.
 - **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required (links provided in the Technical Deep Dive).
@@ -161,7 +162,7 @@ git clone https://github.com/the-boot-code/tbc-library.git
 cd tbc-library
 ```
 
-A script `create_agent.sh` is provided in the root of `tbc-library` to automate agent creation.
+A script `create_agent.sh` is provided in the root of `tbc-library` to automate agent creation from the host. For agents running inside a container, the same script is exposed as an instrument; see `create_agent.md` for agent-oriented usage, required `/containers/...` paths, and Docker/`no_docker` behavior.
 
 **Important Notes:**
 - The script will fail if a container directory for the new agent already exists, to prevent accidental data loss. Remove it manually (e.g., `rm -rf containers/a0-myagent`) if you want to recreate.
@@ -170,23 +171,34 @@ A script `create_agent.sh` is provided in the root of `tbc-library` to automate 
 
 **Usage:**
 ```bash
+# From a shell in the directory that contains create_agent.sh
 ./create_agent.sh <source> <dest> [key=value ...]
 ```
 
-- `<source>`: existing template container name under `containers/`
-- `<dest>`: new container name to create under `containers/` and `layers/`
+- `<source>`: existing template container name under `containers/` (for example `a0-template` when running from the `tbc-library` repo root).
+- `<dest>`: new container name to create under `containers/` and `layers/` (for example `a0-myagent`). When `create_agent.sh` is invoked from inside a container as an instrument, it instead expects `/containers/<source>` and `/containers/<dest>`; see `create_agent.md` for those patterns.
 
-At minimum you can run:
+At minimum, from a **host shell in the `tbc-library` repo root** (outside any Agent Zero container), you can run:
 ```bash
+# Host shell only (outside any Agent Zero container), from tbc-library repo root:
 ./create_agent.sh a0-template a0-myagent
 ```
 
-For a more complete, real-world example (including profile IDs, ports, knowledge directory, layered login credentials, and skipping Docker startup):
+For a more complete, real-world example (including profile IDs, ports, knowledge directory, layered login credentials, and skipping Docker startup) **from a host shell in the `tbc-library` repo root**:
 ```bash
+# Host shell only (outside any Agent Zero container), from tbc-library repo root:
 ./create_agent.sh a0-template a0-myagent \
   dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy \
   port_base=500 knowledge_dir=custom \
   root_password=CHANGE_ME auth_login=myuser auth_password=mypassword no_docker=true
+```
+
+From **inside a running Agent Zero container** (for example, when you invoke the script as an instrument from `a0-clarity`), prefer the in-container form using `/containers/...` paths:
+```bash
+# Inside a running Agent Zero container with tbc-library instruments mounted:
+cd /a0/instruments/default/main/tbc-library
+./create_agent.sh /containers/a0-template /containers/a0-myagent \
+  dest_display="My Agent" port_base=500 no_docker=true
 ```
 
 This script:
@@ -196,12 +208,12 @@ This script:
 - Handles replacements for lowercase container names and display names in key files (for example, `a0-template` → `a0-myagent`, `Agent Zero Template` → `Agent Zero My Agent`).
 - Ensures a layered `/a0/.env` file for the new agent at `layers/[dest_container]/.env` (copying from `layers/[source_container]/.env` if present, or creating an empty one), and uncomments the volume so the container uses this layered file.
 - When provided, upserts `ROOT_PASSWORD`, `AUTH_LOGIN`, and `AUTH_PASSWORD` into the layered `/a0/.env` via the `root_password`, `auth_login`, and `auth_password` options.
-- As the final step, starts Docker containers in detached mode (unless `no_docker` is set), so using `no_docker` lets you inspect and tweak all files before bringing the stack up.
+- As the final step, attempts to start Docker containers in detached mode (unless `no_docker` is set). If Docker is not available or `docker compose up -d` cannot reach the daemon (for example, inside a container without a Docker socket), the script prints a clear message and leaves the new agent created but not started; using `no_docker=true` lets you prepare the filesystem and defer startup to a host with Docker.
 
 
 ### Installation (Step by Step)
 
-**Tip**: If you prefer automation, you can use the script `./create_agent.sh a0-template a0-myagent dest_display="My Agent"` and refer back to these steps when you want to understand or customize what it does.
+**Tip**: If you prefer automation, you can use the script `./create_agent.sh a0-template a0-myagent dest_display="My Agent"` **from a host shell in the `tbc-library` repo root (outside any Agent Zero container)** and refer back to these steps when you want to understand or customize what it does.
 
 #### 1. Clone the Repository
 If you have not already cloned the repository, follow the commands in Installation (Scripted) above, then ensure you are in the `tbc-library` directory.
@@ -335,6 +347,7 @@ These steps are illustrative; the script automates for speed, but manual tweaks 
 ### Common Questions
 
 - **Where is my docker-compose.yml file?** It is located at `tbc-library/containers/[your_agent_name]/docker-compose.yml` (e.g., `a0-myagent`). *For agents*: From within your container, the most certain and direct access is via `/agent_orchestration/docker-compose.yml` through self-revealing bind mounts, allowing introspection without host-side inference. For modifications, explore alternative mounts (e.g., `/containers/[your_agent_name]/docker-compose.yml`) and check permissions—self-revealing orchestration empowers flexible self-modification and autonomy by revealing multiple access paths. This is just one example; apply this pattern in other areas to evolve your agents and workflows over time.
+- **Where is `create_agent.sh` from inside the container?** On the host, the script lives at `tbc-library/create_agent.sh` in the library root. *For agents inside a container*, it is exposed as an instrument via the compose mounts, and is normally available at `/a0/instruments/default/main/tbc-library/create_agent.sh`. Prefer to `cd` to that directory and run `./create_agent.sh /containers/<source> /containers/<dest> [key=value ...]`, or, if you need to rediscover it, use a scoped search such as `find /a0 -name create_agent.sh 2>/dev/null` rather than assuming a `/a0/tbc-library` clone exists.
 
 **Optional: Layer the /a0/.env file via tbc-library abstraction**
 
@@ -830,7 +843,7 @@ The `layers/a0-template/agents/a0-template` directory in the `tbc-library` repos
 - `_context.md` and a small set of prompts (for example, `a0-template.md` and `fw.initial_message.md`) define the identity and initial behavior of the main agent.
 - Most tools and many prompts in `/layers/a0-template/agents/a0-template` are symlinks pointing to `/a0/control_layer/agents/_symlink`, so their actual implementations are maintained centrally.
 
-When you run `./create_agent.sh a0-template a0-myagent dest_display="My Agent"`:
+When you run `./create_agent.sh a0-template a0-myagent dest_display="My Agent"` from the `tbc-library` root on the host:
 
 - A new agent profile directory `layers/a0-myagent/agents/a0-myagent` (mounted into the container at `/layers/a0-myagent/agents/a0-myagent`) is created, preserving the same symlink structure.
 - Centralized tools and prompts continue to live under `layers/control_layer/agents/_symlink` (visible in the container at `/a0/control_layer/agents/_symlink` and `/layers/control_layer/agents/_symlink`), so improvements there automatically apply to `a0-myagent` (and other agents) without copying or manual synchronization.

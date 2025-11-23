@@ -18,6 +18,14 @@ Use this document as a **usage guide** for `create_agent.sh` only:
 - treat `create_agent.sh` as an orchestration instrument you invoke via
   `code_execution_tool` from inside the container
 - use the JSON patterns below as templates when requesting new agents
+- in this deployment, the script is mounted inside the container at
+  `/a0/instruments/default/main/tbc-library/create_agent.sh` via the
+  docker-compose configuration; if this ever changes, you can always
+  locate it safely with:
+
+  ```bash
+  find /a0 -name create_agent.sh 2>/dev/null
+  ```
 
 ---
 
@@ -25,35 +33,22 @@ Use this document as a **usage guide** for `create_agent.sh` only:
 
 #### Create a new agent with `create_agent.sh` via `code_execution_tool`
 
-From inside the container, run the script only as a **local instrument**:
+From inside the container, run the script only as a **local instrument** and
+you **must** use absolute `/containers/...` paths for the first two
+arguments:
 
 - `cd` to the instrument directory (for example
   `/a0/instruments/default/main/tbc-library`) and run
-  `./create_agent.sh ...`
+  `./create_agent.sh /containers/<source> /containers/<dest> [key=value ...]`
 
 Outside this container (for example on a remote host that has the same
 library checked out), `create_agent.sh` can also be run from the library root
 by `cd`-ing there and invoking `./create_agent.sh ...`. This is informational
 only for this document.
 
-The JSON pattern below shows the in-container **instrument** call. Adjust the
-`code` field only if some external automation is calling it from a library
-root instead.
-
-```json
-{
-  "thoughts": [
-    "Clone a new agent container a0-myagent from a0-template without starting Docker yet"
-  ],
-  "headline": "Create new agent container",
-  "tool_name": "code_execution_tool",
-  "tool_args": {
-    "runtime": "terminal",
-    "session": 0,
-    "code": "cd /a0/instruments/default/main/tbc-library && ./create_agent.sh a0-template a0-myagent dest_display=\"My Agent\" port_base=500 knowledge_dir=tbc no_docker=true"
-  }
-}
-```
+Use this pattern when forming `code_execution_tool` requests. Detailed
+arguments, constraints, and behavior are described in the sections below; all
+concrete JSON and shell examples are collected later in this document.
 
 If `code_execution_tool` is unavailable or restricted by policy, do not attempt
 to run this command.
@@ -71,8 +66,14 @@ instrument directory described above):
 
 Positional arguments:
 
-- `source` – existing container under `containers/` (for example `a0-template`).
-- `dest` – new container name (for example `a0-myagent`).
+- `source` – existing container under `containers/`. When running from the repo
+  root, pass a **name** (for example `a0-template`). When running inside the
+  container, you **must** pass an absolute **path** (for example
+  `/containers/a0-template`).
+- `dest` – new container under `containers/`. When running from the repo root,
+  pass a **name** (for example `a0-myagent`). When running inside the
+  container, you **must** pass an absolute **path** (for example
+  `/containers/a0-myagent`).
 
 Optional `key=value` arguments (any order):
 
@@ -87,16 +88,12 @@ Optional `key=value` arguments (any order):
 
 Constraints:
 
-- `dest` and `dest_profile` must be lowercase letters, digits, dashes;
-  must start with letter or digit.
+- `dest` and `dest_profile` must be lowercase letters, digits, dashes; must
+  start with letter or digit.
 - `port_base` must be an integer in `[0, 654]`.
-- `containers/<dest>` must not already exist.
-
-#### Minimal clone
-
-```bash
-./create_agent.sh a0-template a0-myagent
-```
+- The destination **container directory** must not already exist (for example
+  `containers/<dest>` from the repo root, or `/containers/<dest>` inside the
+  container).
 
 What the script does (simplified):
 
@@ -112,11 +109,102 @@ What the script does (simplified):
   `extensions/agent_init/_05_agent_name.py` when present) to use
   the new profile id and display name.
 - uncomments the `/a0/.env` volume mapping if `layers/<dest>/.env` exists.
-- runs `docker compose up -d` unless `no_docker` is set.
+- attempts to run `docker compose up -d` unless `no_docker` is set; if Docker
+  is not available or cannot reach the daemon (for example, inside a container
+  without a Docker socket), it prints a clear message and leaves the agent
+  created but not started.
 
-#### Full example without starting Docker
+#### Docker awareness and safety for agents
+
+- When you invoke `create_agent.sh` from inside a container, you usually do
+  *not* control Docker itself (installation, daemon, or socket). You should not
+  try to install Docker or modify Docker sockets from inside the container.
+- Prefer `no_docker=true` if you only need to prepare the new agent's
+  filesystem and configuration; a human or external orchestrator can start it
+  later on a host with Docker.
+- Do **not** attempt to install system packages such as `rsync` (for example
+  via `apt-get` or `yum`) from inside the container in order to satisfy
+  `create_agent.sh` dependencies. Instead, report that `rsync` (or another
+  dependency) is missing and instruct the user or a host-level orchestrator to
+  install it on the image/host before re-running the script.
+- Do **not** delete `/containers/...` or `/layers/...` directories on your own
+  (for example with `rm -rf`). If `create_agent.sh` reports that a destination
+  container directory already exists, summarize this to the user and wait for
+  explicit instructions (for example, to remove or rename the destination)
+  rather than making destructive changes by default.
+- If the script prints:
+
+  `Agent <dest> created and customized successfully, but Docker is not installed or not on PATH.`
+
+  treat this as a **successful creation** with no containers started. Summarize
+  this to the user and stop; do not attempt host-level fixes.
+- If the script prints:
+
+  `Agent <dest> created and customized, but 'docker compose up -d' failed.`
+
+  assume the environment lacks access to the Docker daemon or compose plugin.
+  Summarize that the new agent is created but not started, and instruct the
+  user to run `docker compose up -d` from a suitable host. Do not repeatedly
+  retry or attempt to repair Docker from inside the container.
+
+##### Example user-facing summaries
+
+- After a "Docker not installed or not on PATH" message:
+
+  > I successfully created and customized the new agent container `<dest>`, but
+  > this environment does not have Docker available to start it. The new
+  > container and its layered configuration are in place; please run
+  > `docker compose up -d` in `containers/<dest>` from a host with Docker
+  > installed if you want it running.
+
+- After a "'docker compose up -d' failed" message:
+
+  > I successfully created and customized the new agent container `<dest>`, but
+  > `docker compose up -d` could not reach the Docker daemon or compose
+  > plugin from this environment. The container definition and layered env are
+  > ready; please start it later by running `docker compose up -d` in
+  > `containers/<dest>` on a host with Docker access.
+
+---
+
+### Examples (for agents and humans)
+
+#### In-container instrument JSON (correct pattern)
+
+```json
+{
+  "thoughts": [
+    "Clone a new agent container a0-myagent from a0-template without starting Docker yet"
+  ],
+  "headline": "Create new agent container",
+  "tool_name": "code_execution_tool",
+  "tool_args": {
+    "runtime": "terminal",
+    "session": 0,
+    "code": "cd /a0/instruments/default/main/tbc-library && ./create_agent.sh /containers/a0-template /containers/a0-myagent dest_display=\"My Agent\" port_base=500 knowledge_dir=tbc no_docker=true"
+  }
+}
+```
+
+#### In-container bare-name error example
 
 ```bash
+# Inside container (incorrect example: using bare names will fail as shown below)
+cd /a0/instruments/default/main/tbc-library && ./create_agent.sh a0-template a0-myagent
+# Error: When running inside the container, source and dest must be absolute /containers/... paths.
+```
+
+#### Minimal host-side clone
+
+```bash
+# Host shell (outside any Agent Zero container), from tbc-library repo root:
+./create_agent.sh a0-template a0-myagent
+```
+
+#### Full host-side example without starting Docker
+
+```bash
+# Host shell (outside any Agent Zero container), from tbc-library repo root:
 ./create_agent.sh a0-template a0-myagent \
   dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy \
   port_base=500 knowledge_dir=tbc \
@@ -124,10 +212,10 @@ What the script does (simplified):
   no_docker=true
 ```
 
-### Help and examples
+### Help and additional patterns
 
-For additional usage patterns and argument combinations, consult the
-`create_agent.sh` help and examples:
+For more combinations and edge cases, consult the script's built-in help
+and examples from an appropriate shell context (host or container):
 
 ```bash
 ./create_agent.sh --help

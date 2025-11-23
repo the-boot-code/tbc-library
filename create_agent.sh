@@ -6,6 +6,8 @@
 # Example with knowledge_dir: ./create_agent.sh a0-template a0-myagent dest_display=MyAgent port_base=500 knowledge_dir=custom
 # Example without starting Docker: ./create_agent.sh a0-template a0-myagent dest_display=MyAgent port_base=500 no_docker=true
 # Example with defaults: ./create_agent.sh a0-template a0-myagent
+# Example from inside container using explicit paths:
+#   ./create_agent.sh /containers/a0-template /containers/a0-myagent dest_display=MyAgent port_base=500 knowledge_dir=custom no_docker=true
 
 print_help() {
   cat <<EOF
@@ -15,8 +17,9 @@ Usage:
   $0 <source> <dest> [key=value ...]
 
 Required arguments:
-  source                      Existing template container name (directory under containers/)
-  dest                        New agent container name (directory will be created; must be filesystem-safe)
+  source                      Existing template container name or path (e.g. a0-template or /containers/a0-template)
+  dest                        New agent container name or path (e.g. a0-myagent or /containers/a0-myagent; directory will be created; must be filesystem-safe)
+                              When running inside a container (REPO_ROOT=/), source and dest must be absolute /containers/... paths.
 
 Optional key=value arguments:
   dest_display=NAME           Human-readable name for the new agent (default: dest_profile)
@@ -153,6 +156,13 @@ if [ $# -lt 2 ] || [ $# -gt 11 ]; then
   exit 1
 fi
 
+# Ensure required dependencies are available early
+if ! command -v rsync >/dev/null 2>&1; then
+  echo "Error: rsync is required by create_agent.sh but is not installed or not on PATH in this environment." >&2
+  echo "Please install rsync on the host or image, then re-run this script." >&2
+  exit 1
+fi
+
 # Determine the base directory of the script
 SCRIPT_DIR=$(dirname "$0")
 BASE_DIR=$(cd "$SCRIPT_DIR" && pwd)
@@ -168,8 +178,8 @@ while [ ! -d "$REPO_ROOT/containers" ] || [ ! -d "$REPO_ROOT/layers" ]; do
 done
 
 # Arguments:
-#   1: SOURCE_CONTAINER (required, positional)
-#   2: DEST_CONTAINER   (required, positional)
+#   1: SOURCE (required, positional; container name or path)
+#   2: DEST   (required, positional; container name or path)
 #
 # Optional args (3+), may appear in any order as key=value:
 #   dest_display=...
@@ -181,8 +191,37 @@ done
 #   root_password=...
 #   auth_login=...
 #   auth_password=...
-SOURCE_CONTAINER=$1
-DEST_CONTAINER=$2
+RAW_SOURCE=$1
+RAW_DEST=$2
+
+CONTAINERS_ROOT="$REPO_ROOT/containers"
+LAYERS_ROOT="$REPO_ROOT/layers"
+
+# If running inside the container (REPO_ROOT=/), require /containers/... for both source and dest
+if [ "$REPO_ROOT" = "/" ]; then
+  if [[ "$RAW_SOURCE" != /containers/* || "$RAW_DEST" != /containers/* ]]; then
+    echo "Error: When running inside the container, source and dest must be absolute /containers/... paths." >&2
+    exit 1
+  fi
+fi
+
+# Resolve source container name and path
+if [[ "$RAW_SOURCE" == /* || "$RAW_SOURCE" == *"/"* ]]; then
+  SOURCE_CONTAINER_PATH="$RAW_SOURCE"
+  SOURCE_CONTAINER=$(basename "$SOURCE_CONTAINER_PATH")
+else
+  SOURCE_CONTAINER="$RAW_SOURCE"
+  SOURCE_CONTAINER_PATH="$CONTAINERS_ROOT/$SOURCE_CONTAINER"
+fi
+
+# Resolve destination container name and path
+if [[ "$RAW_DEST" == /* || "$RAW_DEST" == *"/"* ]]; then
+  DEST_CONTAINER_PATH="$RAW_DEST"
+  DEST_CONTAINER=$(basename "$DEST_CONTAINER_PATH")
+else
+  DEST_CONTAINER="$RAW_DEST"
+  DEST_CONTAINER_PATH="$CONTAINERS_ROOT/$DEST_CONTAINER"
+fi
 
 # Defaults for optional arguments
 SOURCE_PROFILE="$SOURCE_CONTAINER"
@@ -257,22 +296,22 @@ fi
 echo "Creating agent: $DEST_CONTAINER from $SOURCE_CONTAINER"
 
 # Check if source container exists
-if [ ! -d "$REPO_ROOT/containers/$SOURCE_CONTAINER" ]; then
-  echo "Error: Source container $SOURCE_CONTAINER not found in $REPO_ROOT/containers/."
+if [ ! -d "$SOURCE_CONTAINER_PATH" ]; then
+  echo "Error: Source container $SOURCE_CONTAINER not found at $SOURCE_CONTAINER_PATH."
   exit 1
 fi
 
-# Check if container already exists
-if [ -d "$REPO_ROOT/containers/$DEST_CONTAINER" ]; then
-  echo "Error: Container directory $REPO_ROOT/containers/$DEST_CONTAINER already exists. Remove it manually if you want to recreate."
+# Check if destination container directory already exists
+if [ -d "$DEST_CONTAINER_PATH" ]; then
+  echo "Error: Container directory $DEST_CONTAINER_PATH already exists. Remove it manually if you want to recreate."
   exit 1
 fi
 
 # Copy container directory
-cp -r "$REPO_ROOT/containers/$SOURCE_CONTAINER" "$REPO_ROOT/containers/$DEST_CONTAINER"
+cp -r "$SOURCE_CONTAINER_PATH" "$DEST_CONTAINER_PATH"
 
 # Enter container directory
-cd "$REPO_ROOT/containers/$DEST_CONTAINER"
+cd "$DEST_CONTAINER_PATH"
 
 # Ensure orchestration .env (used by docker compose) exists
 if [ ! -f .env ]; then
@@ -304,19 +343,19 @@ fi
 echo "Note: Update PORT_BASE if needed for unique ports."
 
 # Create layered .env (host-side, mounted as /a0/.env) from source if available, with new runtime ID
-mkdir -p "$REPO_ROOT/layers/$DEST_CONTAINER"
-if [ ! -f "$REPO_ROOT/layers/$DEST_CONTAINER/.env" ]; then
-  if [ -f "$REPO_ROOT/layers/$SOURCE_CONTAINER/.env" ]; then
-    cp "$REPO_ROOT/layers/$SOURCE_CONTAINER/.env" "$REPO_ROOT/layers/$DEST_CONTAINER/.env"
+mkdir -p "$LAYERS_ROOT/$DEST_CONTAINER"
+if [ ! -f "$LAYERS_ROOT/$DEST_CONTAINER/.env" ]; then
+  if [ -f "$LAYERS_ROOT/$SOURCE_CONTAINER/.env" ]; then
+    cp "$LAYERS_ROOT/$SOURCE_CONTAINER/.env" "$LAYERS_ROOT/$DEST_CONTAINER/.env"
     # Generate a new A0_PERSISTENT_RUNTIME_ID
     NEW_ID=$(uuidgen 2>/dev/null || echo "$(date +%s)-$(($RANDOM % 10000))")
     sed -i "s|^A0_PERSISTENT_RUNTIME_ID=.*|A0_PERSISTENT_RUNTIME_ID=$NEW_ID|" "$REPO_ROOT/layers/$DEST_CONTAINER/.env"
   else
-    touch "$REPO_ROOT/layers/$DEST_CONTAINER/.env"
+    touch "$LAYERS_ROOT/$DEST_CONTAINER/.env"
   fi
 fi
 
-LAYERED_ENV_FILE="$REPO_ROOT/layers/$DEST_CONTAINER/.env"
+LAYERED_ENV_FILE="$LAYERS_ROOT/$DEST_CONTAINER/.env"
 
 # If root/auth values were provided, upsert them in the layered /a0/.env
 if [ -n "$ROOT_PASSWORD" ]; then
@@ -344,13 +383,13 @@ if [ -n "$AUTH_PASSWORD" ]; then
 fi
 
 # Ensure source profile directory exists under layers
-if [ ! -d "$REPO_ROOT/layers/$SOURCE_CONTAINER/agents/$SOURCE_PROFILE" ]; then
-  echo "Error: Source profile $SOURCE_PROFILE not found under $REPO_ROOT/layers/$SOURCE_CONTAINER/agents/." >&2
+if [ ! -d "$LAYERS_ROOT/$SOURCE_CONTAINER/agents/$SOURCE_PROFILE" ]; then
+  echo "Error: Source profile $SOURCE_PROFILE not found under $LAYERS_ROOT/$SOURCE_CONTAINER/agents/." >&2
   exit 1
 fi
 
 # Navigate to layers
-cd "$REPO_ROOT/layers"
+cd "$LAYERS_ROOT"
 
 # Copy layers contents, preserving existing files
 rsync -a --ignore-existing "$SOURCE_CONTAINER/" "$DEST_CONTAINER/"
@@ -359,12 +398,12 @@ rsync -a --ignore-existing "$SOURCE_CONTAINER/" "$DEST_CONTAINER/"
 cd "$REPO_ROOT/containers/$DEST_CONTAINER"
 
 # Uncomment the layered .env volume so it mounts into the container as /a0/.env
-if [ -f "$REPO_ROOT/layers/$DEST_CONTAINER/.env" ]; then
+if [ -f "$LAYERS_ROOT/$DEST_CONTAINER/.env" ]; then
   sed -i 's/# - \${AGENT_LAYER}\/\.env:\/a0\/\.env:rw/- ${AGENT_LAYER}\/\.env:\/a0\/\.env:rw/' docker-compose.yml
 fi
 
 # Navigate to layers for agent customization
-cd "$REPO_ROOT/layers"
+cd "$LAYERS_ROOT"
 
 # Create agent profile directory
 rm -rf "$DEST_CONTAINER/agents/$DEST_PROFILE"
@@ -405,7 +444,7 @@ if [ -f extensions/agent_init/_05_agent_name.py ]; then
 fi
 
 # Navigate back to container directory for optional Docker start
-cd "$REPO_ROOT/containers/$DEST_CONTAINER"
+cd "$DEST_CONTAINER_PATH"
 
 # Start Docker containers as the final step (unless no_docker is set)
 if [ -n "$NO_DOCKER" ]; then
@@ -413,7 +452,24 @@ if [ -n "$NO_DOCKER" ]; then
   echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
   echo "You can start the agent later with: docker compose up -d (in containers/$DEST_CONTAINER)."
 else
-  docker compose up -d
+  # If Docker CLI is not available at all, do not treat this as a creation failure.
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "Agent $DEST_CONTAINER created and customized successfully, but Docker is not installed or not on PATH."
+    echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+    echo "You can start the agent later with: docker compose up -d (in containers/$DEST_CONTAINER) on a host with Docker installed."
+    exit 0
+  fi
+
+  # Attempt to start the container stack. If this fails (for example, no Docker daemon
+  # or no socket in this environment), surface a clear message but do not undo creation.
+  if ! docker compose up -d; then
+    echo "Agent $DEST_CONTAINER created and customized, but 'docker compose up -d' failed."
+    echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+    echo "You may be running without access to the Docker daemon or compose plugin (for example, inside a container without the Docker socket)."
+    echo "Start the agent later from a host with Docker access using: docker compose up -d (in containers/$DEST_CONTAINER)."
+    exit 1
+  fi
+
   echo "Agent $DEST_CONTAINER created, customized, and started successfully!"
   echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
   echo "Access at configured ports (check orchestration .env for PORT_BASE)."
