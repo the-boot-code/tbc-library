@@ -88,7 +88,12 @@ Optional `key=value` arguments (any order):
 - `knowledge_dir` – value for `KNOWLEDGE_DIR` in the destination `.env`.
 - `no_docker` – if set, skip `docker compose up -d`.
 - `root_password`, `auth_login`, `auth_password` – values written into the
-  layered `/a0/.env` file at `layers/<dest>/.env`.
+  layered `/a0/.env` file at `layers/<dest>/.env`. If you omit
+  `auth_login`/`auth_password` and the layered env does not already define
+  them, the script will generate short, human-friendly default credentials
+  (for example `user1234` / `password5678`) and print them in its output so
+  you have something to use for the first login (you should change them
+  after verifying access, especially on hosted deployments).
 
 Constraints:
 
@@ -109,10 +114,16 @@ What the script does (simplified):
 - copies `layers/<source>/` → `layers/<dest>/` via `rsync --ignore-existing`.
   This includes any `tmp/settings.json` file under the source layer (for
   example `layers/<source>/tmp/settings.json` and its in-container view at
-  `/a0/tmp/settings.json`). Fields such as `agent_profile`,
-  `agent_knowledge_subdir`, and `agent_memory_subdir` are **not** rewritten by
-  the script; they initially reflect the source container until you or a human
-  adjust them for the destination.
+  `/a0/tmp/settings.json`). When present, the script updates
+  `agent_profile` in that file to match `dest_profile`, and if you passed
+  `knowledge_dir` it also updates `agent_knowledge_subdir` accordingly. It
+  also derives `rfc_port_http` and `rfc_port_ssh` from the destination
+  agent's effective `PORT_BASE` so those ports stay consistent with the
+  orchestration `.env`. If no `tmp/settings.json` existed for the source,
+  the script creates a minimal one for the destination with these linkage
+  and port fields. Other fields (for example `agent_memory_subdir`) are not
+  changed and will initially reflect the source container until you or a
+  human adjust them for the destination.
 - recreates `layers/<dest>/agents/<dest_profile>` from
   `layers/<source>/agents/<source_profile>` and edits key files
   (`_context.md`, `prompts/fw.initial_message.md`, and

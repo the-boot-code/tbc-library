@@ -235,6 +235,10 @@ ROOT_PASSWORD=""
 AUTH_LOGIN=""
 AUTH_PASSWORD=""
 
+# Track any generated auth credentials so we can report them to the user
+GENERATED_AUTH_LOGIN=""
+GENERATED_AUTH_PASSWORD=""
+
 # Parse remaining optional arguments (any order, key=value only)
 shift 2
 for arg in "$@"; do
@@ -382,6 +386,35 @@ if [ -n "$AUTH_PASSWORD" ]; then
   fi
 fi
 
+# If no auth_login/auth_password were provided and the layered env still
+# lacks them (or they are empty), generate defaults so hosted deployments
+# that require credentials have something usable on first boot.
+if [ -z "$AUTH_LOGIN" ]; then
+  CURRENT_LOGIN=$(grep '^AUTH_LOGIN=' "$LAYERED_ENV_FILE" 2>/dev/null | sed 's/^AUTH_LOGIN=//')
+  if [ -z "$CURRENT_LOGIN" ]; then
+    LOGIN_SUFFIX=$(printf '%04d' $((RANDOM % 10000)))
+    GENERATED_AUTH_LOGIN="user${LOGIN_SUFFIX}"
+    if grep -q '^AUTH_LOGIN=' "$LAYERED_ENV_FILE" 2>/dev/null; then
+      sed -i "s|^AUTH_LOGIN=.*|AUTH_LOGIN=$GENERATED_AUTH_LOGIN|" "$LAYERED_ENV_FILE"
+    else
+      echo "AUTH_LOGIN=$GENERATED_AUTH_LOGIN" >> "$LAYERED_ENV_FILE"
+    fi
+  fi
+fi
+
+if [ -z "$AUTH_PASSWORD" ]; then
+  CURRENT_PASSWORD=$(grep '^AUTH_PASSWORD=' "$LAYERED_ENV_FILE" 2>/dev/null | sed 's/^AUTH_PASSWORD=//')
+  if [ -z "$CURRENT_PASSWORD" ]; then
+    PASSWORD_SUFFIX=$(printf '%04d' $((RANDOM % 10000)))
+    GENERATED_AUTH_PASSWORD="password${PASSWORD_SUFFIX}"
+    if grep -q '^AUTH_PASSWORD=' "$LAYERED_ENV_FILE" 2>/dev/null; then
+      sed -i "s|^AUTH_PASSWORD=.*|AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD|" "$LAYERED_ENV_FILE"
+    else
+      echo "AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD" >> "$LAYERED_ENV_FILE"
+    fi
+  fi
+fi
+
 # Ensure source profile directory exists under layers
 if [ ! -d "$LAYERS_ROOT/$SOURCE_CONTAINER/agents/$SOURCE_PROFILE" ]; then
   echo "Error: Source profile $SOURCE_PROFILE not found under $LAYERS_ROOT/$SOURCE_CONTAINER/agents/." >&2
@@ -393,6 +426,71 @@ cd "$LAYERS_ROOT"
 
 # Copy layers contents, preserving existing files
 rsync -a --ignore-existing "$SOURCE_CONTAINER/" "$DEST_CONTAINER/"
+
+# If a settings.json exists under the destination layer, update a few
+# fields so the new agent points at its own profile, and, when requested,
+# its own knowledge subdirectory and RFC ports. If it does not exist,
+# create a minimal one with those fields so downstream behaviour has a
+# consistent starting point.
+SETTINGS_JSON="$LAYERS_ROOT/$DEST_CONTAINER/tmp/settings.json"
+
+# Determine effective PORT_BASE for RFC ports (argument wins; otherwise
+# inherit from the destination orchestration .env if present).
+EFFECTIVE_PORT_BASE="$PORT_BASE"
+if [ -z "$EFFECTIVE_PORT_BASE" ] && [ -f "$REPO_ROOT/containers/$DEST_CONTAINER/.env" ]; then
+  EFFECTIVE_PORT_BASE=$(grep '^PORT_BASE=' "$REPO_ROOT/containers/$DEST_CONTAINER/.env" | sed 's/^PORT_BASE=//')
+fi
+
+if [ -f "$SETTINGS_JSON" ]; then
+  # Update agent_profile to match DEST_PROFILE
+  if grep -q '"agent_profile"' "$SETTINGS_JSON"; then
+    sed -i "s/\"agent_profile\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"agent_profile\": \"$DEST_PROFILE\"/" "$SETTINGS_JSON"
+  fi
+  # If KNOWLEDGE_DIR was specified, update agent_knowledge_subdir as well
+  if [ -n "$KNOWLEDGE_DIR" ] && grep -q '"agent_knowledge_subdir"' "$SETTINGS_JSON"; then
+    sed -i "s/\"agent_knowledge_subdir\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"agent_knowledge_subdir\": \"$KNOWLEDGE_DIR\"/" "$SETTINGS_JSON"
+  fi
+
+  # Derive RFC ports from the effective PORT_BASE so they stay aligned with
+  # the orchestration .env configuration.
+  if [ -n "$EFFECTIVE_PORT_BASE" ]; then
+    RFC_HTTP="${EFFECTIVE_PORT_BASE}80"
+    RFC_SSH="${EFFECTIVE_PORT_BASE}22"
+    if grep -q '"rfc_port_http"' "$SETTINGS_JSON"; then
+      sed -i "s/\"rfc_port_http\"[[:space:]]*:[[:space:]]*[0-9]\+/\"rfc_port_http\": $RFC_HTTP/" "$SETTINGS_JSON"
+    fi
+    if grep -q '"rfc_port_ssh"' "$SETTINGS_JSON"; then
+      sed -i "s/\"rfc_port_ssh\"[[:space:]]*:[[:space:]]*[0-9]\+/\"rfc_port_ssh\": $RFC_SSH/" "$SETTINGS_JSON"
+    fi
+  fi
+else
+  # No existing settings file: create a minimal one using the destination
+  # profile, effective knowledge directory, and RFC ports when available.
+  DEST_KNOWLEDGE="$KNOWLEDGE_DIR"
+  if [ -z "$DEST_KNOWLEDGE" ] && [ -f "$REPO_ROOT/containers/$DEST_CONTAINER/.env" ]; then
+    DEST_KNOWLEDGE=$(grep '^KNOWLEDGE_DIR=' "$REPO_ROOT/containers/$DEST_CONTAINER/.env" | sed 's/^KNOWLEDGE_DIR=//')
+  fi
+
+  if [ -n "$EFFECTIVE_PORT_BASE" ]; then
+    RFC_HTTP="${EFFECTIVE_PORT_BASE}80"
+    RFC_SSH="${EFFECTIVE_PORT_BASE}22"
+    cat > "$SETTINGS_JSON" <<EOF
+{
+    "agent_profile": "$DEST_PROFILE",
+    "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}",
+    "rfc_port_http": $RFC_HTTP,
+    "rfc_port_ssh": $RFC_SSH
+}
+EOF
+  else
+    cat > "$SETTINGS_JSON" <<EOF
+{
+    "agent_profile": "$DEST_PROFILE",
+    "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}"
+}
+EOF
+  fi
+fi
 
 # Navigate back to container directory
 cd "$REPO_ROOT/containers/$DEST_CONTAINER"
@@ -450,12 +548,30 @@ cd "$DEST_CONTAINER_PATH"
 if [ -n "$NO_DOCKER" ]; then
   echo "Agent $DEST_CONTAINER created and customized successfully (Docker not started)."
   echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+  if [ -n "$GENERATED_AUTH_LOGIN" ] || [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+    echo "Generated default UI credentials for this agent (change them after first login):"
+    if [ -n "$GENERATED_AUTH_LOGIN" ]; then
+      echo "  AUTH_LOGIN=$GENERATED_AUTH_LOGIN"
+    fi
+    if [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+      echo "  AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD"
+    fi
+  fi
   echo "You can start the agent later with: docker compose up -d (in containers/$DEST_CONTAINER)."
 else
   # If Docker CLI is not available at all, do not treat this as a creation failure.
   if ! command -v docker >/dev/null 2>&1; then
     echo "Agent $DEST_CONTAINER created and customized successfully, but Docker is not installed or not on PATH."
     echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+    if [ -n "$GENERATED_AUTH_LOGIN" ] || [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+      echo "Generated default UI credentials for this agent (change them after first login):"
+      if [ -n "$GENERATED_AUTH_LOGIN" ]; then
+        echo "  AUTH_LOGIN=$GENERATED_AUTH_LOGIN"
+      fi
+      if [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+        echo "  AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD"
+      fi
+    fi
     echo "You can start the agent later with: docker compose up -d (in containers/$DEST_CONTAINER) on a host with Docker installed."
     exit 0
   fi
@@ -465,6 +581,15 @@ else
   if ! docker compose up -d; then
     echo "Agent $DEST_CONTAINER created and customized, but 'docker compose up -d' failed."
     echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+    if [ -n "$GENERATED_AUTH_LOGIN" ] || [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+      echo "Generated default UI credentials for this agent (change them after first login):"
+      if [ -n "$GENERATED_AUTH_LOGIN" ]; then
+        echo "  AUTH_LOGIN=$GENERATED_AUTH_LOGIN"
+      fi
+      if [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+        echo "  AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD"
+      fi
+    fi
     echo "You may be running without access to the Docker daemon or compose plugin (for example, inside a container without the Docker socket)."
     echo "Start the agent later from a host with Docker access using: docker compose up -d (in containers/$DEST_CONTAINER)."
     exit 1
@@ -472,5 +597,14 @@ else
 
   echo "Agent $DEST_CONTAINER created, customized, and started successfully!"
   echo "Sensitive layered env for /a0/.env is at /layers/$DEST_CONTAINER/.env"
+  if [ -n "$GENERATED_AUTH_LOGIN" ] || [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+    echo "Generated default UI credentials for this agent (change them after first login):"
+    if [ -n "$GENERATED_AUTH_LOGIN" ]; then
+      echo "  AUTH_LOGIN=$GENERATED_AUTH_LOGIN"
+    fi
+    if [ -n "$GENERATED_AUTH_PASSWORD" ]; then
+      echo "  AUTH_PASSWORD=$GENERATED_AUTH_PASSWORD"
+    fi
+  fi
   echo "Access at configured ports (check orchestration .env for PORT_BASE)."
 fi
