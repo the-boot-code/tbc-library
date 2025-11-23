@@ -1,1 +1,1 @@
-/a0/agents/_symlink/prompts/pre_behaviour.md
+/a0/control_layer/agents/_symlink/prompts/pre_behaviour.md

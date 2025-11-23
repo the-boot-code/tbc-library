@@ -1,1 +1,1 @@
-/a0/agents/_symlink//prompts/agent.system.tool.scheduler.md
+/a0/control_layer/agents/_symlink/prompts/agent.system.tool.scheduler.md
