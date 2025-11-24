@@ -22,10 +22,19 @@ The Boot Code Storybook blends narrative storytelling with technical innovation.
 
 If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library–layered** Agent Zero instance: you get the standard engine plus self-revealing bind mounts and dynamic system control/profiles (see **The Library** and **Extensibility Features of Agent Zero → Dynamic system control and profiles**).
 
-1. Clone the repo: `git clone https://github.com/the-boot-code/tbc-library.git && cd tbc-library`
-2. From a **host shell in the `tbc-library` repo root** (outside any Agent Zero container), run the script: `./create_agent.sh a0-template a0-myagent dest_display="My Agent" port_base=500 auth_login=myuser auth_password=mypassword` (this example uses `PORT_BASE=500`). If you omit `auth_login`/`auth_password`, the script will generate default credentials and print them in its output so you can log in on first boot; you should change them after verifying access, especially if the agent is reachable from the network.
-3. For `PORT_BASE=500`, access HTTP at `50080`, SSH at `50022`, and HTTPS via nginx at `50043` (other `PORT_BASE` values follow the same pattern).
-4. After cloning from the `a0-template` container and starting the stack, open the Agent Zero Web UI in your browser, click the **Settings** (gear) button in the sidebar, and use:
+1. From a **host shell** (outside any Agent Zero container), run the following commands:
+
+   ```bash
+   git clone https://github.com/the-boot-code/tbc-library.git
+   cd tbc-library
+   ./create_agent.sh a0-template a0-myagent \
+     dest_display="My Agent" port_base=500 \
+     auth_login=myuser auth_password=mypassword
+   ```
+
+   This example uses `PORT_BASE=500`. If you omit `auth_login`/`auth_password`, the script will generate default credentials and print them in its output so you can log in on first boot; you should change them after verifying access, especially if the agent is reachable from the network.
+2. For `PORT_BASE=500`, access HTTP at `50080`, SSH at `50022`, and HTTPS via nginx at `50043` (other `PORT_BASE` values follow the same pattern).
+3. After cloning from the `a0-template` container and starting the stack, open the Agent Zero Web UI in your browser, click the **Settings** (gear) button in the sidebar, and use:
    - the **Agent Settings** page to configure your **LLM models**; and
    - the **External Services** page for **API keys** and **Authentication**, setting a user and password (either by keeping or changing the credentials established via `AUTH_LOGIN`/`AUTH_PASSWORD` in `/a0/.env`, which `create_agent.sh` can set or auto-generate).
 
