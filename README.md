@@ -5,6 +5,8 @@ This README serves two interconnected purposes: (1) a practical guide for deploy
 
 This is a living framework, and this README is a living document: both a friendly welcome to the project and the primary set of instructions for how to work with it. Dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
 
+> **Canonical source of this README**: This file lives at the root of the `tbc-library` repository on GitHub: <https://github.com/the-boot-code/tbc-library>. If you are reading a copied or embedded version (for example, from a vector store), treat that repository and its `README.md` as the source of truth.
+
 ### Reading as a human or an agent
 
 - **Humans** – Start with **Quick Start**, **Installation**, and **Technical Deep Dive** to deploy and understand the layered architecture. Treat later sections as reference material you can skim or return to as needed.
@@ -18,7 +20,7 @@ Agent Zero is an open-source, personal agentic framework that grows and learns w
 ### Project Vision
 The Boot Code Storybook blends narrative storytelling with technical innovation. Stories drive the development of adaptable AI agents, creating a "feedback machine" where creativity and code evolve together. For the full narrative, see Introduction and Narrative below.
 
-## Quick Start (For Developers)
+## Quick Start
 
 If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library–layered** Agent Zero instance: you get the standard engine plus self-revealing bind mounts and dynamic system control/profiles (see **The Library** and **Extensibility Features of Agent Zero → Dynamic system control and profiles**).
 
