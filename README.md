@@ -74,7 +74,7 @@ The narrative of The Boot Code Storybook is a collection of stories that explore
 
 The technical development of The Boot Code Storybook is a collection of technical documents that **codify** foundational instructions, creativity, imagination, and knowledge—a collection of files, systems, and machines.
 
-### The `Boot Code` is Narrative and Technical Combined
+### The "Boot Code" is Narrative and Technical Combined
 
 #### The Library
 
