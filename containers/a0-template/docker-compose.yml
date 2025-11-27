@@ -83,7 +83,9 @@ services:
       - ${COMMON_LAYER}/knowledge/default/solutions/common:/a0/knowledge/default/solutions/common:rw
       # - ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw
       # - ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw
-      - ../../README.md:/a0/knowledge/default/main/tbc-library/README.md:ro
+      # - ../../README.md:/a0/knowledge/default/main/tbc-library/README.md:ro
+      - ${COMMON_LAYER}/knowledge/default/main/tbc-library:/a0/knowledge/default/main/tbc-library:ro
+      - ${COMMON_LAYER}/knowledge/default/solutions/tbc-library:/a0/knowledge/default/solutions/tbc-library:ro
 
       # prompts
       - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
