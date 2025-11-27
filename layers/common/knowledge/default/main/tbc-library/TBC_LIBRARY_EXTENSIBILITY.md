@@ -29,12 +29,12 @@ These knowledge files are not executed directly. Instead, Agent Zero's knowledge
 
 Solutions are structured knowledge entries that document how to use specific tools or patterns. They live alongside other knowledge under paths in the `tbc-library` repository such as (from the host's perspective):
 
-- `layers/common/knowledge/tbc/solutions/tools/workflow_profile_control.md`
-- `layers/common/knowledge/tbc/solutions/tools/liminal_thinking_profile_control.md`
-- `layers/common/knowledge/tbc/solutions/tools/philosophy_profile_control.md`
-- `layers/common/knowledge/tbc/solutions/tools/reasoning_profile_control.md`
+- `layers/common/knowledge/default/solutions/tbc-library/workflow_profile_control.md`
+- `layers/common/knowledge/default/solutions/tbc-library/liminal_thinking_profile_control.md`
+- `layers/common/knowledge/default/solutions/tbc-library/philosophy_profile_control.md`
+- `layers/common/knowledge/default/solutions/tbc-library/reasoning_profile_control.md`
 
-From inside the container, these same solution files are visible under `/a0/knowledge/tbc/solutions/...` via the `/a0/knowledge` bind mounts described earlier.
+From inside the container, these same solution files are visible under `/a0/knowledge/default/solutions/tbc-library/...` via the `/a0/knowledge` bind mounts described earlier.
 
 Each solution follows a consistent `Problem` / `Solution` layout with:
 
