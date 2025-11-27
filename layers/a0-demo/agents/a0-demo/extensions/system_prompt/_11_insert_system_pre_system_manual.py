@@ -1,1 +1,0 @@
-/a0/control_layer/agents/_symlink/extensions/system_prompt/_11_insert_system_pre_system_manual.py

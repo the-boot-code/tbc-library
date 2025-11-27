@@ -1,1 +1,0 @@
-/a0/control_layer/agents/_symlink/extensions/system_prompt/_95_insert_system_model_godmode.py
