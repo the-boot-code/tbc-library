@@ -149,6 +149,13 @@ Permission changes to volumes may be desirable for writable directories, such as
 - The commented-out `- ${AGENT_LAYER}/knowledge/default/main/container:/a0/knowledge/default/main/container:rw` mapping shows how to add container-specific knowledge for a given agent.
 - The commented-out `- ${AGENT_LAYER}/knowledge/default/solutions/container:/a0/knowledge/default/solutions/container:rw` mapping shows how to add container-specific solutions; like the previous line, it is optional and not enabled by default.
 
+In addition to these generic knowledge mounts, typical tbc-library deployments also surface the library's own documentation and solutions as part of the knowledge tree via entries such as:
+
+- `${COMMON_LAYER}/knowledge/default/main/tbc-library:/a0/knowledge/default/main/tbc-library:ro` for the tbc-library documentation cluster (README and related `TBC_LIBRARY_*.md` files).
+- `${COMMON_LAYER}/knowledge/default/solutions/tbc-library:/a0/knowledge/default/solutions/tbc-library:ro` for solutions that describe how to use tbc-library tools, profiles, and workflows.
+
+These mounts mean that, from inside a container, the library that defines the world is itself visible under `/a0/knowledge/...` alongside other knowledge trees, reinforcing the self-revealing orchestration described in [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and the knowledge/solutions model in [TBC_LIBRARY_EXTENSIBILITY.md → Knowledge Features of Agent Zero](TBC_LIBRARY_EXTENSIBILITY.md#knowledge-features-of-agent-zero).
+
 In this approach, the core system prompt directory (`prompts/system`) is mounted read-only from the common layer, while knowledge-specific prompt trees and container-specific prompts can be writable, providing shared defaults with controlled override points.
 
 ```

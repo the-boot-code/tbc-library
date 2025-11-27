@@ -29,7 +29,7 @@ This README serves two interconnected purposes: (1) a practical guide for deploy
 
 This is a living framework, and this README is its living document: both a friendly welcome to the project and the primary set of instructions for how to work with it. Dive in, experiment, and contribute. It's not exhaustive; your innovations expand it.
 
-> **Canonical source of this README**: This file lives at the root of the `tbc-library` repository on GitHub: <https://github.com/the-boot-code/tbc-library>. If you are reading a copied or embedded version (for example, from a vector store), treat that repository and its `README.md` as the source of truth.
+> **Canonical source of this README**: This file lives at the root of the `tbc-library` repository on GitHub: <https://github.com/the-boot-code/tbc-library>. If you are reading a copied or embedded version (for example, from a vector store or from inside a container), treat that repository and its `README.md` as the source of truth. Inside an Agent Zero container, this file is typically available under `/a0/knowledge/default/main/tbc-library/README.md` as part of the tbc-library knowledge tree.
 
 ## Documentation Structure
 

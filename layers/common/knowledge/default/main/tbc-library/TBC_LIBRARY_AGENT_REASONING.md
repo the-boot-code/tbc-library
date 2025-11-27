@@ -31,7 +31,7 @@ tbc-library is designed so that the same structures are visible from multiple va
    - Each subdirectory under `layers/` (for example, `layers/common`, `layers/a0-template`) describes **shared** vs **agent-specific** state: prompts, tools, knowledge, profiles, and helper code.
 2. **Inside-container vantage point** (from within one Agent Zero container)  
    - You see the same structures via bind mounts: host `containers/` and `layers/` appear as `/containers` and `/layers`; the container's own orchestration and layer directories appear as `/agent_orchestration`, `/agent_container`, and `/agent_layer`.  
-   - Your live Agent Zero tree is under `/a0/...` (for example, `/a0/agents`, `/a0/prompts`, `/a0/knowledge`); many of these paths are views onto the same host directories.  
+   - Your live Agent Zero tree is under `/a0/...` (for example, `/a0/agents`, `/a0/prompts`, `/a0/knowledge`); many of these paths are views onto the same host directories. Within `/a0/knowledge`, the tbc-library documentation cluster normally lives under `/a0/knowledge/default/main/tbc-library`, and tbc-library solutions under `/a0/knowledge/default/solutions/tbc-library`.  
    - For how these mounts are wired, see [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Docker Compose Orchestration](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#docker-compose-orchestration).
 3. **Multi-deployment / external orchestrator vantage point** (from the host or another system)  
    - You may see multiple tbc-library clones (for example, `/opt/tbc-a/tbc-library`, `/opt/tbc-b/tbc-library`), each with its own `containers/` and `layers/` trees.  
