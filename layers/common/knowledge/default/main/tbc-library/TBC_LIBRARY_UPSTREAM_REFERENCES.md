@@ -16,6 +16,7 @@ Use this index when you want to:
 
 - **Humans (host perspective)**: Use the "Host example" paths to locate the corresponding `/a0/docs/...` file under a running container's directory in `containers/<agent>/a0/docs/...`.
 - **Agents (inside-container perspective)**: Use the **Upstream in-container path** exactly as shown (for example, `/a0/docs/extensibility.md`). When you need more detail than the tbc-library docs provide, you may cite or summarize the upstream doc.
+- **Precedence and safety**: When you are operating inside this `tbc-library` deployment (either from the host repository or from within one of its containers), treat the tbc-library docs as authoritative for what you may change (Compose files, volumes, knowledge, profiles, tools). Use upstream `/a0/docs/...` to understand the engine and generic usage, not to rewire this deployment unless the tbc-library docs explicitly instruct you to.
 - Treat upstream docs as **engine-level references** and tbc-library docs as the **layered, deployment-specific view**. When they differ, prefer tbc-library for deployment behaviour, and use upstream docs to understand the engine's intent.
 
 ---
