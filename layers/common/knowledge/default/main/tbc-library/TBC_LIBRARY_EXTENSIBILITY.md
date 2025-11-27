@@ -14,7 +14,14 @@ Knowledge in the `tbc-library` repository is treated as a first-class, layered r
 
 In addition to prompts and external `/common` resources, dedicated knowledge trees live under `layers/common/knowledge/...` in this repository (for example, `layers/common/knowledge/tbc/...` on the host). These trees are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed.
 
-The main library README (`README.md` at the root of this repository) is also made available to agents directly. A bind mount in `docker-compose.yml` (for example, `../../README.md:/a0/knowledge/default/main/tbc-library/README.md:ro` for a container under `containers/a0-*`) maps this file into `/a0/knowledge/default/main/tbc-library/README.md` inside the container, so agents can consume the exact same documentation via the knowledge layer.
+The main library README (`README.md` at the root of this repository) is also made available to agents directly. It is mirrored into the knowledge tree at `layers/common/knowledge/default/main/tbc-library/README.md` on the host and, through the existing knowledge mounts, is visible inside the container at `/a0/knowledge/default/main/tbc-library/README.md`. This lets agents consume the same documentation that appears at the repository root via the knowledge layer, without requiring an extra per-container bind mount.
+
+In a typical tbc-library deployment, the documentation and solutions for the library itself are surfaced into the knowledge tree via explicit mounts such as:
+
+- `${COMMON_LAYER}/knowledge/default/main/tbc-library:/a0/knowledge/default/main/tbc-library:ro` for the tbc-library documentation cluster (README and related `TBC_LIBRARY_*.md` files).
+- `${COMMON_LAYER}/knowledge/default/solutions/tbc-library:/a0/knowledge/default/solutions/tbc-library:ro` for solutions that describe how to use tbc-library tools, profiles, and workflows.
+
+Recognizing these mounts and their intent is an important part of self-revealing orchestration: they show that even the library that defines the world is itself visible as knowledge under `/a0/knowledge/...`.
 
 These knowledge files are not executed directly. Instead, Agent Zero's knowledge/solutions mechanism can index them (for example, into a vector store or similar memory) and surface relevant entries to the agent based on queries, tool names, or explicit references from prompts. This keeps the system prompt focused while still giving the agent access to rich background information.
 

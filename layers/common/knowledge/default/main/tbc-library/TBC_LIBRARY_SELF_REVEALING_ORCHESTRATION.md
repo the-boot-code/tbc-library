@@ -41,6 +41,13 @@ The composition mappings provide the agent with reliable direct access to its ow
 - `${AGENT_LAYER}:/agent_layer:rw` → Direct manipulation of the agent's layer directory for dynamic configurations.
 - `${COMMON_LAYER}:/common_layer:ro` → Shared resources accessible without duplication, ensuring consistency across agents.
 
+In addition to these high-level mounts, typical tbc-library deployments expose the library's own documentation and solutions into the knowledge tree via knowledge-specific mappings, for example:
+
+- `${COMMON_LAYER}/knowledge/default/main/tbc-library:/a0/knowledge/default/main/tbc-library:ro` for the tbc-library documentation cluster (README and `TBC_LIBRARY_*.md` files).
+- `${COMMON_LAYER}/knowledge/default/solutions/tbc-library:/a0/knowledge/default/solutions/tbc-library:ro` for solutions that describe how to use tbc-library tools, profiles, and workflows.
+
+For an agent reasoning about its environment, simply recognizing that these mounts exist and what they represent is part of self-revealing orchestration: the library that shapes the world is itself visible under `/a0/knowledge/...` alongside other knowledge trees.
+
 Note: Some mounts are read-only (ro) for system protection and introspection, while others are read-write (rw), allowing agents to modify their own files (e.g., `docker-compose.yml` via `/containers/[agent_name]/docker-compose.yml`) for full autonomy. This balance enables safe self-awareness while supporting generative evolution.
 
 These mappings empower the agent to reveal and control its own existence, blurring the line between container and host. With this self-knowledge, the agent understands its own configuration and can modify, maintain, or create other agents, fostering a truly autonomous ecosystem (see [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management) for distinguishing "self" vs other agents across these paths).

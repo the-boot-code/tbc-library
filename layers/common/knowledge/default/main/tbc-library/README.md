@@ -3,7 +3,7 @@ Agent Zero Deployment Library for The Boot Code Storybook Project
 
 ## Quick Start
 
-If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library-layered** Agent Zero instance. In this setup, you get the standard engine plus self-revealing orchestration via bind mounts and dynamic profiles (System Control and profiles; see [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles)).
+If you're here to deploy Agent Zero quickly, this section shows how to start a **tbc-library-layered** Agent Zero instance. In this setup, you get the standard engine plus self-revealing orchestration via bind mounts and dynamic profiles (System Control and profiles; see [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles)).
 
 1. From a **host shell** (outside any Agent Zero container), run the following commands:
 
@@ -21,7 +21,7 @@ If you're here to deploy Agent Zero quickly, this section shows how to start a *
    - the **Agent Settings** page to configure your **LLM models**; and
    - the **External Services** page for **API keys** and **Authentication**, setting a user and password (either by keeping or changing the credentials established via `AUTH_LOGIN`/`AUTH_PASSWORD` in `/a0/.env`, which `create_agent.sh` can set or auto-generate).
 
-This is a streamlined path for quick deployment. Adapt the commands as needed for your environment. For full details, see [TBC_LIBRARY_INSTALLATION.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_INSTALLATION.md). Skip to [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) for architecture.
+This is a streamlined path for quick deployment. Adapt the commands as needed for your environment. For full details, see [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md). Skip to [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) for architecture.
 
 ## Introduction
 
@@ -38,20 +38,20 @@ The tbc-library documentation in this repository is currently organized into the
 | Document | Purpose |
 |----------|---------|
 | **README.md** (this file) | Overview, navigation, Quick Start, Prerequisites |
-| [TBC_LIBRARY_AGENT_REASONING.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_AGENT_REASONING.md) | Agent reasoning, mental models, and documentation perspectives |
-| [TBC_LIBRARY_INSTALLATION.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_INSTALLATION.md) | Automated and manual installation, configuration, verification |
-| [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md) | Bind mounts and orchestration patterns |
-| [TBC_LIBRARY_EXTENSIBILITY.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_EXTENSIBILITY.md) | Knowledge, profiles, dynamic system control, prompts |
-| [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) | Narrative Driven Development and story context |
-| [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) | Docker Compose, file structure, agent perspectives |
-| [TBC_LIBRARY_META_AND_GLOSSARY.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_META_AND_GLOSSARY.md) | Project meta: final thoughts, disclaimers, versioning, attribution, glossary of key terms |
+| [TBC_LIBRARY_AGENT_REASONING.md](TBC_LIBRARY_AGENT_REASONING.md) | Agent reasoning, mental models, and documentation perspectives |
+| [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md) | Automated and manual installation, configuration, verification |
+| [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md) | Bind mounts and orchestration patterns |
+| [TBC_LIBRARY_EXTENSIBILITY.md](TBC_LIBRARY_EXTENSIBILITY.md) | Knowledge, profiles, dynamic system control, prompts |
+| [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) | Narrative Driven Development and story context |
+| [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) | Docker Compose, file structure, agent perspectives |
+| [TBC_LIBRARY_META_AND_GLOSSARY.md](TBC_LIBRARY_META_AND_GLOSSARY.md) | Project meta: final thoughts, disclaimers, versioning, attribution, glossary of key terms |
 
 > **Note**: As tbc-library evolves, this documentation layout may change; treat this table as a snapshot of the current organization rather than a fixed or exhaustive index.
 
 ## Reading as a human or an agent
 
-- **Humans**: If you just want to get an agent running, read [Quick Start](#quick-start) and [Prerequisites](#prerequisites) in this file, then follow [TBC_LIBRARY_INSTALLATION.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_INSTALLATION.md). When you need more detail, use the documentation table above as your directory into the other files.
-- **Agents**: Treat this documentation set as a map of both the host repository and your in-container filesystem. Use [TBC_LIBRARY_AGENT_REASONING.md → How to reason about this documentation as an agent](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_AGENT_REASONING.md#how-to-reason-about-this-documentation-as-an-agent) as your primary mental model for perception and perspectives; then use [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management) as rulebooks for specific path and orchestration details. Reach for [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) when you need full story context or Narrative Driven Development guidance, and [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) when you need to change how you behave or reason at runtime.
+- **Humans**: If you just want to get an agent running, read [Quick Start](#quick-start) and [Prerequisites](#prerequisites) in this file, then follow [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md). When you need more detail, use the documentation table above as your directory into the other files.
+- **Agents**: Treat this documentation set as a map of both the host repository and your in-container filesystem. Use [TBC_LIBRARY_AGENT_REASONING.md → How to reason about this documentation as an agent](TBC_LIBRARY_AGENT_REASONING.md#how-to-reason-about-this-documentation-as-an-agent) as your primary mental model for perception and perspectives; then use [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management) as rulebooks for specific path and orchestration details. Reach for [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) when you need full story context or Narrative Driven Development guidance, and [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) when you need to change how you behave or reason at runtime.
 
 > **Adaptability**: Treat obstacles as prompts to question assumptions and explore alternatives. Adaptability is key to unlocking the project's full potential.
 
@@ -75,7 +75,7 @@ Those who discover the secrets of the tome will find themselves transported to a
 
 ### Two Parallels Building Together
 
-The narrative and technical development are intertwined and evolve together. For the full story and a deeper treatment of Narrative Driven Development, see [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).
+The narrative and technical development are intertwined and evolve together. For the full story and a deeper treatment of Narrative Driven Development, see [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).
 
 ## Prerequisites
 
@@ -86,17 +86,17 @@ At minimum, you'll need the following to get started (or equivalents for alterna
 - **rsync**: For safely copying and merging layer directories when using `create_agent.sh`.
 - **Agent Zero image**: Version **v0.9.7 or newer**, or any image where the upstream `files.py` already supports `**kwargs` for prompt loading (this library assumes that behavior and does not layer its own `files.py`).
 - **Basic Shell Knowledge**: Familiarity with command-line operations like `cd`, `cp`, `sed`.
-- **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required (links provided in [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md)).
+- **Agent Zero Familiarity**: Basic understanding of Agent Zero's concepts (agents, prompts, extensions) is helpful but not required (links provided in [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md)).
 - **Permissions**: Ability to run Docker commands (may need sudo on some systems).
 
 ## How to Use
 
 Here's a practical workflow to get oriented after reviewing Quick Start:
 
-1. **Deploy an Agent Instance**: Use the Quick Start or [TBC_LIBRARY_INSTALLATION.md](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_INSTALLATION.md) steps to bring up a container for a base agent (for example, `a0-template` cloned to `a0-myagent`).
+1. **Deploy an Agent Instance**: Use the Quick Start or [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md) steps to bring up a container for a base agent (for example, `a0-template` cloned to `a0-myagent`).
 
 2. **Explore the Layered Structure**: On the host, navigate key directories like `containers/` for compose files and runtime configuration, and `layers/` for shared and agent-specific customizations (these are mounted into the container as `/containers` and `/layers`).
 
-3. **Customize Behavior and Settings**: In the host `containers/[agent]/` directory, edit the Docker Compose environment file and compose configuration (for example, `containers/a0-myagent/.env`, `containers/a0-myagent/.env.example`, and `containers/a0-myagent/docker-compose.yml`) to adjust ports and container-level settings, and use prompt files in the agent's layer directory to change behaviours. The in-container `/a0/.env` file is managed separately (see [TBC_LIBRARY_INSTALLATION.md → Advanced: Layer the /a0/.env file](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_INSTALLATION.md#advanced-layer-the-a0env-file-via-tbc-library-abstraction)).
+3. **Customize Behavior and Settings**: In the host `containers/[agent]/` directory, edit the Docker Compose environment file and compose configuration (for example, `containers/a0-myagent/.env`, `containers/a0-myagent/.env.example`, and `containers/a0-myagent/docker-compose.yml`) to adjust ports and container-level settings, and use prompt files in the agent's layer directory to change behaviours. The in-container `/a0/.env` file is managed separately (see [TBC_LIBRARY_INSTALLATION.md → Advanced: Layer the /a0/.env file](TBC_LIBRARY_INSTALLATION.md#advanced-layer-the-a0env-file-via-tbc-library-abstraction)).
 
 Start with this workflow and iterate as you become more familiar with the structure and capabilities.
