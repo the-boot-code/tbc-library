@@ -15,6 +15,8 @@ When you read the examples and mappings below, remember:
 
 For detailed classification of self vs managed agents, and for worked path-perspective examples, see [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).
 
+When you need additional engine-level detail from upstream Agent Zero documentation under `/a0/docs/...`, use [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md) as your index.
+
 ## Direct Agent Access via Bind Mounts
 
 The `docker-compose.yml` file leverages bind mounts to create a self-revealing orchestration, where the agent gains direct, transparent access to its own layers and orchestration elements. This eliminates the need for complex path-indirection logic, allowing Agent Zero to interact with its configurations, data, and even its own container structure as native paths within the container.

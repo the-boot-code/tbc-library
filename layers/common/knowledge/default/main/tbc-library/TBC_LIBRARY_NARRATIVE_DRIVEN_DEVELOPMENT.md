@@ -44,6 +44,8 @@ At a high level, this library layers additional capabilities on top of the upstr
 - **Dynamic system control and profiles** (dynamic profiles): what the stories call "modes" (creative, analytical, cautious, exploratory) are realized as inspectable, runtime-switchable profiles. System Control and its tools give the engine a way to honor narrative intent as explicit configuration rather than hidden magic; for the technical mechanisms, see [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles).
 - **Shared prompts and knowledge trees**: story worlds and reference material live in shared prompt and knowledge trees, with per-agent annotations layered on top. This is how multiple agents can inhabit the same fictional "library" while keeping their own margins and notes. The specific directory layout and mappings are detailed in [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) and [TBC_LIBRARY_EXTENSIBILITY.md](TBC_LIBRARY_EXTENSIBILITY.md).
 
+For engine-level documentation shipped with Agent Zero under `/a0/docs/...`, use [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md) as your index.
+
 ### Narrative Driven Development
 
 A key aspect of the project is Narrative Driven Development: the stories form the foundation, and the technical development is built on top of them.

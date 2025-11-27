@@ -27,7 +27,7 @@ For a complete walkthrough of these settings, refer to the upstream installation
 - On the host in this deployment: `containers/a0-myagent/a0/docs/installation.md`.
 - From inside a running container: `/a0/docs/installation.md` (via the `${AGENT_CONTAINER}:/a0` bind mount).
 
-The tbc-library documentation (including this guide) focuses on how `tbc-library` layers on top of Agent Zero; the detailed semantics of each setting are governed by the upstream Agent Zero project and its documentation.
+The tbc-library documentation (including this guide) focuses on how `tbc-library` layers on top of Agent Zero; the detailed semantics of each setting are governed by the upstream Agent Zero project and its documentation. For an index of upstream `/a0/docs` topics and how they relate to this layered deployment, see [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md).
 
 Choose the automated script for quick setup (see **Installation (Automated, Recommended)** below), or follow the manual deep-dive steps in **Installation (Manual Deep Dive and Customization)**.
 

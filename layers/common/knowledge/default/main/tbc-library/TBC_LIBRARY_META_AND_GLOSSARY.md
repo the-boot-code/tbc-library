@@ -64,6 +64,9 @@ Use this section as a map from high-level ideas to the documents that explain th
   - Knowledge trees and how agents read documentation via `/a0/knowledge`: [TBC_LIBRARY_EXTENSIBILITY.md → Knowledge Features of Agent Zero](TBC_LIBRARY_EXTENSIBILITY.md#knowledge-features-of-agent-zero).  
   - Structured solutions for tools: [TBC_LIBRARY_EXTENSIBILITY.md → Solutions](TBC_LIBRARY_EXTENSIBILITY.md#solutions).
 
+- **Upstream Agent Zero documentation (/a0/docs)**  
+  - Index of upstream engine docs available under `/a0/docs/...`: [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md).
+
 - **Layered architecture and library structure**  
   - Compose, volumes, and bind-mounts: [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Docker Compose Orchestration](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#docker-compose-orchestration).  
   - Repository layout and major directories: [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Structure](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#structure).

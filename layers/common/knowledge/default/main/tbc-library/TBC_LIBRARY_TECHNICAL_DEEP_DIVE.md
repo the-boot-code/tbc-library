@@ -1,6 +1,6 @@
 # Technical Deep Dive
 
-The narrative of The Boot Code Storybook manifests technically through the tbc-library's layered architecture, where agents are abstracted and extensible like evolving stories. This includes the self-revealing orchestration via bind mounts, enabling agents direct access to their layers for autonomous operation. The following sections detail how this philosophy is implemented in Docker Compose, file structures, and Agent Zero modifications. For a conceptual overview of that narrative, see [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).
+The narrative of The Boot Code Storybook manifests technically through the tbc-library's layered architecture, where agents are abstracted and extensible like evolving stories. This includes the self-revealing orchestration via bind mounts, enabling agents direct access to their layers for autonomous operation. The following sections detail how this philosophy is implemented in Docker Compose, file structures, and Agent Zero modifications. For a conceptual overview of that narrative, see [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md), and for the upstream engine-level architecture overview under `/a0/docs/architecture.md`, see [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Architecture overview (core Agent Zero)](TBC_LIBRARY_UPSTREAM_REFERENCES.md#architecture-overview-core-agent-zero).
 
 > **Navigation**: [← Back to README](README.md) | [← Narrative Driven Development](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) | [Project Meta and Glossary →](TBC_LIBRARY_META_AND_GLOSSARY.md)
 
@@ -435,5 +435,7 @@ For comprehensive documentation of Agent Zero itself (configuration options, ups
 
 - [Agent Zero on GitHub](https://github.com/agent0ai/agent-zero)
 - Inside a running container: `/a0/docs/installation.md` and related files
+
+For an index of upstream `/a0/docs` topics that are especially relevant when you are running under tbc-library's layered orchestration, see [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md).
 
 This technical deep dive focuses on how `tbc-library` layers on top of Agent Zero; the upstream documentation remains the authoritative source for core Agent Zero behavior.

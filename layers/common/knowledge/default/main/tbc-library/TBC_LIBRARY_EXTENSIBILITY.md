@@ -53,6 +53,8 @@ In the `tbc-library` deployment, extensibility is expressed most strongly throug
 
 If you want to understand *how this library changes Agent Zero's behaviour at runtime*, start with **Dynamic system control and profiles** below. If you want to understand *where that behaviour lives on disk*, see the prompts/extensions/tools subsections.
 
+For the upstream engine-level description of extensible components (extensions, tools, prompts, API endpoints, helpers, projects), see [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Extensibility framework (core Agent Zero)](TBC_LIBRARY_UPSTREAM_REFERENCES.md#extensibility-framework-core-agent-zero).
+
 ### Extensions
 
 Extensions enable custom behaviors layered on top of the core Agent Zero framework. In the `tbc-library` repository, most shared extensions live under `layers/control_layer/agents/_symlink/extensions` (host path), which are visible inside the container at `/a0/control_layer/agents/_symlink/extensions` and `/layers/control_layer/agents/_symlink/extensions`; agent profile directories then consume them via symlinks.
