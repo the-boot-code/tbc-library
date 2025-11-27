@@ -6,37 +6,38 @@ agent_history.gif
 /containers/*
 /containers/*/
 
-!/containers/a0-demo/
-!/containers/a0-demo/**
 !/containers/a0-template/
 !/containers/a0-template/**
 # Ignore a0-template/a0 directory (created from image, has own repo)
-/containers/a0-demo/a0/
-/containers/a0-demo/a0/**
 /containers/a0-template/a0/
 /containers/a0-template/a0/**
 
 # Ignore everything in layers/ except a0-demo/ a0-template/ and common/
 /layers/*
 /layers/*/
+
 # Allow a0-demo and its contents to be tracked
-!/layers/a0-demo/
-!/layers/a0-demo/**
+# !/containers/a0-demo/
+# !/containers/a0-demo/**
+# /containers/a0-demo/a0/
+# /containers/a0-demo/a0/**
+# !/layers/a0-demo/
+# !/layers/a0-demo/**
+# /layers/a0-demo/logs/*
+# /layers/a0-demo/root/*
 
 # Allow a0-template and its contents to be tracked
 !/layers/a0-template/
 !/layers/a0-template/**
+/layers/a0-template/logs/*
+/layers/a0-template/root/*
 
 # Ignore logs directory
-/layers/a0-demo/logs/*
-/layers/a0-template/logs/*
 
 # Ignore memory directory in a0-template
 # /layers/a0-template/memory/*
 
 # Ignore root directory
-/layers/a0-demo/root/*
-/layers/a0-template/root/*
 # Ignore tmp directory in a0-template
 # /layers/a0-template/tmp/*
 
