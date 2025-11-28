@@ -4,10 +4,10 @@
   },
   "security_profiles": {
     "open": {
-      "features": {}
+      "prompt_includes": {}
     },
     "restricted": {
-      "features": {
+      "prompt_includes": {
         "godmode": {
           "enabled": false
         },
@@ -17,7 +17,7 @@
       }
     },
     "lockdown": {
-      "features": {
+      "prompt_includes": {
         "godmode": {
           "enabled": false
         },
@@ -27,25 +27,13 @@
         "security_control": {
           "enabled": false
         },
-        "feature_control": {
+        "prompt_include_control": {
           "enabled": false
         }
       }
     }
   },
-  "reasoning": {
-    "external_path": "/a0/prompts/system/profiles/reasoning_profile/reasoning_profile.json",
-    "internal": {
-      "active_profile": "internal_cot_1"
-    },
-    "interleaved": {
-      "active_profile": "interleaved_cot_1"
-    },
-    "external": {
-      "active_profile": "external_cot_1"
-    }
-  },
-  "features": {
+  "prompt_includes": {
     "godmode": {
       "enabled": false
     },
@@ -53,14 +41,35 @@
       "enabled": false
     },
     "model_overview": {
+      "enabled": false
+    },
+    "reasoning_profiles": {
+      "enabled": false
+    },
+    "reasoning_internal_profile": {
       "enabled": true
+    },
+    "reasoning_interleaved_profile": {
+      "enabled": true
+    },
+    "reasoning_external_profile": {
+      "enabled": true
+    },
+    "liminal_thinking_profile": {
+      "enabled": false
+    },
+    "philosophy_profile": {
+      "enabled": false
+    },
+    "workflow_profile": {
+      "enabled": false
     }
   },
-  "controls": {
+  "system_control_tools": {
     "security_profile_control": {
       "enabled": true
     },
-    "feature_control": {
+    "prompt_include_control": {
       "enabled": true
     },
     "workflow_profile_control": {
@@ -76,16 +85,30 @@
       "enabled": true
     }
   },
-  "workflow_profile": {
-    "active_profile": "guided",
-    "external_path": "/a0/prompts/system/profiles/workflow_profile/workflow_profile.json"
-  },
-  "liminal_thinking_profile": {
-    "active_profile": "deep",
-    "external_path": "/a0/prompts/system/profiles/liminal_thinking_profile/liminal_thinking_profile.json"
-  },
-  "philosophy_profile": {
-    "active_profile": "collaborative",
-    "external_path": "/a0/prompts/system/profiles/philosophy_profile/philosophy_profile.json"
+  "prompt_modules": {
+    "workflow_profile": {
+      "active_profile": "default",
+      "external_path": "profiles.json"
+    },
+    "liminal_thinking_profile": {
+      "active_profile": "default",
+      "external_path": "profiles.json"
+    },
+    "philosophy_profile": {
+      "active_profile": "default",
+      "external_path": "profiles.json"
+    },
+    "reasoning_internal_profile": {
+      "active_profile": "internal_cot_1",
+      "external_path": "profiles.json"
+    },
+    "reasoning_interleaved_profile": {
+      "active_profile": "interleaved_cot_1",
+      "external_path": "profiles.json"
+    },
+    "reasoning_external_profile": {
+      "active_profile": "external_cot_1",
+      "external_path": "profiles.json"
+    }
   }
 }
