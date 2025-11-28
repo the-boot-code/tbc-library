@@ -12,7 +12,7 @@ class AgentIdentity(VariablesPlugin):
         
         # Load model-specific persona file using prompt-relative path
         agent_identity_filename = f"{agent_profile}.md"
-        agent_identity_dir = "prompts/tbc/agent_identity/identities"
+        agent_identity_dir = "/common/prompts/agent_identity/identities"
         agent_profile_dir = f"agents/{agent_profile}/prompts"
         agent_identity_dir_msg_found = f"## '{agent_profile}' in The Book of Agent Identities\n\n" # directory '{agent_identity_dir}'.\n\n"
         # agent_identity_dir_msg_not_found = f"Agent profile '{agent_profile}' not found in directory '{agent_identity_dir}'."
