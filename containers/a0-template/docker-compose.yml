@@ -88,9 +88,6 @@ services:
       - ${COMMON_LAYER}/knowledge/default/solutions/tbc-library:/a0/knowledge/default/solutions/tbc-library:ro
 
       # prompts
-      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      # - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
 
       # usr
       - ${COMMON_LAYER}/usr:/a0/usr:rw
