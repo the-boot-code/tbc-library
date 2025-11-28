@@ -75,7 +75,11 @@ Use this document as a **usage guide** for `create_agent.sh` only:
     env live, whether Docker was started, any generated UI
     credentials, and, when relevant, which `agent_memory_subdir` is
     active and where the new agent's `behaviour.md` lives
-    (normally `/a0/memory/<agent_memory_subdir>/behaviour.md`).
+    (normally `/a0/memory/<agent_memory_subdir>/behaviour.md`). Avoid
+    trying to discover the live behaviour file purely by scanning the
+    entire filesystem with `find / -name behaviour.md`; instead, use
+    the `agent_memory_subdir` value in `/a0/tmp/settings.json` as the
+    source of truth.
 
 ---
 
