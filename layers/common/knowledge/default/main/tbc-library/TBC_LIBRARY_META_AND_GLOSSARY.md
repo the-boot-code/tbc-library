@@ -1,4 +1,4 @@
-# Project Meta and Glossary
+we# Project Meta and Glossary
 
 This document captures project meta information: final thoughts, disclaimers, versioning details, attribution, and a glossary of key terms.
 
@@ -86,6 +86,9 @@ Use this section as a map from high-level ideas to the documents that explain th
   - How host directories are projected into the container: [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts).  
   - Host vs container mapping tables: [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).
 
+- **Memory roots (`agent_memory_subdir`, `/a0/memory`)**  
+  - How the `agent_memory_subdir` field in `/a0/tmp/settings.json` selects a subdirectory under `/a0/memory` (host mirror `layers/<container_name>/memory/<agent_memory_subdir>`) as the active memory root for an agent, how `create_agent.sh` can set this via its `memory_subdir` argument, and how this participates in self-revealing orchestration and backup/clone workflows: see [TBC_LIBRARY_INSTALLATION.md → Installation (Automated, Recommended)](TBC_LIBRARY_INSTALLATION.md#installation-automated-recommended), `create_agent.md`, and [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts).
+
 - **`_symlink` shared library**  
   - Shared tools, prompts, and extensions for many agents: [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Symlinked Agents and the `_symlink` Profile](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#symlinked-agents-and-the-_symlink-profile).
 
@@ -97,6 +100,7 @@ The glossary below is organized alphabetically and focuses on individual terms. 
 - **Agent**: In this project, an "agent" is an Agent Zero process together with its active profile (for example, `/a0/agents/${CONTAINER_NAME}` inside a container). See [TBC_LIBRARY_AGENT_REASONING.md → Who you are acting as: self vs managed vs external](TBC_LIBRARY_AGENT_REASONING.md#who-you-are-acting-as-self-vs-managed-vs-external) and [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).
 - **Agent container**: A Docker container running an Agent Zero instance plus its bind mounts. Containers are parameterized primarily by `.env` and `docker-compose.yml` under `containers/<name>/`; see [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Docker Compose Orchestration](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#docker-compose-orchestration).
 - **Agent profile**: A specific identity under `/a0/agents/<name>` (mirrored from `layers/<name>/agents/<name>` on the host). Contains prompts, tools, and extensions that describe how that agent behaves; see examples in [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).
+- **agent_memory_subdir**: Field in `/a0/tmp/settings.json` that selects which subdirectory under `/a0/memory` is used as the active memory root for an agent (for example, `/a0/memory/a0-clarity-20251120-openai`). The same directory is visible on the host as `layers/<container_name>/memory/<agent_memory_subdir>`. It can be set at creation time via the `memory_subdir` argument to `create_agent.sh`, and is used by extensions such as `_20_behaviour_prompt.py` to locate memory-backed files like `behaviour.md`. See [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md), `create_agent.md`, and [TBC_LIBRARY_EXTENSIBILITY.md → System prompt staging pipeline](TBC_LIBRARY_EXTENSIBILITY.md#system-prompt-staging-pipeline).
 - **Agent Zero**: An open-source AI framework for building customizable agents that learn and adapt. Upstream documentation lives at <https://github.com/agent0ai/agent-zero>; this library layers on top of that engine without modifying its core.
 - **Boot Code**: Persistent narrative and technical data that "activates" the system's creative feedback loop. Introduced in [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → The "Boot Code" is Narrative and Technical Combined](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md#the-boot-code-is-narrative-and-technical-combined).
 - **Common layer**: The shared host directory `layers/common` (seen inside the container as `/common_layer` and via specific `/a0/...` mounts) that holds shared agents, knowledge, prompts, and instruments used by many agents.

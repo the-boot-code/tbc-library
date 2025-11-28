@@ -15,7 +15,7 @@ If you're here to deploy Agent Zero quickly, this section shows how to start a *
      auth_login=myuser auth_password=mypassword
    ```
 
-   This example uses `PORT_BASE=500`. If you omit `auth_login`/`auth_password`, the script will generate default credentials and print them in its output so you can log in on first boot; you should change them after verifying access, especially if the agent is reachable from a public network.
+   This example uses `PORT_BASE=500`. If you omit `auth_login`/`auth_password`, the script will generate default credentials and print them in its output so you can log in on first boot; you should change them after verifying access, especially if the agent is reachable from a public network. To give each cloned agent its own memory directory under `/a0/memory/<name>`, you can optionally add `memory_subdir=<name>`; the script will set `agent_memory_subdir` in `/a0/tmp/settings.json` for that agent.
 2. For `PORT_BASE=500`, access HTTP at `50080`, SSH at `50022`, and HTTPS via nginx at `50043` (other `PORT_BASE` values follow the same pattern).
 3. After cloning from the `a0-template` container and starting the stack, open the Agent Zero Web UI in your browser, click the **Settings** (gear) button in the sidebar, and use:
    - the **Agent Settings** page to configure your **LLM models**; and

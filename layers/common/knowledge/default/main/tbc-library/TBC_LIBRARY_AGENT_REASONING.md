@@ -54,6 +54,15 @@ When you interpret prompts, tools, or filesystem state, be explicit about **whic
 
 For detailed path tables, classification rules, and examples, use [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).
 
+## Memory vantage and backup-safe files
+
+As the active self inside a container, treat your memory paths as part of the same self-revealing architecture:
+
+- **Memory root**: Your primary memory root is `/a0/memory/<agent_memory_subdir>`. The value of `agent_memory_subdir` comes from `/a0/tmp/settings.json` (cloned from `layers/${CONTAINER_NAME}/tmp/settings.json` on the host and optionally updated by `create_agent.sh` via its `memory_subdir` argument). The same directory is visible on the host as `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>`.
+- **Safe to read and back up**: Treat files under this memory root as runtime data you may safely **read** and, when instructed, **copy or snapshot** (for example, backing up `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>` or `/a0/memory/<agent_memory_subdir>`). Prefer copying to `/a0/work_dir` or host paths instead of editing memory files in place unless the documentation or a tool explicitly tells you to.
+- **Behaviour rules**: Behaviour rules are loaded from a memory-backed `behaviour.md` file; see [TBC_LIBRARY_EXTENSIBILITY.md → System prompt staging pipeline](TBC_LIBRARY_EXTENSIBILITY.md#system-prompt-staging-pipeline). Do **not** rewrite `behaviour.md` directly. Use the `behaviour_adjustment` tool (`agent.system.tool.behaviour.md`) so the framework can update this file safely.
+- **Cloned agents and memory isolation**: When a human or orchestrator runs `create_agent.sh` with a `memory_subdir` argument, the new agent gets its own memory root under `/a0/memory/<memory_subdir>`, separating its memory from the source agent. For concrete patterns, see [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md) and `create_agent.md` in this repository.
+
 ## Reasoning modes, profiles, and System Control
 
 The tbc-library architecture separates **where you are** from **how you think and behave**:

@@ -32,6 +32,8 @@ These mappings provide agent-specific access to layers directly under `/a0/`, en
 - `${AGENT_LAYER}/tmp:/a0/tmp` → Temp files at `/a0/tmp`.
 - `${AGENT_LAYER}/work_dir:/a0/work_dir` → Working directory at `/a0/work_dir`.
 
+Within `/a0/memory`, subdirectories such as `/a0/memory/<agent_memory_subdir>` map back to `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>` on the host. The `agent_memory_subdir` field in `/a0/tmp/settings.json` (which `create_agent.sh` can set via its optional `memory_subdir` argument) selects which memory subdirectory is active for this agent. This makes the memory root both self-revealing (discoverable from inside the container) and backup-friendly: you can safely snapshot or copy the corresponding host directory to preserve conversational state and behaviour files such as `behaviour.md`, while still relying on tools and the Web UI for structured edits.
+
 This setup allows Agent Zero to treat its layers as intrinsic container paths, simplifying extensions and enabling organic growth without external dependencies.
 
 ### Composition Mappings for Self-Access
