@@ -4,21 +4,35 @@ This document is a dedicated guide for **agents** (and advanced operators) for i
 
 > **Navigation**: [← Back to README](README.md) | [Installation →](TBC_LIBRARY_INSTALLATION.md)
 
+## Config-First Rule
+
+> **Always read configuration files as JSON before inferring from the filesystem.**
+>
+> - **Your runtime configuration** lives in `/a0/tmp/settings.json`. Read it to learn your `agent_memory_subdir`, `agent_profile`, `agent_knowledge_subdir`, model settings, and connectivity options.
+> - **Your active profiles and prompt-includes** live in `/a0/tmp/system_control.json`.
+> - **Your live `behaviour.md`** is at `/a0/memory/<agent_memory_subdir>/behaviour.md`, where `<agent_memory_subdir>` comes from `settings.json`.
+>
+> **Anti-pattern**: Do not scan the filesystem with commands like `find / -name behaviour.md` to locate your configuration or behaviour file. Such searches are slow, ambiguous when backups exist, and ignore the authoritative configuration.
+
+This rule applies to reasoning about yourself and about other agents you may manage.
+
+---
+
 ## How to reason about this documentation as an agent
 
-When you (as an agent) work with this tbc-library documentation set, treat it as a **map** that describes both the host repository and your in-container environment. Use this file as your primary quick-reference for perception and roles:
+When you (as an agent) work with this tbc-library documentation set, treat it as a **map** that describes both the host repository and your in-container environment. Use this file as your primary quick-reference for perception and roles.
 
 1. **Determine your vantage point**  
-   - If you see paths like `tbc-library/...`, `containers/...`, or `layers/...` **without** a leading `/`, you are reasoning about the **host repository**.  
-   - If you see paths like `/a0/...`, `/layers/...`, `/agent_layer/...`, `/common_layer/...`, `/agent_orchestration`, or `/containers/...`, you are reasoning about the **inside of a container** created by tbc-library's Docker Compose orchestration.
+   - Paths like `tbc-library/...`, `containers/...`, or `layers/...` **without** a leading `/` describe the **host repository**.  
+   - Paths like `/a0/...`, `/layers/...`, `/agent_layer/...`, `/common_layer/...`, `/agent_orchestration`, or `/containers/...` describe the **inside of a container** created by tbc-library's Docker Compose orchestration.
 2. **Decide who you are acting as**  
    - Are you reasoning as the **current self profile** inside one container, as a **manager of other profiles** in the same container, or as an **orchestrator of other containers/deployments** from the host?  
-   - This distinction is central to avoiding confusion between "self" vs "managed" agents and between local vs external orchestration.
-3. **Use this guide as your mental model, and other docs as rulebooks**  
-   - For concrete bind-mount mappings and path-level rules, use [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts).  
-   - For detailed host/container path relationships, self vs managed agents, and worked examples, use [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).  
-   - For how narrative intent becomes reasoning modes and profiles, use [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) together with [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).  
-   - For **runtime configuration**, prefer reading `/a0/tmp/settings.json` (models, memory, agent directories, external integrations) and `/a0/tmp/system_control.json` (active profiles and prompt-includes) as structured JSON before inferring configuration from scattered filesystem patterns.
+   - This distinction prevents confusion between "self" vs "managed" agents and between local vs external orchestration.
+3. **Apply the Config-First Rule** (above) before inferring configuration from filesystem patterns.
+4. **Use supporting docs for deep dives**  
+   - Bind-mount mappings: [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts).  
+   - Path tables and worked examples: [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).  
+   - Dynamic profiles and reasoning modes: [TBC_LIBRARY_EXTENSIBILITY.md](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles).
 
 By consistently applying this perception model, you can treat the documentation set as a stable conceptual map, even as details evolve.
 
@@ -57,15 +71,40 @@ For detailed path tables, classification rules, and examples, use [TBC_LIBRARY_T
 
 ## Memory vantage and backup-safe files
 
-As the active self inside a container, treat your memory paths as part of the same self-revealing architecture:
+As the active self inside a container, treat your memory paths as part of the same self-revealing architecture. This section is the **authoritative reference** for locating `behaviour.md` and memory roots; other docs link here.
 
-- **Memory root**: Your primary memory root is `/a0/memory/<agent_memory_subdir>`. The value of `agent_memory_subdir` comes from `/a0/tmp/settings.json` (cloned from `layers/${CONTAINER_NAME}/tmp/settings.json` on the host and optionally updated by `create_agent.sh` via its `memory_subdir` argument). The same directory is visible on the host as `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>`.
-- **Safe to read and back up**: Treat files under this memory root as runtime data you may safely **read** and, when instructed, **copy or snapshot** (for example, backing up `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>` or `/a0/memory/<agent_memory_subdir>`). Prefer copying to `/a0/work_dir` or host paths instead of editing memory files in place unless the documentation or a tool explicitly tells you to.
- - **Behaviour rules**: Behaviour rules are loaded from a memory-backed `behaviour.md` file located at `/a0/memory/<agent_memory_subdir>/behaviour.md`; see [TBC_LIBRARY_EXTENSIBILITY.md → System prompt staging pipeline](TBC_LIBRARY_EXTENSIBILITY.md#system-prompt-staging-pipeline). Do **not** rewrite `behaviour.md` directly. Use the `behaviour_adjustment` tool (`agent.system.tool.behaviour.md`) so the framework can update this file safely.
- - **How to locate your own `behaviour.md` (preferred)**: To identify your live behaviour file, (1) read `/a0/tmp/settings.json`, (2) find the `agent_memory_subdir` value, and (3) combine it with `/a0/memory/<agent_memory_subdir>/behaviour.md`. Treat other `behaviour.md` files you may find on the filesystem as backups or historical copies unless the documentation for this deployment explicitly says otherwise.
- - **Anti-pattern to avoid**: Do not try to identify your live behaviour file by scanning the entire filesystem with a broad command such as `find / -name behaviour.md 2>/dev/null`; that is slow and ambiguous when you have backups or historical copies. Always treat the `agent_memory_subdir` in `/a0/tmp/settings.json` as the single source of truth for your active memory root and `behaviour.md` location.
- - **Cloned agents and memory isolation**: When a human or orchestrator runs `create_agent.sh` with a `memory_subdir` argument, the new agent gets its own memory root under `/a0/memory/<memory_subdir>`, separating its memory from the source agent. For concrete patterns, see [TBC_LIBRARY_INSTALLATION.md](TBC_LIBRARY_INSTALLATION.md) and `create_agent.md` in this repository.
- - **Other agents' memory and behaviour (orchestrator view)**: When you are acting as an orchestrator with access to `/containers` and `/layers`, you can locate another agent's memory root and behaviour file by (1) identifying that agent's container name, (2) reading its `/containers/<other>/a0/tmp/settings.json` (or the host mirror) to learn its `agent_memory_subdir` value, and then (3) combining that value with the known mappings to find `/containers/<other>/layers/<other>/memory/<agent_memory_subdir>` on the host and `/a0/memory/<agent_memory_subdir>/behaviour.md` inside that agent's own container. Treat any modification of another agent's memory or `behaviour.md` as a high-impact orchestration action that must follow the documented tools and safety rules for that deployment.
+### Locating your own memory root and behaviour file
+
+**Recipe (config-first)**:
+
+1. Read `/a0/tmp/settings.json` as JSON.
+2. Extract the `agent_memory_subdir` field.
+3. Your memory root is `/a0/memory/<agent_memory_subdir>`.
+4. Your live `behaviour.md` is `/a0/memory/<agent_memory_subdir>/behaviour.md`.
+
+**Host mirror**: The same directory is `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>` on the host.
+
+**Editing behaviour**: Do not rewrite `behaviour.md` directly. Use the `behaviour_adjustment` tool (`agent.system.tool.behaviour.md`) so the framework can update this file safely.
+
+### Locating another agent's memory root and behaviour file (orchestrator view)
+
+When you are acting as an orchestrator with access to `/containers` and `/layers`:
+
+1. Identify the target agent's container name (for example, `a0-myagent`).
+2. Read `/containers/<other>/a0/tmp/settings.json` (or host mirror `layers/<other>/tmp/settings.json`) as JSON.
+3. Extract its `agent_memory_subdir` field.
+4. The target agent's memory root is `layers/<other>/memory/<agent_memory_subdir>` on the host, and `/a0/memory/<agent_memory_subdir>` inside that agent's container.
+5. Its live `behaviour.md` is at `<memory_root>/behaviour.md`.
+
+Treat any modification of another agent's memory or `behaviour.md` as a high-impact orchestration action that must follow the documented tools and safety rules.
+
+### Backup-safe files
+
+Files under the memory root are runtime data you may safely **read** and, when instructed, **copy or snapshot**. Prefer copying to `/a0/work_dir` or host paths instead of editing in place unless documentation or a tool explicitly tells you to.
+
+### Cloned agents and memory isolation
+
+When a human or orchestrator runs `create_agent.sh` with a `memory_subdir` argument, the new agent gets its own memory root under `/a0/memory/<memory_subdir>`, separating its memory and `behaviour.md` from the source agent.
 
 ## Reasoning modes, profiles, and System Control
 
@@ -90,11 +129,11 @@ For concrete details on profile modules, tools, and example configurations that 
 
 ## Where to go next
 
-Use this file as your starting point whenever you need to re-establish orientation. Then follow these references for deeper knowledge:
+Use this file as your starting point whenever you need to re-establish orientation. Key supporting docs:
 
-- [README.md → Reading as a human or an agent](README.md#reading-as-a-human-or-an-agent) for how humans and agents should approach the documentation set.  
-- [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) for a detailed view of bind mounts and self-revealing orchestration.  
-- [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management) for worked examples of self vs managed agents, symlinks, and host/container path mappings.  
-- [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) for how modes, profiles, and tools translate narrative requirements into runtime behaviour.  
-- [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md) for the story context that motivates these structures and modes.  
-- [TBC_LIBRARY_UPSTREAM_REFERENCES.md → Upstream Agent Zero documentation references](TBC_LIBRARY_UPSTREAM_REFERENCES.md) for an index of `/a0/docs` topics provided by the Agent Zero engine and how they relate to this layered deployment.
+| Topic | Document |
+|-------|----------|
+| Bind mounts and paths | [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md) |
+| Path tables and worked examples | [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md) |
+| Dynamic profiles and System Control | [TBC_LIBRARY_EXTENSIBILITY.md](TBC_LIBRARY_EXTENSIBILITY.md) |
+| Upstream Agent Zero docs index | [TBC_LIBRARY_UPSTREAM_REFERENCES.md](TBC_LIBRARY_UPSTREAM_REFERENCES.md) |

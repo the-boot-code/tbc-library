@@ -72,14 +72,11 @@ Use this document as a **usage guide** for `create_agent.sh` only:
 - **After running**
   - Summarize for the user: new container name and paths, effective
     `PORT_BASE`, any `knowledge_dir`, where the settings and layered
-    env live, whether Docker was started, any generated UI
-    credentials, and, when relevant, which `agent_memory_subdir` is
-    active and where the new agent's `behaviour.md` lives
-    (normally `/a0/memory/<agent_memory_subdir>/behaviour.md`). Avoid
-    trying to discover the live behaviour file purely by scanning the
-    entire filesystem with `find / -name behaviour.md`; instead, use
-    the `agent_memory_subdir` value in `/a0/tmp/settings.json` as the
-    source of truth.
+    env live, whether Docker was started, and any generated UI
+    credentials.
+  - To locate the new agent's `behaviour.md`, apply the **Config-First
+    Rule**: read `agent_memory_subdir` from `/a0/tmp/settings.json`.
+    See [TBC_LIBRARY_AGENT_REASONING.md → Config-First Rule](layers/common/knowledge/default/main/tbc-library/TBC_LIBRARY_AGENT_REASONING.md#config-first-rule).
 
 ---
 

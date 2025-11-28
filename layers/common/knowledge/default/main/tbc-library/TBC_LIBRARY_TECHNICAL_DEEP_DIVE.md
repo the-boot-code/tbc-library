@@ -199,9 +199,8 @@ Alongside `/a0/.env`, the upstream Agent Zero engine maintains a JSON configurat
     - RFC ports are derived from `PORT_BASE` when relevant.  
   - If no `tmp/settings.json` existed for the source, `create_agent.sh` creates a minimal one for the destination with these linkage, memory, and port fields so the Web UI has a sensible starting point. Details and follow-up checks are described in [TBC_LIBRARY_INSTALLATION.md → Installation (Automated, Recommended)](TBC_LIBRARY_INSTALLATION.md#installation-automated-recommended) and [TBC_LIBRARY_INSTALLATION.md → Post-Installation Verification](TBC_LIBRARY_INSTALLATION.md#post-installation-verification).
 - **How agents should use it**  
-  - When you need to know **how you are configured** (models, memory root, knowledge subdirectory, connectivity), start by **reading `/a0/tmp/settings.json` as JSON** instead of inferring from scattered files or naming patterns.  
-  - Treat fields like `agent_memory_subdir` as the **source of truth** for paths such as `/a0/memory/<agent_memory_subdir>/behaviour.md`, and use filesystem searches only as a debugging fallback when configuration is clearly inconsistent.  
-  - For the higher-level reasoning perspective on this file and how it relates to memory vantage and behaviour, see [TBC_LIBRARY_AGENT_REASONING.md → Memory vantage and backup-safe files](TBC_LIBRARY_AGENT_REASONING.md#memory-vantage-and-backup-safe-files).
+  - Apply the **Config-First Rule**: read `/a0/tmp/settings.json` as JSON to learn your configuration instead of inferring from filesystem patterns.  
+  - For the step-by-step recipe to locate your `behaviour.md` using `agent_memory_subdir`, see [TBC_LIBRARY_AGENT_REASONING.md → Config-First Rule](TBC_LIBRARY_AGENT_REASONING.md#config-first-rule) and [Memory vantage and backup-safe files](TBC_LIBRARY_AGENT_REASONING.md#memory-vantage-and-backup-safe-files).
 
 The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
 
