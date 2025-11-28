@@ -72,8 +72,10 @@ Use this document as a **usage guide** for `create_agent.sh` only:
 - **After running**
   - Summarize for the user: new container name and paths, effective
     `PORT_BASE`, any `knowledge_dir`, where the settings and layered
-    env live, whether Docker was started, and any generated UI
-    credentials.
+    env live, whether Docker was started, any generated UI
+    credentials, and, when relevant, which `agent_memory_subdir` is
+    active and where the new agent's `behaviour.md` lives
+    (normally `/a0/memory/<agent_memory_subdir>/behaviour.md`).
 
 ---
 
