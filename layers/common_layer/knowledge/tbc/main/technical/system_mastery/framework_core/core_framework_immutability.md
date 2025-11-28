@@ -26,7 +26,7 @@ External host directories are mounted as volumes into the container's `/a0` envi
 
 *   **Writable Shared Overlays (e.g., `COMMON_LAYER`)**:
     *   Directories containing foundational knowledge, instruments, and prompts intended for collective contribution and availability across multiple agents.
-    *   When mounted `rw` (e.g., `/a0/instruments`, `/a0/knowledge/tbc/main`, `/a0/prompts/system`), changes made from within `/a0` directly modify the shared underlying host source. This ensures system-wide consistency across all agents accessing that shared `rw` mount.
+    *   When mounted `rw` (for example, shared directories under `/a0/instruments` or `/a0/knowledge/tbc/main`), changes made from within `/a0` directly modify the shared underlying host source. This ensures system-wide consistency across all agents accessing that shared `rw` mount.
     *   **Again**: These modifications affect the mounted host volume, **not the underlying base image files**.
 
 *   **Read-Only Overlays (e.g., `COMMON_LAYER` for agent profiles)**:

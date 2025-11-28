@@ -156,14 +156,7 @@ In addition to these generic knowledge mounts, typical tbc-library deployments a
 
 These mounts mean that, from inside a container, the library that defines the world is itself visible under `/a0/knowledge/...` alongside other knowledge trees, reinforcing the self-revealing orchestration described in [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and the knowledge/solutions model in [TBC_LIBRARY_EXTENSIBILITY.md → Knowledge Features of Agent Zero](TBC_LIBRARY_EXTENSIBILITY.md#knowledge-features-of-agent-zero).
 
-In this approach, the core system prompt directory (`prompts/system`) is mounted read-only from the common layer, while knowledge-specific prompt trees and container-specific prompts can be writable, providing shared defaults with controlled override points.
-
-```
-      # prompts
-      - ${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw
-      - ${COMMON_LAYER}/prompts/system:/a0/prompts/system:ro
-      - ${AGENT_LAYER}/prompts/container:/a0/prompts/container
-```
+In this approach, the system prompt pipeline is structured around shared, effectively read-only entrypoints and includes, while knowledge-specific prompt trees and container-specific prompts can be writable, providing shared defaults with controlled override points.
 
 - Note how this approach allows for fine-grained control over read-only vs read-write access to different layers of the application.
 - Administration of these layers is done at the host level by managing the contents of the `${COMMON_LAYER}` and `${AGENT_LAYER}` directories if permissions are given.
@@ -369,8 +362,6 @@ For `CONTAINER_NAME=a0-template` this means, from inside the container:
 Other mapped layer paths follow the same pattern:
 
 - `${COMMON_LAYER}/knowledge/${KNOWLEDGE_DIR}:/a0/knowledge/${KNOWLEDGE_DIR}:rw`
-- `${COMMON_LAYER}/prompts/${KNOWLEDGE_DIR}:/a0/prompts/${KNOWLEDGE_DIR}:rw`
-- `${AGENT_LAYER}/prompts/container:/a0/prompts/container`
 
 From the agent's perspective, `/a0/agents`, `/a0/knowledge`, and `/a0/prompts` are its live environment. The `/agent_layer`, `/common_layer`, and `/agent_orchestration` mounts expose the same structures explicitly for introspection and self‑modification when allowed.
 
@@ -397,13 +388,13 @@ Agent profiles (for example, `layers/a0-template/agents/a0-template/extensions/.
 
 The `layers/control_layer/agents/_symlink/prompts` directory in the `tbc-library` repository on the host (visible inside the container at `/a0/control_layer/agents/_symlink/prompts` and `/layers/control_layer/agents/_symlink/prompts`) centralizes prompt templates that agent profiles reference via symlinks:
 
-- Agent/meta entrypoints such as `agent.system.main.role.md` are thin wrappers that use `{{ include ... }}` to pull text from the shared system prompt tree (for example, `prompts/system`), where `prompts/...` is resolved relative to `/a0/prompts` inside the container (mirrored on the host under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount). This allows central updates while keeping agent profile files small.
+- Agent/meta entrypoints such as `agent.system.main.role.md` are thin wrappers that use `{{ include ... }}` to pull text from shared system-level templates, allowing central updates while keeping agent profile files small.
 - Tool prompts such as `agent.system.tool.prompt_include_control.md`, `agent.system.tool.security_profile_control.md`, `agent.system.tool.memory.md`, `agent.system.tool.scheduler.md`, and `agent.system.tool.a2a_chat.md` define how tools should be invoked and described.
-- Lifecycle prompts `pre_system_manual.md`, `post_system_manual.md`, `pre_behaviour.md`, and `post_behaviour.md` are routing stubs that `{{ include "prompts/system/..." }}` and are positioned in the system prompt by the corresponding `_symlink/extensions/system_prompt/*` extensions.
+- Lifecycle prompts `pre_system_manual.md`, `post_system_manual.md`, `pre_behaviour.md`, and `post_behaviour.md` are routing stubs that `{{ include ... }}` shared pre/post-manual and pre/post-behaviour segments and are positioned in the system prompt by the corresponding `_symlink/extensions/system_prompt/*` extensions.
 
 Agent profile prompt directories (for example, `layers/a0-template/agents/a0-template/prompts` in the `tbc-library` repository on the host, visible inside the container at `/layers/a0-template/agents/a0-template/prompts`) typically contain symlinks to these `_symlink` prompts, so a change in `_symlink/prompts` can immediately affect all linked agents while still allowing per-agent overrides when needed.
 
-This pattern generalizes to `_symlink` prompt stubs that route into the shared system prompt tree (for example, `prompts/system`), giving each agent a simple, symlink-based entrypoint while keeping the authoritative text in shared, layered locations.
+This pattern generalizes to `_symlink` prompt stubs that route into shared system-level templates, giving each agent a simple, symlink-based entrypoint while keeping the authoritative text in shared, layered locations.
 
 #### `_symlink/tools`: shared tools and profile control
 
@@ -443,16 +434,15 @@ shared/
 
 #### External prompt resources via `/common`
 
-The `/common` mount exposes host-level resources from `volumes/common` into the container. This enables prompts to pull in external content that lives outside the `/a0` and `/layers` trees while still participating in the same kwargs-aware prompt and plugin system.
+The `/common` mount exposes host-level resources from `volumes/common` into the container. This enables prompts and plugins to pull in external content that lives outside the `/a0` and `/layers` trees while still participating in the same kwargs-aware prompt and plugin system.
 
 - In `docker-compose.yml`, `${PATH_COMMON}` is mounted as `/common` inside the container. For example, host path `volumes/common/prompts/merged/merged_post_system_manual.md` is accessible as `/common/prompts/merged/merged_post_system_manual.md`.
-- The prompt `prompts/system/external/merged/merged_post_system_manual.md` is a thin wrapper containing `{{resource_content}}` and is paired with `merged_post_system_manual.py`, a `VariablesPlugin` that calls:
+- A `VariablesPlugin` can then call helpers such as:
   - `files.read_prompt_file("merged_post_system_manual.md", _directories=["/common/prompts/merged"], **kwargs)`
-  - and returns `{"resource_content": <loaded content>}`.
-- The system-level prompt `prompts/system/post_behaviour.md` includes this wrapper, so the merged external resource is injected into the system prompt at the desired stage.
-- A similar pattern is used for TBC resources such as `tbc.protocols`, `tbc.overview`, and `tbc.lineage`: wrappers in `prompts/tbc/external_resources/...` (each containing `{{resource_content}}`) are paired with `VariablesPlugin` implementations that load the corresponding files from `/common/prompts/tbc/...` (for example, `/common/prompts/tbc/tbc.protocols/tbc.protocols.md`) using `files.read_prompt_file(..., **kwargs)`.
+  - and return a dictionary like `{"resource_content": <loaded content>}` that the prompt pipeline can include at the appropriate stage.
+- The same pattern applies to other TBC resources such as `tbc.protocols`, `tbc.overview`, and `tbc.lineage`, whose markdown content lives under `/common/prompts/tbc/...` and is loaded by kwargs-enabled plugins using `files.read_prompt_file(..., **kwargs)`.
 
-- Because `read_prompt_file` and `VariablesPlugin.get_variables` are kwargs-enabled in the upstream Agent Zero `files.py` (v0.9.7+), any external prompt loaded from `/common` can still see runtime context such as `agent`, `loop_data`, and profile information, making `/common` a powerful external prompt/knowledge layer managed on the host.
+- Because `read_prompt_file` and `VariablesPlugin.get_variables` are kwargs-enabled in the upstream Agent Zero `files.py` (v0.9.7+), any external prompt loaded from `/common` can still see runtime context such as `agent`, `loop_data`, and profile information, making `/common` a powerful external prompt and knowledge layer that is managed on the host.
 
 ## More About Agent Zero
 
