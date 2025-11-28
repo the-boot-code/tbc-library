@@ -7,13 +7,13 @@ This document codifies the fundamental capabilities governing read/write (RW) vo
 Agent Zero instances operate within a dynamic `/a0` filesystem that is a composite of multiple host-side volumes, layered onto a minimal base image. This architecture ensures flexibility, reusability, and persistence.
 
 *   **`/a0` (Composite View)**: The agent's perceived root filesystem, a synthesis of various mounted volumes.
-*   **`COMMON_LAYER` (Shared Host Source)**: A singular host-side directory (e.g., `/layers/common/`) containing foundational knowledge, instruments, and prompts, shared across multiple agents. This Host Source can be accessed via multiple host paths (e.g., `/layers/common/...`, `/common_layer/...`) and is often mounted into `/a0`.
+*   **`COMMON_LAYER` (Shared Host Source)**: A singular host-side directory (e.g., `/layers/common_layer/`) containing foundational knowledge, instruments, and prompts, shared across multiple agents. This Host Source can be accessed via multiple host paths (e.g., `/layers/common_layer/...`, `/common_layer/...`) and is often mounted into `/a0`.
 *   **`CONTAINER_LAYER` (Instance-Specific Host Source)**: A distinct host-side directory (e.g., `/layers/a0-clarity/`) containing unique configurations, memory, and logs for a specific agent instance.
 *   **Blueprints/Container Roots (Static Views)**: Paths like `/containers/a0-clarity/` or `/container/a0/` represent static deployment definitions or isolated container root views. They do not dynamically reflect runtime changes made to `COMMON_LAYER` or `CONTAINER_LAYER` mounts.
 
 ## 2. Principle: Writable COMMON_LAYER Capability & Direct Modification
 
-If **any access point** to a `COMMON_LAYER` Host Source (e.g., `/layers/common/knowledge/tbc/main` on the host, `/common_layer/knowledge/tbc/main` on the host, or `/a0/knowledge/tbc/main` mounted in the container) is configured with read/write (`rw`) permissions, then:
+If **any access point** to a `COMMON_LAYER` Host Source (e.g., `/layers/common_layer/knowledge/tbc/main` on the host, `/common_layer/knowledge/tbc/main` on the host, or `/a0/knowledge/tbc/main` mounted in the container) is configured with read/write (`rw`) permissions, then:
 
 *   Changes made through *that specific `rw` access point* will **immediately and directly modify the single underlying Host Source filesystem**.
 *   These modifications are then **simultaneously and immediately reflected in all other views** of that same Host Source, regardless of whether those other views are themselves configured as `rw` or `ro`.
@@ -34,9 +34,9 @@ ls -F /container/a0/knowledge/tbc/main
 echo "\n--- /container_layer/knowledge/tbc/main ---"
 ls -F /container_layer/knowledge/tbc/main
 echo "\n--- /common_layer/knowledge/tbc/main ---"
-ls -F /layers/common/knowledge/tbc/main
-echo "\n--- /layers/common/knowledge/tbc/main ---"
-ls -F /layers/common/knowledge/tbc/main
+ls -F /layers/common_layer/knowledge/tbc/main
+echo "\n--- /layers/common_layer/knowledge/tbc/main ---"
+ls -F /layers/common_layer/knowledge/tbc/main
 ```
 
 ### **Observed Results & Validation:**
@@ -44,7 +44,7 @@ ls -F /layers/common/knowledge/tbc/main
 *   **`system_mastery/` Present**: The directory was consistently observed in:
 *   `/a0/knowledge/tbc/main` (the agent's operational view, configured `rw` and directly mapped to the Host Source).
 *   `/common_layer/knowledge/tbc/main` (a host-side access point to the `COMMON_LAYER` Host Source).
-*   `/layers/common/knowledge/tbc/main` (the actual physical `COMMON_LAYER` Host Source directory).
+*   `/layers/common_layer/knowledge/tbc/main` (the actual physical `COMMON_LAYER` Host Source directory).
 This confirms **direct modification of the single Host Source** via the `rw` `/a0` mount, and its immediate reflection in all views referencing it.
 
 *   **`system_mastery/` Absent/Inaccessible**: The directory was *not* observed (or access failed) in:

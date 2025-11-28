@@ -12,9 +12,9 @@ This document covers knowledge management, extensions, dynamic profiles (via Dyn
 
 Knowledge in the `tbc-library` repository is treated as a first-class, layered resource, not something that must always be inlined into the system prompt.
 
-In addition to prompts and external `/common` resources, dedicated knowledge trees live under `layers/common/knowledge/...` in this repository (for example, `layers/common/knowledge/tbc/...` on the host). These trees are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed.
+In addition to prompts and external `/common` resources, dedicated knowledge trees live under `layers/common_layer/knowledge/...` in this repository (for example, `layers/common_layer/knowledge/tbc/...` on the host). These trees are mounted into the container under `/a0/knowledge/...` (for example, `/a0/knowledge/tbc/...`) and contain narrative, conceptual, and procedural documents the agent can retrieve when needed.
 
-The main library README (`README.md` at the root of this repository) is also made available to agents directly. It is mirrored into the knowledge tree at `layers/common/knowledge/default/main/tbc-library/README.md` on the host and, through the existing knowledge mounts, is visible inside the container at `/a0/knowledge/default/main/tbc-library/README.md`. This lets agents consume the same documentation that appears at the repository root via the knowledge layer, without requiring an extra per-container bind mount.
+The main library README (`README.md` at the root of this repository) is also made available to agents directly. It is mirrored into the knowledge tree at `layers/common_layer/knowledge/default/main/tbc-library/README.md` on the host and, through the existing knowledge mounts, is visible inside the container at `/a0/knowledge/default/main/tbc-library/README.md`. This lets agents consume the same documentation that appears at the repository root via the knowledge layer, without requiring an extra per-container bind mount.
 
 In a typical tbc-library deployment, the documentation and solutions for the library itself are surfaced into the knowledge tree via explicit mounts such as:
 
@@ -29,10 +29,10 @@ These knowledge files are not executed directly. Instead, Agent Zero's knowledge
 
 Solutions are structured knowledge entries that document how to use specific tools or patterns. They live alongside other knowledge under paths in the `tbc-library` repository such as (from the host's perspective):
 
-- `layers/common/knowledge/default/solutions/tbc-library/workflow_profile_control.md`
-- `layers/common/knowledge/default/solutions/tbc-library/liminal_thinking_profile_control.md`
-- `layers/common/knowledge/default/solutions/tbc-library/philosophy_profile_control.md`
-- `layers/common/knowledge/default/solutions/tbc-library/reasoning_profile_control.md`
+- `layers/common_layer/knowledge/default/solutions/tbc-library/workflow_profile_control.md`
+- `layers/common_layer/knowledge/default/solutions/tbc-library/liminal_thinking_profile_control.md`
+- `layers/common_layer/knowledge/default/solutions/tbc-library/philosophy_profile_control.md`
+- `layers/common_layer/knowledge/default/solutions/tbc-library/reasoning_profile_control.md`
 
 From inside the container, these same solution files are visible under `/a0/knowledge/default/solutions/tbc-library/...` via the `/a0/knowledge` bind mounts described earlier.
 
@@ -164,7 +164,7 @@ This kind of configuration illustrates how the System Control subsystem turns ab
 
 ## Prompts in Agent Zero
 
-Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into the shared `_symlink` prompt library under `layers/control_layer/agents/_symlink/prompts` (seen inside the container at `/a0/control_layer/agents/_symlink/prompts` and `/layers/control_layer/agents/_symlink/prompts`). Those shared stubs typically include or route into the default system prompt tree at `/a0/prompts` (for example, `prompts/system` and any container-specific prompts under `/a0/prompts/container`). From the host, this same `/a0/prompts` tree is mirrored under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount, while its shared content originates from `layers/common/prompts/...` via the `${COMMON_LAYER}/prompts/...` mounts described earlier.
+Prompts are the primary way agents describe their roles, tools, and lifecycle behavior. In the `tbc-library` repository on the host, most agent-visible prompt files in `layers/<agent>/agents/<agent>/prompts` are symlinks into the shared `_symlink` prompt library under `layers/control_layer/agents/_symlink/prompts` (seen inside the container at `/a0/control_layer/agents/_symlink/prompts` and `/layers/control_layer/agents/_symlink/prompts`). Those shared stubs typically include or route into the default system prompt tree at `/a0/prompts` (for example, `prompts/system` and any container-specific prompts under `/a0/prompts/container`). From the host, this same `/a0/prompts` tree is mirrored under `containers/${CONTAINER_NAME}/a0/prompts` via the `${AGENT_CONTAINER}:/a0` bind mount, while its shared content originates from `layers/common_layer/prompts/...` via the `${COMMON_LAYER}/prompts/...` mounts described earlier.
 
 - Files such as `agent.system.main.role.md` act as stable entrypoints that `{{ include ... }}` their actual text from the shared system prompt tree (for example, `prompts/system`), allowing central updates without changing agent profiles.
 - Tool prompt stubs such as `agent.system.tool.prompt_include_control.md`, `agent.system.tool.security_profile_control.md`, and `agent.system.tool.scheduler.md` include shared descriptions from `prompts/system/tools`, keeping tool instructions consistent across agents.

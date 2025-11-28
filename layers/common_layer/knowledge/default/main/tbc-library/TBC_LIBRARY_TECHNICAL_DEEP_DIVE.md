@@ -23,7 +23,7 @@ These modifications demonstrate how the framework's flexibility turns abstract c
 
 That said, the layered approach is designed for safe experimentation: test in isolated environments, share discoveries, and explore variations to unlock new capabilities over time.
 
-- `files.py` kwargs-enabled prompt helper (**provided by the Agent Zero image as of v0.9.7**): the upstream Agent Zero `files.py` now supports `**kwargs` for prompt loading, so this library no longer ships or mounts `layers/common/python/helpers/files.py`. It continues to:
+- `files.py` kwargs-enabled prompt helper (**provided by the Agent Zero image as of v0.9.7**): the upstream Agent Zero `files.py` now supports `**kwargs` for prompt loading, so this library no longer ships or mounts a custom`files.py`. It continues to:
   - `VariablesPlugin.get_variables(file, backup_dirs=None, **kwargs)` accepts runtime context.
   - `load_plugin_variables(file, backup_dirs=None, **kwargs)` forwards `**kwargs` into plugin implementations.
   - `parse_file(..., **kwargs)` passes `**kwargs` through to both `load_plugin_variables` and `process_includes`.
@@ -245,8 +245,9 @@ Boot Code Storybook Layers
 │   ├── .env
 │   └── nginx/            # Reverse proxy
 ├── /layers/              # Abstracted configurations and data
-│   ├── common/           # Shared across agents (tools, prompts, knowledge)
-│   └── a0-template/      # Agent-specific layers
+│   ├── common_layer/     # Shared across agents (tools, prompts, knowledge)
+│   ├── control_layer/    # Shared SystemControl, prompt-includes, and orchestration helpers
+│   └── a0-template/      # Example agent-specific layer
 └── /volumes/             # Optional external volumes
     ├── common/
     ├── private/
@@ -254,7 +255,7 @@ Boot Code Storybook Layers
     └── shared/
 ```
 
-In this schematic, `/containers/`, `/layers/`, and `/volumes/` denote top-level directories in the `tbc-library` repository on the host; inside the container they are exposed via bind mounts as `/containers`, `/layers`, and `/volumes` respectively.
+In this schematic, `/containers/`, `/layers/`, and `/volumes/` denote top-level directories in the `tbc-library` repository on the host; inside the container they are exposed via bind mounts as `/containers`, `/layers`, and `/volumes` respectively. The Docker Compose files (for example, `containers/a0-clarity/docker-compose.yml`) also provide convenience mounts such as `/agent_layer`, `/common_layer`, and `/control_layer` that present focused views of these same host directories.
 
 This layered approach allows for fine-grained control, where common elements are shared read-only, and agent-specific ones are writable.
 
@@ -275,7 +276,7 @@ a0-template/
 
 ```
 a0-template/          # Agent-specific layers
-common/               # Shared across agents
+common_layer/         # Shared across agents
 ├── agents/
 │   └── kairos/       # Subordinate agent for adversarial analysis
 ├── instruments/      # Knowledge bases
@@ -327,8 +328,8 @@ The following subsections describe how an Agent Zero instance running inside a c
   - In this container: that same directory is visible as `/layers/${CONTAINER_NAME}/agents/${CONTAINER_NAME}`, `/a0/agents/${CONTAINER_NAME}`, and `/agent_layer/agents/${CONTAINER_NAME}`.  
   - When reasoning about "my own profile", treat `/a0/agents/${CONTAINER_NAME}` as the canonical "self" path in the common single-agent-per-container pattern and the others as alternate views of the same directory. In general, `/a0/agents` may contain multiple profiles (for example, `a0-template`, `agent0`, `default`, `developer`, `hacker`, `researcher`, `kairos`); Agent Zero's own mechanisms (for example, the web UI) can switch which of these is the active self profile for a given agent process.
 - **Managed agent in the same container (for example, `kairos`)**  
-  - In the repository: `layers/common/agents/kairos`.  
-  - In this container: visible at `/layers/common/agents/kairos` and `/a0/agents/kairos` (via the `${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro` mapping); there is **no** `/agent_layer/agents/kairos` because `AGENT_LAYER` is reserved for this container's primary agent.  
+  - In the repository: `layers/common_layer/agents/kairos`.  
+  - In this container: visible at `/layers/common_layer/agents/kairos` and `/a0/agents/kairos` (via the `${COMMON_LAYER}/agents/kairos:/a0/agents/kairos:ro` mapping); there is **no** `/agent_layer/agents/kairos` because `AGENT_LAYER` is reserved for this container's primary agent.  
   - Reason about `kairos` as "another agent I can call or delegate to", not as a replacement for the active agent profile at `/a0/agents/${CONTAINER_NAME}`.
 - **Agents in other containers (for example, `a0-myagent` when viewed from `a0-template`)**  
   - In the repository: `layers/a0-myagent/agents/a0-myagent`.  
@@ -350,7 +351,7 @@ At a high level (as seen from inside the container):
 The `.env` and `docker-compose.yml` files define how host layer paths are exposed inside the container:
 
 - `AGENT_LAYER=${PATH_LAYERS}/${CONTAINER_NAME}`
-- `COMMON_LAYER=${PATH_LAYERS}/common`
+- `COMMON_LAYER=${PATH_LAYERS}/common_layer`
 - `CONTROL_LAYER=${PATH_LAYERS}/control_layer`
 
 These are then mounted by Docker:

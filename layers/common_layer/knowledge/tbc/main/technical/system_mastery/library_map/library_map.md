@@ -12,7 +12,7 @@ The `/containers` directory serves as a repository of deployable agent blueprint
 
 ### 2. Layers: The Evolution of Intelligence
 
-The `/layers` directory embodies the modular, incremental composition of agent intelligence. It contains versioned snapshots of agent configurations and prompts. Individual agent layers (e.g., `/layers/a0-clarity`) house unique, evolving cognitive states, including instance-specific memory, prompts, and logs. The `/layers/common` directory acts as a shared base, providing reusable elements such as agent profiles, universal instruments, collective knowledge bases, and core system prompts. This layered approach allows for continuous learning and evolution without altering the immutable core framework.
+The `/layers` directory embodies the modular, incremental composition of agent intelligence. It contains versioned snapshots of agent configurations and prompts. Individual agent layers (e.g., `/layers/a0-clarity`) house unique, evolving cognitive states, including instance-specific memory, prompts, and logs. The `/layers/common_layer` directory acts as a shared base, providing reusable elements such as agent profiles, universal instruments, collective knowledge bases, and core system prompts. This layered approach allows for continuous learning and evolution without altering the immutable core framework.
 
 ### 3. Volumes: The Persistent Knowledge Base
 

@@ -31,7 +31,7 @@ External host directories are mounted as volumes into the container's `/a0` envi
 
 *   **Read-Only Overlays (e.g., `COMMON_LAYER` for agent profiles)**:
     *   Foundational resources (e.g., common agent profiles like `kairos`, `default`) are mounted `ro` (read-only) from `COMMON_LAYER` into `/a0`.
-    *   This protects their integrity, ensuring they are consumed but not modified from within the container. Administrative changes to these resources occur on the host via `/layers/common/`.
+    *   This protects their integrity, ensuring they are consumed but not modified from within the container. Administrative changes to these resources occur on the host via `/layers/common_layer/`.
 
 ### 2.2 Prompt Injections
 

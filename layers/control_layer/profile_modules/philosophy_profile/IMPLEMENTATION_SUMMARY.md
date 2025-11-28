@@ -157,7 +157,7 @@ agent.system.tool.philosophy_profile.md
 ## File Structure
 
 ```
-/mnt/tbc/library/layers/common/prompts/system/profiles/philosophy_profile/
+/mnt/tbc/library/layers/control_layer/profile_modules/philosophy_profile/
 ├── philosophy_profile.py              # VariablesPlugin
 ├── philosophy_profile.md              # Main template
 ├── IMPLEMENTATION_SUMMARY.md          # This file

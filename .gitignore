@@ -16,7 +16,7 @@ agent_history.gif
 /containers/a0-template/a0/
 /containers/a0-template/a0/**
 
-# Ignore everything in layers/ except a0-demo/ a0-template/ and common/
+# Ignore everything in layers/ except a0-demo/ a0-template/ and common_layer/
 /layers/*
 /layers/*/
 # Allow a0-demo and its contents to be tracked
@@ -40,9 +40,9 @@ agent_history.gif
 # Ignore tmp directory in a0-template
 # /layers/a0-template/tmp/*
 
-# Explicitly include common and all its subdirectories
-!/layers/common/
-!/layers/common/**
+# Explicitly include common_layer and all its subdirectories
+!/layers/common_layer/
+!/layers/common_layer/**
 
 # Explicitly include control_layer and all its subdirectories
 !/layers/control_layer/
