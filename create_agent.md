@@ -49,11 +49,15 @@ Use this document as a **usage guide** for `create_agent.sh` only:
   - The script clones or creates `tmp/settings.json` under the
     destination layer (visible in-container as `/a0/tmp/settings.json`).
   - It updates `agent_profile` to match `dest_profile`, and, when you
-    pass `knowledge_dir`, it updates `agent_knowledge_subdir`. It also
-    derives `rfc_port_http` and `rfc_port_ssh` from `PORT_BASE` so they
-    track the same prefix.
-  - Other fields (for example `agent_memory_subdir`) may still reflect
-    the source until you or a human adjust them.
+    pass `knowledge_dir`, it updates `agent_knowledge_subdir`.
+  - If you pass `memory_subdir`, it updates `agent_memory_subdir` so
+    the agent's effective memory root becomes `/a0/memory/<memory_subdir>`
+    for that destination (with the host-side mirror at
+    `layers/<dest>/memory/<memory_subdir>`).
+  - It also derives `rfc_port_http` and `rfc_port_ssh` from `PORT_BASE`
+    so they track the same prefix.
+  - If you omit `memory_subdir`, `agent_memory_subdir` will initially
+    reflect the source container until you or a human adjust it.
 - **Layered env and auth**
   - The layered env at `layers/<dest>/.env` (mounted as `/a0/.env`)
     holds `ROOT_PASSWORD`, `AUTH_LOGIN`, and `AUTH_PASSWORD` when used.
@@ -111,6 +115,10 @@ Optional `key=value` arguments (any order):
   an exact clone, but if you plan to run both containers at the same time you
   should choose a new `port_base` to avoid port collisions.
 - `knowledge_dir` – value for `KNOWLEDGE_DIR` in the destination `.env`.
+- `memory_subdir` – optional memory subdirectory name. When set, updates
+  `agent_memory_subdir` in `/a0/tmp/settings.json` so the agent uses
+  `/a0/memory/<memory_subdir>` as its memory root (host mirror
+  `layers/<dest>/memory/<memory_subdir>`).
 - `no_docker` – if set, skip `docker compose up -d`.
 - `root_password`, `auth_login`, `auth_password` – values written into the
   layered `/a0/.env` file at `layers/<dest>/.env`. If you omit
@@ -141,14 +149,18 @@ What the script does (simplified):
   example `layers/<source>/tmp/settings.json` and its in-container view at
   `/a0/tmp/settings.json`). When present, the script updates
   `agent_profile` in that file to match `dest_profile`, and if you passed
-  `knowledge_dir` it also updates `agent_knowledge_subdir` accordingly. It
-  also derives `rfc_port_http` and `rfc_port_ssh` from the destination
-  agent's effective `PORT_BASE` so those ports stay consistent with the
+  `knowledge_dir` it also updates `agent_knowledge_subdir` accordingly.
+  If you passed `memory_subdir`, it updates `agent_memory_subdir` so the
+  destination agent uses `/a0/memory/<memory_subdir>` as its memory
+  root (with the corresponding layered path at
+  `layers/<dest>/memory/<memory_subdir>`). It also derives
+  `rfc_port_http` and `rfc_port_ssh` from the destination agent's
+  effective `PORT_BASE` so those ports stay consistent with the
   orchestration `.env`. If no `tmp/settings.json` existed for the source,
-  the script creates a minimal one for the destination with these linkage
-  and port fields. Other fields (for example `agent_memory_subdir`) are not
-  changed and will initially reflect the source container until you or a
-  human adjust them for the destination.
+  the script creates a minimal one for the destination with these linkage,
+  memory, and port fields when relevant. If you omit `memory_subdir`,
+  `agent_memory_subdir` will initially reflect the source container until
+  you or a human adjust it for the destination.
 - recreates `layers/<dest>/agents/<dest_profile>` from
   `layers/<source>/agents/<source_profile>` and edits key files
   (`_context.md`, `prompts/fw.initial_message.md`, and
@@ -227,7 +239,7 @@ cd /a0/instruments/default/main/tbc-library && ./create_agent.sh a0-template a0-
 # Host shell (outside any Agent Zero container), from tbc-library repo root:
 ./create_agent.sh a0-template a0-myagent \
   dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy \
-  port_base=500 knowledge_dir=tbc \
+  port_base=500 knowledge_dir=tbc memory_subdir=a0-myagent-20251128-openai \
   root_password=CHANGE_ME auth_login=myuser auth_password=mypassword \
   no_docker=true
 ```

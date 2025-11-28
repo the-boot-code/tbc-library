@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Usage: ./create_agent.sh <source> <dest> [key=value ...]
-# Optional keys: dest_display, dest_profile, source_profile, port_base, knowledge_dir, no_docker, root_password, auth_login, auth_password
+# Optional keys: dest_display, dest_profile, source_profile, port_base, knowledge_dir, memory_subdir, no_docker, root_password, auth_login, auth_password
 # Example: ./create_agent.sh a0-template a0-myagent dest_display=MyAgent port_base=500
 # Example with knowledge_dir: ./create_agent.sh a0-template a0-myagent dest_display=MyAgent port_base=500 knowledge_dir=custom
 # Example without starting Docker: ./create_agent.sh a0-template a0-myagent dest_display=MyAgent port_base=500 no_docker=true
@@ -27,6 +27,7 @@ Optional key=value arguments:
   source_profile=NAME         Agent profile id in the source container (default: source)
   port_base=NUM               Base port (0-654) for this agent's services
   knowledge_dir=DIR           Knowledge directory name (template-dependent default if omitted)
+  memory_subdir=DIR           Memory subdirectory name under /a0/memory (optional; if set, updates agent_memory_subdir in tmp/settings.json when present)
   no_docker=BOOL              If set (e.g. no_docker=true), do not run "docker compose up -d"
   root_password=VALUE         Root password to place in the layered /a0/.env (ROOT_PASSWORD)
   auth_login=USERNAME         Default auth login to place in the layered /a0/.env (AUTH_LOGIN)
@@ -68,6 +69,11 @@ Usage examples:
   $0 a0-template a0-myagent \
     dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy port_base=500 knowledge_dir=custom \
     root_password=CHANGE_ME auth_login=myuser auth_password=mypassword no_docker=true
+
+  # 8) Full configuration with custom memory subdirectory
+  $0 a0-template a0-myagent \
+    dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy port_base=500 knowledge_dir=custom \
+    memory_subdir=a0-myagent-20251128-openai no_docker=true
 EOF
 }
 
@@ -187,6 +193,7 @@ done
 #   source_profile=...
 #   port_base=...
 #   knowledge_dir=...
+#   memory_subdir=...
 #   no_docker=...      (any non-empty value skips docker compose up -d)
 #   root_password=...
 #   auth_login=...
@@ -230,6 +237,7 @@ DEST_DISPLAY=""
 DEST_DISPLAY_SET=""
 PORT_BASE=""
 KNOWLEDGE_DIR=""
+MEMORY_SUBDIR=""
 NO_DOCKER=""
 ROOT_PASSWORD=""
 AUTH_LOGIN=""
@@ -258,6 +266,9 @@ for arg in "$@"; do
       ;;
     knowledge_dir=*|KNOWLEDGE_DIR=*)
       KNOWLEDGE_DIR="${arg#*=}"
+      ;;
+    memory_subdir=*|MEMORY_SUBDIR=*)
+      MEMORY_SUBDIR="${arg#*=}"
       ;;
     no_docker=*|NO_DOCKER=*)
       NO_DOCKER="${arg#*=}"
@@ -450,6 +461,10 @@ if [ -f "$SETTINGS_JSON" ]; then
   if [ -n "$KNOWLEDGE_DIR" ] && grep -q '"agent_knowledge_subdir"' "$SETTINGS_JSON"; then
     sed -i "s/\"agent_knowledge_subdir\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"agent_knowledge_subdir\": \"$KNOWLEDGE_DIR\"/" "$SETTINGS_JSON"
   fi
+  # If MEMORY_SUBDIR was specified, update agent_memory_subdir as well
+  if [ -n "$MEMORY_SUBDIR" ] && grep -q '"agent_memory_subdir"' "$SETTINGS_JSON"; then
+    sed -i "s/\"agent_memory_subdir\"[[:space:]]*:[[:space:]]*\"[^\"]*\"/\"agent_memory_subdir\": \"$MEMORY_SUBDIR\"/" "$SETTINGS_JSON"
+  fi
 
   # Derive RFC ports from the effective PORT_BASE so they stay aligned with
   # the orchestration .env configuration.
@@ -474,7 +489,18 @@ else
   if [ -n "$EFFECTIVE_PORT_BASE" ]; then
     RFC_HTTP="${EFFECTIVE_PORT_BASE}80"
     RFC_SSH="${EFFECTIVE_PORT_BASE}22"
-    cat > "$SETTINGS_JSON" <<EOF
+    if [ -n "$MEMORY_SUBDIR" ]; then
+      cat > "$SETTINGS_JSON" <<EOF
+{
+    "agent_profile": "$DEST_PROFILE",
+    "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}",
+    "agent_memory_subdir": "$MEMORY_SUBDIR",
+    "rfc_port_http": $RFC_HTTP,
+    "rfc_port_ssh": $RFC_SSH
+}
+EOF
+    else
+      cat > "$SETTINGS_JSON" <<EOF
 {
     "agent_profile": "$DEST_PROFILE",
     "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}",
@@ -482,13 +508,24 @@ else
     "rfc_port_ssh": $RFC_SSH
 }
 EOF
+    fi
   else
-    cat > "$SETTINGS_JSON" <<EOF
+    if [ -n "$MEMORY_SUBDIR" ]; then
+      cat > "$SETTINGS_JSON" <<EOF
+{
+    "agent_profile": "$DEST_PROFILE",
+    "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}",
+    "agent_memory_subdir": "$MEMORY_SUBDIR"
+}
+EOF
+    else
+      cat > "$SETTINGS_JSON" <<EOF
 {
     "agent_profile": "$DEST_PROFILE",
     "agent_knowledge_subdir": "${DEST_KNOWLEDGE:-tbc}"
 }
 EOF
+    fi
   fi
 fi
 

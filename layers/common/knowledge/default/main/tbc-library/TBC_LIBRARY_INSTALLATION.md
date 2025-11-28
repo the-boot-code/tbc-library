@@ -62,12 +62,12 @@ At minimum, from a **host shell in the `tbc-library` repo root** (outside any Ag
 ./create_agent.sh a0-template a0-myagent
 ```
 
-For a more complete, real-world example (including profile IDs, ports, knowledge directory, layered login credentials, and skipping Docker startup) **from a host shell in the `tbc-library` repo root**:
+For a more complete, real-world example (including profile IDs, ports, knowledge directory, optional memory directory, layered login credentials, and skipping Docker startup) **from a host shell in the `tbc-library` repo root**:
 ```bash
 # Host shell only (outside any Agent Zero container), from tbc-library repo root:
 ./create_agent.sh a0-template a0-myagent \
   dest_display="My Agent" dest_profile=myagent-profile source_profile=a0-template-copy \
-  port_base=500 knowledge_dir=custom \
+  port_base=500 knowledge_dir=custom memory_subdir=a0-myagent-20251128-openai \
   root_password=CHANGE_ME auth_login=myuser auth_password=mypassword no_docker=true
 ```
 
@@ -93,7 +93,7 @@ Conceptually, `create_agent.sh` performs the following steps for you:
 
 - Copies the source container directory to the destination.
 - Updates configurations with the new container name and, when provided, `PORT_BASE` and/or `KNOWLEDGE_DIR`. If you omit `port_base`, the destination inherits the source container's `PORT_BASE`. This is usually fine when you want an exact clone, but if you plan to run both containers at the same time you should choose a new `port_base` to avoid port collisions.
-- Copies the relevant layer data under `layers/` for the destination container (using `rsync --ignore-existing`), then updates the destination agent profile with customizations. Because this is a full layer copy, files such as `layers/<source>/tmp/settings.json` (seen inside the container as `/a0/tmp/settings.json`) are also cloned. The script then updates `agent_profile` in that file to match the destination profile and, when you pass `knowledge_dir`/`KNOWLEDGE_DIR`, also updates `agent_knowledge_subdir`. It likewise derives `rfc_port_http` and `rfc_port_ssh` from the destination agent's effective `PORT_BASE` so those ports track the same prefix. If the source layer had no `tmp/settings.json`, the script creates a minimal one for the destination with these linkage and RFC port fields. Other UI-level fields, such as `agent_memory_subdir`, still initially match the source until you change them for the new agent if desired.
+- Copies the relevant layer data under `layers/` for the destination container (using `rsync --ignore-existing`), then updates the destination agent profile with customizations. Because this is a full layer copy, files such as `layers/<source>/tmp/settings.json` (seen inside the container as `/a0/tmp/settings.json`) are also cloned. The script then updates `agent_profile` in that file to match the destination profile and, when you pass `knowledge_dir`/`KNOWLEDGE_DIR`, also updates `agent_knowledge_subdir`. If you pass `memory_subdir`, it similarly updates `agent_memory_subdir` so the agent's effective memory root becomes `/a0/memory/<memory_subdir>` for that instance. It likewise derives `rfc_port_http` and `rfc_port_ssh` from the destination agent's effective `PORT_BASE` so those ports track the same prefix. If the source layer had no `tmp/settings.json`, the script creates a minimal one for the destination with these linkage, memory, and RFC port fields. If you omit `memory_subdir`, the destination inherits the source `agent_memory_subdir` and you can still change it later via the Web UI.
 - Handles replacements for lowercase container names and display names in key files (for example, `a0-template` → `a0-myagent`, `Agent Zero Template` → `Agent Zero My Agent`).
 - Ensures a layered `/a0/.env` file for the new agent at `layers/[dest_container]/.env` (copying from `layers/[source_container]/.env` if present, or creating an empty one), and uncomments the volume so the container uses this layered file.
 - When provided, upserts `ROOT_PASSWORD`, `AUTH_LOGIN`, and `AUTH_PASSWORD` into the layered `/a0/.env` via the `root_password`, `auth_login`, and `auth_password` options. If you do not pass `auth_login`/`auth_password` and they are not already set in the layered env, the script generates short, human-friendly default credentials (for example `user1234` / `password5678`) and prints them so you can log in on first boot; you should change these values after verifying access, especially for hosted deployments.
@@ -226,7 +226,7 @@ These steps are illustrative; the script automates for speed, but manual tweaks 
 
 - Ensure the containers are running (for example, `docker ps`).
 - Check the `.env` file for port settings and adjust as needed (and confirm that `PORT_BASE` values are unique across agents you plan to run concurrently).
-- Review the cloned settings file for the new agent (for example `layers/a0-myagent/tmp/settings.json` on the host, visible inside the container as `/a0/tmp/settings.json`). Fields such as `agent_profile`, `agent_knowledge_subdir`, and `agent_memory_subdir` will initially reflect the source container; update them if you want the destination to use a different profile, knowledge subdirectory, or memory subdirectory.
+- Review the cloned settings file for the new agent (for example `layers/a0-myagent/tmp/settings.json` on the host, visible inside the container as `/a0/tmp/settings.json`). Fields such as `agent_profile`, `agent_knowledge_subdir`, and `agent_memory_subdir` will either reflect the source container or any values you passed via `knowledge_dir` or `memory_subdir` to `create_agent.sh`; adjust them if you want the destination to use a different profile, knowledge subdirectory, or memory subdirectory.
 - Access the agent at the configured ports to confirm it is reachable.
 
 ## Common Questions
