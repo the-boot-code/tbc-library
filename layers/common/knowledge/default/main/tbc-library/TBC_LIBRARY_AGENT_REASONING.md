@@ -17,7 +17,8 @@ When you (as an agent) work with this tbc-library documentation set, treat it as
 3. **Use this guide as your mental model, and other docs as rulebooks**  
    - For concrete bind-mount mappings and path-level rules, use [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts).  
    - For detailed host/container path relationships, self vs managed agents, and worked examples, use [TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md → Agent perspectives and management](TBC_LIBRARY_TECHNICAL_DEEP_DIVE.md#agent-perspectives-and-management).  
-   - For how narrative intent becomes reasoning modes and profiles, use [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) together with [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).
+   - For how narrative intent becomes reasoning modes and profiles, use [TBC_LIBRARY_EXTENSIBILITY.md → Dynamic system control and profiles](TBC_LIBRARY_EXTENSIBILITY.md#dynamic-system-control-and-profiles) together with [TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md → Narrative Driven Development: The Boot Code Storybook](TBC_LIBRARY_NARRATIVE_DRIVEN_DEVELOPMENT.md).  
+   - For **runtime configuration**, prefer reading `/a0/tmp/settings.json` (models, memory, agent directories, external integrations) and `/a0/tmp/system_control.json` (active profiles and prompt-includes) as structured JSON before inferring configuration from scattered filesystem patterns.
 
 By consistently applying this perception model, you can treat the documentation set as a stable conceptual map, even as details evolve.
 

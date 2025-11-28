@@ -178,6 +178,31 @@ If you want `/a0/.env` to be "layered" and abstracted from the `a0` runtime of t
 
 This mapping ensures the container reads sensitive configuration (API keys and authentication data) from the host file `layers/[container_name]/.env`, which the agent sees inside the container as `/layers/[container_name]/.env` and `/agent_layer/.env`, and, once you enable this volume, as the effective `/a0/.env` (also visible via `/agent_orchestration/a0/.env`). For a concise summary of how this same file is preserved and reused by `create_agent.sh`, see [TBC_LIBRARY_INSTALLATION.md → Installation (Automated, Recommended)](TBC_LIBRARY_INSTALLATION.md#installation-automated-recommended), and for step-by-step instructions on creating and layering this file via the same tbc-library abstraction, see [TBC_LIBRARY_INSTALLATION.md → Advanced: Layer the /a0/.env file via tbc-library abstraction](TBC_LIBRARY_INSTALLATION.md#advanced-layer-the-a0env-file-via-tbc-library-abstraction).
 
+### `/a0/tmp/settings.json`: runtime configuration map
+
+Alongside `/a0/.env`, the upstream Agent Zero engine maintains a JSON configuration file at `/a0/tmp/settings.json` inside the container (host mirror `layers/[container_name]/tmp/settings.json` in this deployment). This file is the primary map of the agent's **runtime configuration**, and is usually written and updated by the Web UI rather than by hand. For orientation:
+
+- **Location and mirrors**  
+  - Inside the container: `/a0/tmp/settings.json`.  
+  - On the host under tbc-library: `layers/a0-myagent/tmp/settings.json` for a container named `a0-myagent`.  
+  - Self-revealing views: via `/agent_layer/tmp/settings.json` or `/containers/a0-myagent/a0/tmp/settings.json` depending on vantage; see [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct Agent Access via Bind Mounts](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-agent-access-via-bind-mounts) and [TBC_LIBRARY_AGENT_REASONING.md → Memory vantage and backup-safe files](TBC_LIBRARY_AGENT_REASONING.md#memory-vantage-and-backup-safe-files).
+- **Major groups of fields** (simplified)  
+  - **Model configuration**: providers, model names, context limits, and rate-limit hints for chat, utility, browser, embedding models (for example, `chat_model_provider`, `chat_model_name`, `chat_model_ctx_length`, `util_model_name`, `embed_model_name`, `browser_model_name`).  
+  - **Memory behaviour**: recall and memorize settings such as `memory_recall_enabled`, `memory_recall_interval`, `memory_recall_history_len`, and thresholds.  
+  - **Agent identity and directories**: `agent_profile`, `agent_knowledge_subdir`, and `agent_memory_subdir`. In this deployment, `agent_memory_subdir` selects which directory under `/a0/memory` (host mirror `layers/[container_name]/memory/<agent_memory_subdir>`) is the **active memory root** and where the live `behaviour.md` resides; see [TBC_LIBRARY_EXTENSIBILITY.md → System prompt staging pipeline](TBC_LIBRARY_EXTENSIBILITY.md#system-prompt-staging-pipeline) and [TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md → Direct /a0/ Layer Mappings](TBC_LIBRARY_SELF_REVEALING_ORCHESTRATION.md#direct-a0-layer-mappings).  
+  - **Authentication and external services**: flags and fields such as `mcp_servers`, `mcp_server_enabled`, `a2a_server_enabled`, token and timeout settings, and other integration knobs, as described in the upstream `/a0/docs/mcp_setup.md` and related docs (see [TBC_LIBRARY_UPSTREAM_REFERENCES.md → MCP setup and configuration](TBC_LIBRARY_UPSTREAM_REFERENCES.md#mcp-setup-and-configuration-core-agent-zero)).
+- **How tbc-library uses it**  
+  - `create_agent.sh` treats the host mirror `layers/<source>/tmp/settings.json` (when present) as a template for the destination, cloning it to `layers/<dest>/tmp/settings.json` and updating key fields:  
+    - `agent_profile` is set to the destination profile id.  
+    - `agent_knowledge_subdir` may be updated from the `knowledge_dir` argument.  
+    - `agent_memory_subdir` may be updated from the `memory_subdir` argument so that the new agent's memory root and `behaviour.md` path move to `/a0/memory/<memory_subdir>`.  
+    - RFC ports are derived from `PORT_BASE` when relevant.  
+  - If no `tmp/settings.json` existed for the source, `create_agent.sh` creates a minimal one for the destination with these linkage, memory, and port fields so the Web UI has a sensible starting point. Details and follow-up checks are described in [TBC_LIBRARY_INSTALLATION.md → Installation (Automated, Recommended)](TBC_LIBRARY_INSTALLATION.md#installation-automated-recommended) and [TBC_LIBRARY_INSTALLATION.md → Post-Installation Verification](TBC_LIBRARY_INSTALLATION.md#post-installation-verification).
+- **How agents should use it**  
+  - When you need to know **how you are configured** (models, memory root, knowledge subdirectory, connectivity), start by **reading `/a0/tmp/settings.json` as JSON** instead of inferring from scattered files or naming patterns.  
+  - Treat fields like `agent_memory_subdir` as the **source of truth** for paths such as `/a0/memory/<agent_memory_subdir>/behaviour.md`, and use filesystem searches only as a debugging fallback when configuration is clearly inconsistent.  
+  - For the higher-level reasoning perspective on this file and how it relates to memory vantage and behaviour, see [TBC_LIBRARY_AGENT_REASONING.md → Memory vantage and backup-safe files](TBC_LIBRARY_AGENT_REASONING.md#memory-vantage-and-backup-safe-files).
+
 The following resource reservations are applied to the container. You may prefer to comment them out or adjust them either in place or in the `.env` file.
 
 ```
