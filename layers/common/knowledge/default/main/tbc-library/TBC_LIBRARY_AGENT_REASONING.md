@@ -84,7 +84,7 @@ As the active self inside a container, treat your memory paths as part of the sa
 
 **Host mirror**: The same directory is `layers/${CONTAINER_NAME}/memory/<agent_memory_subdir>` on the host.
 
-**Editing behaviour**: Do not rewrite `behaviour.md` directly. Use the `behaviour_adjustment` tool (`agent.system.tool.behaviour.md`) so the framework can update this file safely.
+**Editing behaviour**: When you are acting **inside your own container**, treat this as an operational rule: do **not** rewrite `behaviour.md` directly. Use the `behaviour_adjustment` tool (`agent.system.tool.behaviour.md`) so the framework can update this file safely, unless a human operator explicitly instructs you otherwise and you have confirmed that doing so is safe.
 
 ### Locating another agent's memory root and behaviour file (orchestrator view)
 
