@@ -1,4 +1,4 @@
-we# Project Meta and Glossary
+# Project Meta and Glossary
 
 This document captures project meta information: final thoughts, disclaimers, versioning details, attribution, and a glossary of key terms.
 
